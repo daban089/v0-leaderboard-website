@@ -213,15 +213,15 @@ export function LeaderboardTable({ category }: LeaderboardTableProps) {
                 </div>
 
                 <div className="flex gap-3">
-                  <div className="rounded-lg bg-primary/10 px-3 py-2 text-center">
+                  <div className="rounded-full bg-primary/10 px-3 py-2 text-center">
                     <p className="text-xs font-medium text-muted-foreground">Time</p>
                     <p className="text-sm font-bold text-primary">{player.playtime.toLocaleString()}h</p>
                   </div>
-                  <div className="rounded-lg bg-accent/10 px-3 py-2 text-center">
+                  <div className="rounded-full bg-accent/10 px-3 py-2 text-center">
                     <p className="text-xs font-medium text-muted-foreground">Kills</p>
                     <p className="text-sm font-bold text-accent">{player.kills}</p>
                   </div>
-                  <div className="rounded-lg bg-destructive/10 px-3 py-2 text-center">
+                  <div className="rounded-full bg-destructive/10 px-3 py-2 text-center">
                     <p className="text-xs font-medium text-muted-foreground">Deaths</p>
                     <p className="text-sm font-bold text-destructive">{player.deaths}</p>
                   </div>

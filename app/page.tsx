@@ -62,14 +62,14 @@ export default function Page() {
                   placeholder="Search players..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-full w-64 pl-10 pr-4 rounded-lg border-border bg-card"
+                  className="h-full w-64 pl-10 pr-4 rounded-full border-border bg-card"
                 />
               </div>
 
               {/* Login/Logout */}
               {loggedInUser ? (
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 h-12">
+                  <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 h-12">
                     <User className="h-4 w-4 text-primary" />
                     <span className="text-sm font-medium">{loggedInUser}</span>
                   </div>
