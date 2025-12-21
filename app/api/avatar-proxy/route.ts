@@ -1,4 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { readFile } from "fs/promises"
+import { join } from "path"
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,77 +12,48 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-      const pageResponse = await fetch(`https://mcskins.top/avatar-maker?username=${username}`, {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        },
-      })
+      // Try to fetch player's UUID from Mojang API
+      const mojangResponse = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`)
 
-      if (pageResponse.ok) {
-        const html = await pageResponse.text()
+      if (mojangResponse.ok) {
+        const mojangData = await mojangResponse.json()
+        const uuid = mojangData.id
 
-        // Look for links containing "avaBody3" or with id/anchor "#avaBody3"
-        const avaBody3Match = html.match(
-          /<a[^>]*(?:href="([^"]*avaBody3[^"]*)"[^>]*|[^>]*id="avaBody3"[^>]*href="([^"]+)")/i,
-        )
+        // Try crafty.gg render with the UUID
+        const craftyUrl = `https://render.crafty.gg/3d/bust/${uuid}`
+        const craftyResponse = await fetch(craftyUrl, {
+          headers: {
+            "User-Agent": "Mozilla/5.0",
+          },
+        })
 
-        if (avaBody3Match) {
-          const imageUrl = avaBody3Match[1] || avaBody3Match[2]
-          console.log("[v0] Found avaBody3 avatar URL:", imageUrl)
+        if (craftyResponse.ok) {
+          const contentType = craftyResponse.headers.get("content-type") || "image/png"
+          const imageBuffer = await craftyResponse.arrayBuffer()
 
-          // Fetch the actual image
-          const imageResponse = await fetch(imageUrl, {
+          return new NextResponse(imageBuffer, {
             headers: {
-              "User-Agent": "Mozilla/5.0",
+              "Content-Type": contentType,
+              "Cache-Control": "public, max-age=3600",
+              "Access-Control-Allow-Origin": "*",
             },
           })
-
-          if (imageResponse.ok) {
-            const contentType = imageResponse.headers.get("content-type") || "image/png"
-            const imageBuffer = await imageResponse.arrayBuffer()
-
-            return new NextResponse(imageBuffer, {
-              headers: {
-                "Content-Type": contentType,
-                "Cache-Control": "public, max-age=3600",
-                "Access-Control-Allow-Origin": "*",
-              },
-            })
-          }
         }
       }
     } catch (error) {
-      console.error("[v0] mcskins.top scraping failed:", error)
+      console.error("[v0] crafty.gg fetch failed:", error)
     }
 
-    // Fallback to crafatar if mcskins.top scraping fails
-    const fallbackUrl = `https://crafatar.com/renders/body/${username}?scale=4&overlay`
+    const fallbackPath = join(process.cwd(), "public", "skin-404.avif")
+    const fallbackImage = await readFile(fallbackPath)
 
-    try {
-      const response = await fetch(fallbackUrl, {
-        headers: {
-          "User-Agent": "Mozilla/5.0",
-        },
-      })
-
-      if (response.ok) {
-        const contentType = response.headers.get("content-type") || "image/png"
-        const imageBuffer = await response.arrayBuffer()
-
-        return new NextResponse(imageBuffer, {
-          headers: {
-            "Content-Type": contentType,
-            "Cache-Control": "public, max-age=3600",
-            "Access-Control-Allow-Origin": "*",
-          },
-        })
-      }
-    } catch (error) {
-      console.error("[v0] Fallback failed:", error)
-    }
-
-    // All sources failed, return 404
-    return new NextResponse(null, { status: 404 })
+    return new NextResponse(fallbackImage, {
+      headers: {
+        "Content-Type": "image/avif",
+        "Cache-Control": "public, max-age=3600",
+        "Access-Control-Allow-Origin": "*",
+      },
+    })
   } catch (error) {
     console.error("[v0] Avatar proxy error:", error)
     return new NextResponse("Internal server error", { status: 500 })
