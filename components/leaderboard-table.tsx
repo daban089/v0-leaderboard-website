@@ -27,7 +27,6 @@ export function LeaderboardTable({
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState(externalSearchQuery || "")
-  const [autoRefresh, setAutoRefresh] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [avatarCache, setAvatarCache] = useState<Record<string, string>>({})
 
@@ -67,14 +66,12 @@ export function LeaderboardTable({
   }, [category])
 
   useEffect(() => {
-    if (!autoRefresh) return
-
     const interval = setInterval(() => {
       fetchLeaderboard()
-    }, 30000)
+    }, 60000)
 
     return () => clearInterval(interval)
-  }, [autoRefresh, category])
+  }, [category])
 
   useEffect(() => {
     setSearchQuery(externalSearchQuery || "")
@@ -196,15 +193,6 @@ export function LeaderboardTable({
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setAutoRefresh(!autoRefresh)}
-                className={autoRefresh ? "bg-primary/10" : ""}
-              >
-                <RefreshCw className={`h-4 w-4 ${autoRefresh ? "animate-spin" : ""}`} />
-                <span className="ml-2 hidden sm:inline">{autoRefresh ? "Auto" : "Manual"}</span>
-              </Button>
               <Button variant="outline" size="sm" onClick={fetchLeaderboard} disabled={loading}>
                 <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               </Button>
