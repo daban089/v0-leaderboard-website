@@ -201,9 +201,7 @@ export function LeaderboardTable({
           {lastUpdated && (
             <p className="text-xs text-muted-foreground">Last updated: {lastUpdated.toLocaleTimeString()}</p>
           )}
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-6 px-4 pb-3 border-b border-border mb-4">
+          <div className="flex items-center gap-6 pt-4 border-t border-border mt-4">
             <div className="h-[80px] w-[240px] flex-shrink-0 flex items-center">
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-4">#</span>
             </div>
@@ -212,7 +210,8 @@ export function LeaderboardTable({
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">TIERS</span>
             </div>
           </div>
-
+        </CardHeader>
+        <CardContent>
           <div className="space-y-4">
             {filteredPlayers.map((player) => (
               <div
