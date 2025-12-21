@@ -223,9 +223,9 @@ export function LeaderboardTable({
       <div className="flex items-end gap-1 mb-4">
         <button
           onClick={() => onKitChange?.("all")}
-          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
+          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
             kit === "all"
-              ? "bg-card border-t border-l border-r border-border text-white opacity-100"
+              ? "text-white opacity-100"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
@@ -235,9 +235,9 @@ export function LeaderboardTable({
 
         <button
           onClick={() => onKitChange?.("sword")}
-          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
+          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
             kit === "sword"
-              ? "bg-card border-t border-l border-r border-border text-white opacity-100"
+              ? "text-white opacity-100"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
@@ -247,9 +247,9 @@ export function LeaderboardTable({
 
         <button
           onClick={() => onKitChange?.("axe")}
-          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
+          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
             kit === "axe"
-              ? "bg-card border-t border-l border-r border-border text-white opacity-100"
+              ? "text-white opacity-100"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
@@ -259,9 +259,9 @@ export function LeaderboardTable({
 
         <button
           onClick={() => onKitChange?.("sumo")}
-          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
+          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
             kit === "sumo"
-              ? "bg-card border-t border-l border-r border-border text-white opacity-100"
+              ? "text-white opacity-100"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
