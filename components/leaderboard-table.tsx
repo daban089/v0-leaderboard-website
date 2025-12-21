@@ -149,10 +149,10 @@ export function LeaderboardTable({
       <div className="flex items-end gap-1">
         <button
           onClick={() => onCategoryChange?.("playtime")}
-          className={`flex flex-col items-center gap-1 px-6 py-3 transition-all duration-300 rounded-t-3xl ${
+          className={`flex flex-col items-center gap-1 px-6 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
             category === "playtime"
-              ? "bg-card border border-b-0 border-border text-foreground"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-card border border-b-0 border-border text-foreground opacity-100 translate-y-0"
+              : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
           <Clock className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
@@ -161,10 +161,10 @@ export function LeaderboardTable({
 
         <button
           onClick={() => onCategoryChange?.("kills")}
-          className={`flex flex-col items-center gap-1 px-6 py-3 transition-all duration-300 rounded-t-3xl ${
+          className={`flex flex-col items-center gap-1 px-6 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
             category === "kills"
-              ? "bg-card border border-b-0 border-border text-foreground"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-card border border-b-0 border-border text-foreground opacity-100 translate-y-0"
+              : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
           <Sword className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
@@ -173,10 +173,10 @@ export function LeaderboardTable({
 
         <button
           onClick={() => onCategoryChange?.("deaths")}
-          className={`flex flex-col items-center gap-1 px-6 py-3 transition-all duration-300 rounded-t-3xl ${
+          className={`flex flex-col items-center gap-1 px-6 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
             category === "deaths"
-              ? "bg-card border border-b-0 border-border text-foreground"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-card border border-b-0 border-border text-foreground opacity-100 translate-y-0"
+              : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
           <Skull className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
@@ -184,7 +184,7 @@ export function LeaderboardTable({
         </button>
       </div>
 
-      <Card className="overflow-hidden rounded-t-none">
+      <Card className="overflow-hidden rounded-t-none animate-in fade-in duration-500">
         <CardHeader>
           <div className="flex items-start justify-between gap-4">
             <div>
