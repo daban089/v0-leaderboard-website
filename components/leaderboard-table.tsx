@@ -225,7 +225,7 @@ export function LeaderboardTable({
           onClick={() => onKitChange?.("all")}
           className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
             kit === "all"
-              ? "bg-card border-t border-l border-r border-border text-foreground opacity-100"
+              ? "bg-card border-t border-l border-r border-border text-white opacity-100"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
@@ -237,7 +237,7 @@ export function LeaderboardTable({
           onClick={() => onKitChange?.("sword")}
           className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
             kit === "sword"
-              ? "bg-card border-t border-l border-r border-border text-foreground opacity-100"
+              ? "bg-card border-t border-l border-r border-border text-white opacity-100"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
@@ -249,7 +249,7 @@ export function LeaderboardTable({
           onClick={() => onKitChange?.("axe")}
           className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
             kit === "axe"
-              ? "bg-card border-t border-l border-r border-border text-foreground opacity-100"
+              ? "bg-card border-t border-l border-r border-border text-white opacity-100"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
@@ -261,7 +261,7 @@ export function LeaderboardTable({
           onClick={() => onKitChange?.("sumo")}
           className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
             kit === "sumo"
-              ? "bg-card border-t border-l border-r border-border text-foreground opacity-100"
+              ? "bg-card border-t border-l border-r border-border text-white opacity-100"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
