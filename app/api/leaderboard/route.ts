@@ -30,23 +30,42 @@ export async function GET(request: Request) {
       let query: string
       let params: any[] = []
 
-      // Get all match data first, then filter by kit if needed
-      query = `SELECT 
-        username,
-        SUM(is_winner) as wins,
-        COUNT(*) - SUM(is_winner) as losses,
-        COUNT(*) as total_matches,
-        MAX(player_data) as latest_player_data,
-        GROUP_CONCAT(is_winner ORDER BY id DESC SEPARATOR ',') as recent_results
-      FROM fight_players
-      ${kit !== "all" ? "WHERE fight IN (SELECT id FROM fights WHERE kit = ?)" : ""}
-      GROUP BY username`
+      if (kit === "all") {
+        // Get all matches regardless of kit
+        query = `SELECT 
+          fp.username,
+          SUM(fp.is_winner) as wins,
+          COUNT(*) - SUM(fp.is_winner) as losses,
+          COUNT(*) as total_matches,
+          MAX(fp.player_data) as latest_player_data,
+          GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results
+        FROM fight_players fp
+        GROUP BY fp.username`
+      } else {
+        // Filter by specific kit using the correct JOIN on started timestamp
+        query = `SELECT 
+          fp.username,
+          SUM(fp.is_winner) as wins,
+          COUNT(*) - SUM(fp.is_winner) as losses,
+          COUNT(*) as total_matches,
+          MAX(fp.player_data) as latest_player_data,
+          GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results
+        FROM fight_players fp
+        INNER JOIN fights f ON fp.fight = f.started
+        WHERE f.kit = ? OR f.kit = ?
+        GROUP BY fp.username`
 
-      if (kit !== "all") {
-        params = [kit]
+        const rankedKit = kit + "elo"
+        params = [kit, rankedKit]
       }
 
+      console.log("[v0] Executing query for kit:", kit)
+      console.log("[v0] Query:", query)
+      console.log("[v0] Params:", params)
+
       const [rows] = await connection.execute<any[]>(query, params)
+
+      console.log("[v0] Query returned rows:", rows.length)
 
       const players = (rows as any[]).map((player) => {
         let elo = 1000
