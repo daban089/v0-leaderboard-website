@@ -146,150 +146,145 @@ export function LeaderboardTable({
   }
 
   return (
-    <Card className="overflow-hidden">
-      <div className="border-b border-border bg-[#1a1f2e] px-6 py-3">
-        <div className="flex items-center gap-1">
-          <button
-            onClick={() => onCategoryChange?.("playtime")}
-            className={`flex flex-col items-center gap-1 px-6 py-3 transition-all relative ${
-              category === "playtime" ? "text-foreground" : "text-muted-foreground"
-            }`}
-          >
-            <Clock className="h-5 w-5" />
-            <span className="text-xs font-medium">Playtime</span>
-            {category === "playtime" && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
-            )}
-          </button>
+    <div>
+      <div className="flex items-end gap-1">
+        <button
+          onClick={() => onCategoryChange?.("playtime")}
+          className={`flex flex-col items-center gap-1 px-6 py-3 transition-all rounded-t-3xl ${
+            category === "playtime"
+              ? "bg-card border border-b-0 border-border text-foreground"
+              : "text-muted-foreground"
+          }`}
+        >
+          <Clock className="h-5 w-5" />
+          <span className="text-xs font-medium">Playtime</span>
+        </button>
 
-          <button
-            onClick={() => onCategoryChange?.("kills")}
-            className={`flex flex-col items-center gap-1 px-6 py-3 transition-all relative ${
-              category === "kills" ? "text-foreground" : "text-muted-foreground"
-            }`}
-          >
-            <Sword className="h-5 w-5" />
-            <span className="text-xs font-medium">Kills</span>
-            {category === "kills" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />}
-          </button>
+        <button
+          onClick={() => onCategoryChange?.("kills")}
+          className={`flex flex-col items-center gap-1 px-6 py-3 transition-all rounded-t-3xl ${
+            category === "kills" ? "bg-card border border-b-0 border-border text-foreground" : "text-muted-foreground"
+          }`}
+        >
+          <Sword className="h-5 w-5" />
+          <span className="text-xs font-medium">Kills</span>
+        </button>
 
-          <button
-            onClick={() => onCategoryChange?.("deaths")}
-            className={`flex flex-col items-center gap-1 px-6 py-3 transition-all relative ${
-              category === "deaths" ? "text-foreground" : "text-muted-foreground"
-            }`}
-          >
-            <Skull className="h-5 w-5" />
-            <span className="text-xs font-medium">Deaths</span>
-            {category === "deaths" && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
-            )}
-          </button>
-        </div>
+        <button
+          onClick={() => onCategoryChange?.("deaths")}
+          className={`flex flex-col items-center gap-1 px-6 py-3 transition-all rounded-t-3xl ${
+            category === "deaths" ? "bg-card border border-b-0 border-border text-foreground" : "text-muted-foreground"
+          }`}
+        >
+          <Skull className="h-5 w-5" />
+          <span className="text-xs font-medium">Deaths</span>
+        </button>
       </div>
 
-      <CardHeader>
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <CardTitle>{getCategoryTitle()}</CardTitle>
-            <CardDescription>
-              {category === "playtime" && "Players with the most time on the server"}
-              {category === "kills" && "Players with the most player kills"}
-              {category === "deaths" && "Players with the most deaths"}
-            </CardDescription>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setAutoRefresh(!autoRefresh)}
-              className={autoRefresh ? "bg-primary/10" : ""}
-            >
-              <RefreshCw className={`h-4 w-4 ${autoRefresh ? "animate-spin" : ""}`} />
-              <span className="ml-2 hidden sm:inline">{autoRefresh ? "Auto" : "Manual"}</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={fetchLeaderboard} disabled={loading}>
-              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            </Button>
-          </div>
-        </div>
-        <div className="relative mt-4">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search players..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        {lastUpdated && (
-          <p className="text-xs text-muted-foreground">Last updated: {lastUpdated.toLocaleTimeString()}</p>
-        )}
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          {filteredPlayers.map((player) => (
-            <div
-              key={player.username}
-              className="relative flex items-center gap-6 rounded-xl border border-border overflow-hidden p-4 transition-all hover:scale-[1.01] hover:shadow-lg"
-              style={{
-                backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
-                backgroundSize: "240px 80px",
-                backgroundPosition: "left center",
-                backgroundRepeat: "no-repeat",
-              }}
-            >
-              <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
-                <span
-                  className={`absolute left-4 text-5xl font-black italic font-sans text-white z-10`}
-                  style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)" }}
-                >
-                  {player.rank}.
-                </span>
-                <img
-                  src={getAvatarUrl(player.username) || "/placeholder.svg"}
-                  alt={player.username}
-                  className="absolute right-14 h-[88px] w-[88px] object-contain z-10"
-                  style={{ filter: "drop-shadow(-4px 0px 0.8px rgba(0, 0, 0, 0.3))" }}
-                  onError={(e) => {
-                    e.currentTarget.src = "/placeholder.svg?height=88&width=88"
-                  }}
-                />
-              </div>
-
-              <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-xl font-bold text-foreground">{player.username}</p>
-                  <p className="text-sm text-muted-foreground">{getStatValue(player)}</p>
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="rounded-full bg-primary/10 px-3 py-2 text-center">
-                    <p className="text-xs font-medium text-muted-foreground">Time</p>
-                    <p className="text-sm font-bold text-primary">{player.playtime.toLocaleString()}h</p>
-                  </div>
-                  <div className="rounded-full bg-accent/10 px-3 py-2 text-center">
-                    <p className="text-xs font-medium text-muted-foreground">Kills</p>
-                    <p className="text-sm font-bold text-accent">{player.kills}</p>
-                  </div>
-                  <div className="rounded-full bg-destructive/10 px-3 py-2 text-center">
-                    <p className="text-xs font-medium text-muted-foreground">Deaths</p>
-                    <p className="text-sm font-bold text-destructive">{player.deaths}</p>
-                  </div>
-                </div>
-              </div>
+      <Card className="overflow-hidden rounded-t-none">
+        <CardHeader>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <CardTitle>{getCategoryTitle()}</CardTitle>
+              <CardDescription>
+                {category === "playtime" && "Players with the most time on the server"}
+                {category === "kills" && "Players with the most player kills"}
+                {category === "deaths" && "Players with the most deaths"}
+              </CardDescription>
             </div>
-          ))}
-
-          {filteredPlayers.length === 0 && !loading && (
-            <div className="py-12 text-center">
-              <p className="text-muted-foreground">
-                {searchQuery ? `No players found matching "${searchQuery}"` : "No players found"}
-              </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAutoRefresh(!autoRefresh)}
+                className={autoRefresh ? "bg-primary/10" : ""}
+              >
+                <RefreshCw className={`h-4 w-4 ${autoRefresh ? "animate-spin" : ""}`} />
+                <span className="ml-2 hidden sm:inline">{autoRefresh ? "Auto" : "Manual"}</span>
+              </Button>
+              <Button variant="outline" size="sm" onClick={fetchLeaderboard} disabled={loading}>
+                <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+              </Button>
             </div>
+          </div>
+          <div className="relative mt-4">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search players..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          {lastUpdated && (
+            <p className="text-xs text-muted-foreground">Last updated: {lastUpdated.toLocaleTimeString()}</p>
           )}
-        </div>
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {filteredPlayers.map((player) => (
+              <div
+                key={player.username}
+                className="relative flex items-center gap-6 rounded-xl border border-border overflow-hidden p-4 transition-all hover:scale-[1.01] hover:shadow-lg"
+                style={{
+                  backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
+                  backgroundSize: "240px 80px",
+                  backgroundPosition: "left center",
+                  backgroundRepeat: "no-repeat",
+                }}
+              >
+                <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
+                  <span
+                    className={`absolute left-4 text-5xl font-black italic font-sans text-white z-10`}
+                    style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)" }}
+                  >
+                    {player.rank}.
+                  </span>
+                  <img
+                    src={getAvatarUrl(player.username) || "/placeholder.svg"}
+                    alt={player.username}
+                    className="absolute right-14 h-[88px] w-[88px] object-contain z-10"
+                    style={{ filter: "drop-shadow(-4px 0px 0.8px rgba(0, 0, 0, 0.3))" }}
+                    onError={(e) => {
+                      e.currentTarget.src = "/placeholder.svg?height=88&width=88"
+                    }}
+                  />
+                </div>
+
+                <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xl font-bold text-foreground">{player.username}</p>
+                    <p className="text-sm text-muted-foreground">{getStatValue(player)}</p>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <div className="rounded-full bg-primary/10 px-3 py-2 text-center">
+                      <p className="text-xs font-medium text-muted-foreground">Time</p>
+                      <p className="text-sm font-bold text-primary">{player.playtime.toLocaleString()}h</p>
+                    </div>
+                    <div className="rounded-full bg-accent/10 px-3 py-2 text-center">
+                      <p className="text-xs font-medium text-muted-foreground">Kills</p>
+                      <p className="text-sm font-bold text-accent">{player.kills}</p>
+                    </div>
+                    <div className="rounded-full bg-destructive/10 px-3 py-2 text-center">
+                      <p className="text-xs font-medium text-muted-foreground">Deaths</p>
+                      <p className="text-sm font-bold text-destructive">{player.deaths}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {filteredPlayers.length === 0 && !loading && (
+              <div className="py-12 text-center">
+                <p className="text-muted-foreground">
+                  {searchQuery ? `No players found matching "${searchQuery}"` : "No players found"}
+                </p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
