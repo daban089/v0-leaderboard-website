@@ -146,73 +146,44 @@ export function LeaderboardTable({
   }
 
   return (
-    <Card>
-      <div className="border-b border-border bg-card/50 backdrop-blur-sm rounded-t-xl p-4">
-        <div className="flex items-center justify-center gap-3">
+    <Card className="overflow-hidden">
+      <div className="border-b border-border bg-[#1a1f2e] px-6 py-3">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => onCategoryChange?.("playtime")}
-            className={`group flex flex-col items-center gap-2 rounded-lg px-6 py-4 transition-all ${
-              category === "playtime" ? "bg-primary shadow-lg shadow-primary/20" : ""
+            className={`flex flex-col items-center gap-1 px-6 py-3 transition-all relative ${
+              category === "playtime" ? "text-foreground" : "text-muted-foreground"
             }`}
           >
-            <div
-              className={`flex h-12 w-12 items-center justify-center rounded-lg transition-colors ${
-                category === "playtime" ? "bg-primary-foreground/10" : "bg-primary/10"
-              }`}
-            >
-              <Clock className={`h-6 w-6 ${category === "playtime" ? "text-primary-foreground" : "text-primary"}`} />
-            </div>
-            <span
-              className={`text-sm font-semibold ${
-                category === "playtime" ? "text-primary-foreground" : "text-foreground"
-              }`}
-            >
-              Playtime
-            </span>
+            <Clock className="h-5 w-5" />
+            <span className="text-xs font-medium">Playtime</span>
+            {category === "playtime" && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
+            )}
           </button>
 
           <button
             onClick={() => onCategoryChange?.("kills")}
-            className={`group flex flex-col items-center gap-2 rounded-lg px-6 py-4 transition-all ${
-              category === "kills" ? "bg-accent shadow-lg shadow-accent/20" : ""
+            className={`flex flex-col items-center gap-1 px-6 py-3 transition-all relative ${
+              category === "kills" ? "text-foreground" : "text-muted-foreground"
             }`}
           >
-            <div
-              className={`flex h-12 w-12 items-center justify-center rounded-lg transition-colors ${
-                category === "kills" ? "bg-accent-foreground/10" : "bg-accent/10"
-              }`}
-            >
-              <Sword className={`h-6 w-6 ${category === "kills" ? "text-accent-foreground" : "text-accent"}`} />
-            </div>
-            <span
-              className={`text-sm font-semibold ${category === "kills" ? "text-accent-foreground" : "text-foreground"}`}
-            >
-              Kills
-            </span>
+            <Sword className="h-5 w-5" />
+            <span className="text-xs font-medium">Kills</span>
+            {category === "kills" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />}
           </button>
 
           <button
             onClick={() => onCategoryChange?.("deaths")}
-            className={`group flex flex-col items-center gap-2 rounded-lg px-6 py-4 transition-all ${
-              category === "deaths" ? "bg-destructive shadow-lg shadow-destructive/20" : ""
+            className={`flex flex-col items-center gap-1 px-6 py-3 transition-all relative ${
+              category === "deaths" ? "text-foreground" : "text-muted-foreground"
             }`}
           >
-            <div
-              className={`flex h-12 w-12 items-center justify-center rounded-lg transition-colors ${
-                category === "deaths" ? "bg-destructive-foreground/10" : "bg-destructive/10"
-              }`}
-            >
-              <Skull
-                className={`h-6 w-6 ${category === "deaths" ? "text-destructive-foreground" : "text-destructive"}`}
-              />
-            </div>
-            <span
-              className={`text-sm font-semibold ${
-                category === "deaths" ? "text-destructive-foreground" : "text-foreground"
-              }`}
-            >
-              Deaths
-            </span>
+            <Skull className="h-5 w-5" />
+            <span className="text-xs font-medium">Deaths</span>
+            {category === "deaths" && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
+            )}
           </button>
         </div>
       </div>
