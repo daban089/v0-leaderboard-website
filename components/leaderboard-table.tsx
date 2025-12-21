@@ -112,13 +112,13 @@ export function LeaderboardTable({ category }: LeaderboardTableProps) {
         setAvatarCache((prev) => ({ ...prev, [username]: url }))
       })
       .catch(() => {
-        // Fallback to crafatar
-        const fallbackUrl = `https://crafatar.com/renders/bust/${username}?scale=4&overlay=true`
+        // Fallback to mcskins.top avatarBody3 (3D bust render)
+        const fallbackUrl = `https://mcskins.top/avatar/${username}/avatarBody3`
         setAvatarCache((prev) => ({ ...prev, [username]: fallbackUrl }))
       })
 
-    // Return temporary URL while loading
-    return `https://crafatar.com/renders/bust/${username}?scale=4&overlay=true`
+    // Return temporary mcskins.top URL while loading
+    return `https://mcskins.top/avatar/${username}/avatarBody3`
   }
 
   const getStatValue = (player: Player) => {
