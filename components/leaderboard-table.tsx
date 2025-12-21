@@ -271,8 +271,8 @@ export function LeaderboardTable({
       </div>
 
       <Card className="overflow-hidden rounded-t-none border-t-0">
-        <CardHeader className="pb-0">
-          <div className="flex items-center gap-6">
+        <CardHeader className="p-0">
+          <div className="flex items-center gap-6 px-4 pb-1">
             <div className="h-[80px] w-[240px] flex-shrink-0 flex items-center">
               <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider ml-4">#</span>
             </div>
@@ -283,7 +283,7 @@ export function LeaderboardTable({
           </div>
         </CardHeader>
 
-        <CardContent className="pt-2">
+        <CardContent className="p-4 pt-0">
           <div className="space-y-4">
             {filteredPlayers.map((player) => (
               <div
