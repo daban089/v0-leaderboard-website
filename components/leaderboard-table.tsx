@@ -304,7 +304,7 @@ export function LeaderboardTable({
             </div>
             <div className="flex flex-1 items-center justify-between gap-4">
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">PLAYER</span>
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">BADGES</span>
+              {/* Removed BADGES from header */}
             </div>
           </div>
         </CardHeader>
@@ -343,19 +343,18 @@ export function LeaderboardTable({
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
                     <p className="text-sm text-muted-foreground">{getStatValue(player)}</p>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2 justify-end max-w-md">
-                    {getBadges(player).map((badge) => (
-                      <div
-                        key={badge.id}
-                        className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 ${badge.color}`}
-                        title={badge.requirement}
-                      >
-                        {badge.icon}
-                        <span className="text-xs font-semibold">{badge.name}</span>
-                      </div>
-                    ))}
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {getBadges(player).map((badge) => (
+                        <div
+                          key={badge.id}
+                          className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 ${badge.color}`}
+                          title={badge.requirement}
+                        >
+                          {badge.icon}
+                          <span className="text-xs font-semibold">{badge.name}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
