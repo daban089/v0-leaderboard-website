@@ -3,12 +3,11 @@
 import { useState, useEffect } from "react"
 import { LeaderboardTable } from "@/components/leaderboard-table"
 import { LoginDialog } from "@/components/login-dialog"
-import { Trophy, Sword, Skull, Clock, LogIn, LogOut, User } from "lucide-react"
+import { Sword, Skull, Clock, LogIn, LogOut, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export default function Page() {
   const [activeCategory, setActiveCategory] = useState<"playtime" | "kills" | "deaths">("playtime")
-  const [totalStats, setTotalStats] = useState({ playtime: 0, kills: 0, deaths: 0 })
   const [showLogin, setShowLogin] = useState(false)
   const [loggedInUser, setLoggedInUser] = useState<string | null>(null)
 
@@ -18,29 +17,6 @@ export default function Page() {
     if (savedUser) {
       setLoggedInUser(savedUser)
     }
-  }, [])
-
-  useEffect(() => {
-    async function fetchStats() {
-      try {
-        const response = await fetch("/api/leaderboard")
-        const data = await response.json()
-        if (Array.isArray(data)) {
-          const totals = data.reduce(
-            (acc, player) => ({
-              playtime: acc.playtime + player.playtime,
-              kills: acc.kills + player.kills,
-              deaths: acc.deaths + player.deaths,
-            }),
-            { playtime: 0, kills: 0, deaths: 0 },
-          )
-          setTotalStats(totals)
-        }
-      } catch (error) {
-        console.error("[v0] Failed to fetch stats:", error)
-      }
-    }
-    fetchStats()
   }, [])
 
   const handleLogin = (username: string) => {
@@ -60,13 +36,7 @@ export default function Page() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary">
-                <Trophy className="h-7 w-7 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight text-balance">SMP Leaderboard</h1>
-                <p className="text-sm text-muted-foreground">Top players on the server</p>
-              </div>
+              <img src="/images/jangamar-logo.png" alt="Jangamar SMP" className="h-16 w-auto object-contain" />
             </div>
 
             <div>
@@ -92,40 +62,7 @@ export default function Page() {
         </div>
       </header>
 
-      {/* Stats Overview */}
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8 grid gap-4 md:grid-cols-3">
-          <div className="flex items-center gap-4 rounded-lg border border-border bg-card p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-              <Clock className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Total Playtime</p>
-              <p className="text-2xl font-bold">{totalStats.playtime.toLocaleString()}h</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 rounded-lg border border-border bg-card p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent/10">
-              <Sword className="h-6 w-6 text-accent" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Total Kills</p>
-              <p className="text-2xl font-bold">{totalStats.kills.toLocaleString()}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 rounded-lg border border-border bg-card p-6">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-destructive/10">
-              <Skull className="h-6 w-6 text-destructive" />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-muted-foreground">Total Deaths</p>
-              <p className="text-2xl font-bold">{totalStats.deaths.toLocaleString()}</p>
-            </div>
-          </div>
-        </div>
-
         <section className="w-full mb-8">
           <div className="flex items-center justify-center gap-3 rounded-lg border border-border bg-card/50 p-3 backdrop-blur-sm">
             <button
