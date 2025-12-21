@@ -186,7 +186,7 @@ export function LeaderboardTable({
     if (rank === 1) return "/shimmer.svg"
     if (rank === 2) return "/shimmer-silver.svg"
     if (rank === 3) return "/shimmer-bronze.svg"
-    return "/shimmer.svg"
+    return null
   }
 
   const getKitIcon = (kitName: string) => {
@@ -304,12 +304,16 @@ export function LeaderboardTable({
               <div
                 key={player.username}
                 className="relative flex items-center gap-6 rounded-xl border border-border overflow-hidden p-4 transition-all hover:scale-[1.01] hover:shadow-lg"
-                style={{
-                  backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
-                  backgroundSize: "240px 80px",
-                  backgroundPosition: "left center",
-                  backgroundRepeat: "no-repeat",
-                }}
+                style={
+                  player.rank <= 3
+                    ? {
+                        backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
+                        backgroundSize: "240px 80px",
+                        backgroundPosition: "left center",
+                        backgroundRepeat: "no-repeat",
+                      }
+                    : undefined
+                }
               >
                 <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
                   <span
