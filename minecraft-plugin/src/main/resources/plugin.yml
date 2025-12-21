@@ -1,0 +1,12 @@
+name: SMPStats
+version: 1.0
+main: com.smp.stats.SMPStatsPlugin
+api-version: 1.19
+author: YourName
+description: Tracks player statistics for SMP leaderboard
+
+commands:
+  verify:
+    description: Generate a verification code to login to the website
+    usage: /<command>
+    aliases: [v]

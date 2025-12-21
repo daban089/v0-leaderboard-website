@@ -1,0 +1,6 @@
+database:
+  host: "node9.partner-hosting.com"
+  port: "3306"
+  name: "s602_MySQL"
+  username: "u602_YDV9ppr7m2"
+  password: "L4oDmnR=FPLuOtbrXuc4L!E."
