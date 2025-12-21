@@ -13,22 +13,14 @@ interface Player {
   elo: number
   wins: number
   losses: number
+  winRate: number
   winStreak: number
-  kit: string
-  // Game mode specific stats
-  modes: {
-    nodebuff?: { wins: number; losses: number }
-    sumo?: { wins: number; losses: number }
-    gapple?: { wins: number; losses: number }
-    builduhc?: { wins: number; losses: number }
-  }
+  totalMatches: number
 }
 
 interface LeaderboardTableProps {
-  category: "elo" | "wins" | "winstreak"
   kit?: string
   searchQuery?: string
-  onCategoryChange?: (category: "elo" | "wins" | "winstreak") => void
   onKitChange?: (kit: string) => void
 }
 
@@ -43,29 +35,45 @@ interface Badge {
 const getBadges = (player: Player): Badge[] => {
   const badges: Badge[] = []
 
-  // ELO badges
-  if (player.elo >= 2000) {
+  // ELO tier badges
+  if (player.elo >= 1800) {
     badges.push({
       id: "master",
       name: "Master",
       icon: <Crown className="h-3 w-3" />,
       color: "bg-purple-500/20 text-purple-400 border-purple-500/50",
-      requirement: "2000+ ELO",
+      requirement: "1800+ ELO",
     })
-  } else if (player.elo >= 1500) {
+  } else if (player.elo >= 1600) {
     badges.push({
-      id: "expert",
-      name: "Expert",
+      id: "diamond",
+      name: "Diamond",
       icon: <Trophy className="h-3 w-3" />,
-      color: "bg-blue-500/20 text-blue-400 border-blue-500/50",
-      requirement: "1500+ ELO",
+      color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/50",
+      requirement: "1600+ ELO",
+    })
+  } else if (player.elo >= 1400) {
+    badges.push({
+      id: "gold",
+      name: "Gold",
+      icon: <Medal className="h-3 w-3" />,
+      color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
+      requirement: "1400+ ELO",
+    })
+  } else if (player.elo >= 1200) {
+    badges.push({
+      id: "silver",
+      name: "Silver",
+      icon: <Target className="h-3 w-3" />,
+      color: "bg-gray-400/20 text-gray-300 border-gray-400/50",
+      requirement: "1200+ ELO",
     })
   } else if (player.elo >= 1000) {
     badges.push({
-      id: "skilled",
-      name: "Skilled",
-      icon: <Target className="h-3 w-3" />,
-      color: "bg-green-500/20 text-green-400 border-green-500/50",
+      id: "bronze",
+      name: "Bronze",
+      icon: <TrendingUp className="h-3 w-3" />,
+      color: "bg-orange-600/20 text-orange-400 border-orange-600/50",
       requirement: "1000+ ELO",
     })
   }
@@ -83,36 +91,9 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "onfire",
       name: "On Fire",
-      icon: <TrendingUp className="h-3 w-3" />,
+      icon: <Flame className="h-3 w-3" />,
       color: "bg-orange-500/20 text-orange-400 border-orange-500/50",
       requirement: "5+ win streak",
-    })
-  }
-
-  // Rank badges
-  if (player.rank === 1) {
-    badges.push({
-      id: "first",
-      name: "Champion",
-      icon: <Crown className="h-3 w-3" />,
-      color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
-      requirement: "Rank #1",
-    })
-  } else if (player.rank === 2) {
-    badges.push({
-      id: "second",
-      name: "Runner-up",
-      icon: <Medal className="h-3 w-3" />,
-      color: "bg-gray-400/20 text-gray-300 border-gray-400/50",
-      requirement: "Rank #2",
-    })
-  } else if (player.rank === 3) {
-    badges.push({
-      id: "third",
-      name: "Top 3",
-      icon: <Trophy className="h-3 w-3" />,
-      color: "bg-orange-500/20 text-orange-400 border-orange-500/50",
-      requirement: "Rank #3",
     })
   }
 
@@ -120,10 +101,8 @@ const getBadges = (player: Player): Badge[] => {
 }
 
 export function LeaderboardTable({
-  category,
   kit = "all",
   searchQuery: externalSearchQuery,
-  onCategoryChange,
   onKitChange,
 }: LeaderboardTableProps) {
   const [players, setPlayers] = useState<Player[]>([])
@@ -135,13 +114,11 @@ export function LeaderboardTable({
   const fetchLeaderboard = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/leaderboard?category=${category}&kit=${kit}`)
+      const response = await fetch(`/api/leaderboard?kit=${kit}`)
       const data = await response.json()
       if (Array.isArray(data)) {
         setPlayers(data)
         setLastUpdated(new Date())
-        const kits = ["all", ...new Set(data.map((p: any) => p.kit).filter(Boolean))]
-        setAvailableKits(kits)
       } else {
         setPlayers([])
       }
@@ -155,7 +132,7 @@ export function LeaderboardTable({
 
   useEffect(() => {
     fetchLeaderboard()
-  }, [category, kit])
+  }, [kit])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -163,7 +140,7 @@ export function LeaderboardTable({
     }, 60000)
 
     return () => clearInterval(interval)
-  }, [category, kit])
+  }, [kit])
 
   useEffect(() => {
     setSearchQuery(externalSearchQuery || "")
@@ -197,17 +174,12 @@ export function LeaderboardTable({
   }
 
   const getStatValue = (player: Player) => {
-    if (category === "elo") return `${player.elo} ELO`
-    if (category === "wins") return `${player.wins}W - ${player.losses}L`
-    if (category === "winstreak") return `${player.winStreak} Win Streak`
-    return ""
+    if (kit === "all") return `${player.elo} ELO`
+    return `${player.wins}W - ${player.losses}L`
   }
 
   const getCategoryTitle = () => {
-    if (category === "elo") return "Top Players by ELO"
-    if (category === "wins") return "Top Players by Wins"
-    if (category === "winstreak") return "Highest Win Streaks"
-    return "Player Rankings"
+    return "Strike Practice Leaderboard"
   }
 
   const getShimmerUrl = (rank: number) => {
@@ -249,89 +221,83 @@ export function LeaderboardTable({
   return (
     <div>
       <div className="flex items-end gap-1 mb-4">
-        {availableKits.map((kitName) => (
-          <button
-            key={kitName}
-            onClick={() => onKitChange?.(kitName)}
-            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
-              kit === kitName
-                ? "bg-card border-t border-l border-r border-border text-foreground opacity-100 translate-y-0"
-                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
-            }`}
-          >
-            {getKitIcon(kitName)}
-            <span className="text-xs font-medium">{getKitDisplayName(kitName)}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="flex items-end gap-1">
         <button
-          onClick={() => onCategoryChange?.("elo")}
+          onClick={() => onKitChange?.("all")}
           className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
-            category === "elo"
-              ? "bg-card border-t border-l border-r border-border text-foreground opacity-100 translate-y-0"
+            kit === "all"
+              ? "bg-card border-t border-l border-r border-border text-foreground opacity-100"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <Trophy className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
-          <span className="text-xs font-medium">ELO</span>
+          <Trophy className="h-5 w-5" />
+          <span className="text-xs font-medium">Overall</span>
         </button>
 
         <button
-          onClick={() => onCategoryChange?.("wins")}
+          onClick={() => onKitChange?.("sword")}
           className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
-            category === "wins"
-              ? "bg-card border-t border-l border-r border-border text-foreground opacity-100 translate-y-0"
+            kit === "sword"
+              ? "bg-card border-t border-l border-r border-border text-foreground opacity-100"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <Target className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
-          <span className="text-xs font-medium">Wins</span>
+          <Target className="h-5 w-5" />
+          <span className="text-xs font-medium">Sword</span>
         </button>
 
         <button
-          onClick={() => onCategoryChange?.("winstreak")}
+          onClick={() => onKitChange?.("axe")}
           className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
-            category === "winstreak"
-              ? "bg-card border-t border-l border-r border-border text-foreground opacity-100 translate-y-0"
+            kit === "axe"
+              ? "bg-card border-t border-l border-r border-border text-foreground opacity-100"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <Flame className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
-          <span className="text-xs font-medium">Win Streak</span>
+          <Flame className="h-5 w-5" />
+          <span className="text-xs font-medium">Axe</span>
+        </button>
+
+        <button
+          onClick={() => onKitChange?.("sumo")}
+          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
+            kit === "sumo"
+              ? "bg-card border-t border-l border-r border-border text-foreground opacity-100"
+              : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+          }`}
+        >
+          <TrendingUp className="h-5 w-5" />
+          <span className="text-xs font-medium">Sumo</span>
         </button>
       </div>
 
-      <Card className="overflow-hidden rounded-t-none border-t-0 animate-in fade-in duration-500">
+      <Card className="overflow-hidden rounded-t-none border-t-0">
         <CardHeader>
           <div className="flex items-start justify-between gap-4">
             <div>
               <CardTitle>{getCategoryTitle()}</CardTitle>
               <CardDescription>
-                {category === "elo" && "Players with the highest ELO rating"}
-                {category === "wins" && "Players with the most practice wins"}
-                {category === "winstreak" && "Players with the longest active win streaks"}
+                Top players ranked by ELO rating {kit !== "all" ? `in ${kit.toUpperCase()} mode` : "across all modes"}
               </CardDescription>
             </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={fetchLeaderboard} disabled={loading}>
-                <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-              </Button>
-            </div>
+            <Button variant="outline" size="sm" onClick={fetchLeaderboard} disabled={loading}>
+              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+            </Button>
           </div>
           {lastUpdated && (
             <p className="text-xs text-muted-foreground">Last updated: {lastUpdated.toLocaleTimeString()}</p>
           )}
+
           <div className="flex items-center gap-6 pt-4 border-t border-border mt-4">
             <div className="h-[80px] w-[240px] flex-shrink-0 flex items-center">
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-4">#</span>
             </div>
             <div className="flex flex-1 items-center justify-between gap-4">
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">PLAYER</span>
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">STATS</span>
             </div>
           </div>
         </CardHeader>
+
         <CardContent>
           <div className="space-y-4">
             {filteredPlayers.map((player) => (
@@ -347,7 +313,7 @@ export function LeaderboardTable({
               >
                 <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
                   <span
-                    className={`absolute left-0 text-5xl font-black italic font-sans text-white z-10`}
+                    className="absolute left-0 text-5xl font-black italic font-sans text-white z-10"
                     style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)" }}
                   >
                     {player.rank}.
@@ -379,15 +345,31 @@ export function LeaderboardTable({
                       ))}
                     </div>
                   </div>
+
+                  <div className="flex flex-col gap-2 items-end">
+                    <div className="flex items-center gap-2">
+                      <span className="text-3xl font-black text-primary">{player.elo}</span>
+                      <span className="text-sm text-muted-foreground">ELO</span>
+                    </div>
+                    <div className="flex gap-3 text-sm">
+                      <span className="text-green-500 font-semibold">{player.wins}W</span>
+                      <span className="text-red-500 font-semibold">{player.losses}L</span>
+                      <span className="text-muted-foreground">({player.winRate}%)</span>
+                    </div>
+                    {player.winStreak > 0 && (
+                      <div className="flex items-center gap-1 text-orange-500">
+                        <Flame className="h-3 w-3" />
+                        <span className="text-xs font-semibold">{player.winStreak} streak</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
 
             {filteredPlayers.length === 0 && !loading && (
               <div className="py-12 text-center">
-                <p className="text-muted-foreground">
-                  {searchQuery ? `No players found matching "${searchQuery}"` : "No players found"}
-                </p>
+                <p className="text-muted-foreground">No players found</p>
               </div>
             )}
           </div>

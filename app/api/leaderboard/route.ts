@@ -5,27 +5,20 @@ interface PlayerData {
   elo: number
   wins: number
   losses: number
+  winRate: number
   winStreak: number
+  totalMatches: number
   kit?: string
 }
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const category = searchParams.get("category") || "elo"
   const kit = searchParams.get("kit") || "all"
-
-  console.log("[v0] API called with category:", category, "kit:", kit)
 
   try {
     const mysql = await import("mysql2/promise")
 
     try {
-      console.log("[v0] Connecting to database:", {
-        host: process.env.MYSQL_HOST,
-        user: process.env.MYSQL_USER,
-        database: process.env.MYSQL_DATABASE,
-      })
-
       const connection = await mysql.createConnection({
         host: process.env.MYSQL_HOST || "localhost",
         port: 3306,
@@ -34,121 +27,78 @@ export async function GET(request: Request) {
         database: process.env.MYSQL_DATABASE,
       })
 
-      console.log("[v0] Database connected successfully")
-
       let query: string
       let params: any[] = []
 
-      if (kit && kit !== "all") {
-        // Only use JOIN when filtering by specific kit
-        query = `SELECT 
-          fp.username,
-          SUM(fp.is_winner) as wins,
-          COUNT(*) - SUM(fp.is_winner) as losses,
-          MAX(fp.player_data) as player_data
-        FROM fight_players fp
-        JOIN fights f ON fp.fight = f.id
-        WHERE f.kit = ?
-        GROUP BY fp.username`
-        params = [kit]
-      } else {
-        // Get all players without JOIN
-        query = `SELECT 
-          username,
-          SUM(is_winner) as wins,
-          COUNT(*) - SUM(is_winner) as losses,
-          MAX(player_data) as player_data
-        FROM fight_players
-        GROUP BY username`
-      }
+      // Get all match data first, then filter by kit if needed
+      query = `SELECT 
+        username,
+        SUM(is_winner) as wins,
+        COUNT(*) - SUM(is_winner) as losses,
+        COUNT(*) as total_matches,
+        MAX(player_data) as latest_player_data,
+        GROUP_CONCAT(is_winner ORDER BY id DESC SEPARATOR ',') as recent_results
+      FROM fight_players
+      ${kit !== "all" ? "WHERE fight IN (SELECT id FROM fights WHERE kit = ?)" : ""}
+      GROUP BY username`
 
-      console.log("[v0] Executing query:", query)
-      console.log("[v0] With params:", params)
+      if (kit !== "all") {
+        params = [kit]
+      }
 
       const [rows] = await connection.execute<any[]>(query, params)
 
-      console.log("[v0] Query returned", rows.length, "players")
-      console.log("[v0] First row sample:", rows[0])
-
-      const playersWithElo = (rows as any[]).map((player) => {
+      const players = (rows as any[]).map((player) => {
         let elo = 1000
 
+        // Parse the latest player_data JSON to get current ELO
         try {
-          if (player.player_data) {
-            const data = JSON.parse(player.player_data)
+          if (player.latest_player_data) {
+            const data = JSON.parse(player.latest_player_data)
             elo = data.newElo || data.oldElo || 1000
           }
         } catch (e) {
-          console.log("[v0] Failed to parse player_data for", player.username)
+          // If parsing fails, keep default 1000 ELO
         }
 
-        return {
-          username: player.username,
-          wins: Number(player.wins) || 0,
-          losses: Number(player.losses) || 0,
-          elo: elo,
-        }
-      })
-
-      console.log("[v0] Processed", playersWithElo.length, "players with ELO")
-
-      const playersWithStreaks = await Promise.all(
-        playersWithElo.map(async (player) => {
-          let streakQuery: string
-          let streakParams: any[]
-
-          if (kit && kit !== "all") {
-            streakQuery = `SELECT fp.is_winner 
-             FROM fight_players fp 
-             JOIN fights f ON fp.fight = f.id
-             WHERE fp.username = ? AND f.kit = ?
-             ORDER BY fp.id DESC 
-             LIMIT 20`
-            streakParams = [player.username, kit]
-          } else {
-            streakQuery = `SELECT is_winner 
-             FROM fight_players 
-             WHERE username = ? 
-             ORDER BY id DESC 
-             LIMIT 20`
-            streakParams = [player.username]
-          }
-
-          const [streakRows] = await connection.execute<any[]>(streakQuery, streakParams)
-
-          let currentStreak = 0
-          for (const match of streakRows as any[]) {
-            if (match.is_winner === 1) {
-              currentStreak++
+        // Calculate current win streak from recent results
+        let winStreak = 0
+        if (player.recent_results) {
+          const results = player.recent_results.split(",")
+          for (const result of results) {
+            if (result === "1") {
+              winStreak++
             } else {
               break
             }
           }
+        }
 
-          return {
-            ...player,
-            winStreak: currentStreak,
-          }
-        }),
-      )
+        const wins = Number(player.wins) || 0
+        const losses = Number(player.losses) || 0
+        const totalMatches = Number(player.total_matches) || 0
+        const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0
+
+        return {
+          username: player.username,
+          wins,
+          losses,
+          totalMatches,
+          winRate,
+          elo,
+          winStreak,
+        }
+      })
 
       await connection.end()
 
-      const sorted = [...playersWithStreaks]
-      if (category === "elo") {
-        sorted.sort((a, b) => b.elo - a.elo)
-      } else if (category === "wins") {
-        sorted.sort((a, b) => b.wins - a.wins)
-      } else if (category === "winstreak") {
-        sorted.sort((a, b) => b.winStreak - a.winStreak)
-      }
+      players.sort((a, b) => b.elo - a.elo)
 
-      const playersWithRank = sorted.map((player, index) => ({
+      // Add rank to each player
+      const playersWithRank = players.map((player, index) => ({
         ...player,
         rank: index + 1,
       }))
-
-      console.log("[v0] Returning", playersWithRank.length, "players")
 
       return NextResponse.json(playersWithRank)
     } catch (dbError) {
@@ -156,7 +106,7 @@ export async function GET(request: Request) {
       return NextResponse.json([])
     }
   } catch (importError) {
-    console.log("[v0] mysql2 not available")
+    console.log("[v0] mysql2 not available in preview")
     return NextResponse.json([])
   }
 }

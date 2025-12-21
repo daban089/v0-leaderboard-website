@@ -12,26 +12,19 @@ export async function GET(request: NextRequest) {
     const isBedrockPlayer = username.startsWith(".")
 
     if (isBedrockPlayer) {
-      console.log("[v0] Bedrock player detected:", username)
+      console.log("[v0] Bedrock player detected, using question mark avatar:", username)
 
-      // Use a default Bedrock Steve skin from crafatar
-      const bedrockSkinUrl = "https://crafatar.com/renders/body/8667ba71b85a4004af54457a9734eed7?overlay"
+      const questionMarkUrl = "/images/skin-404.avif"
+      const questionMarkResponse = await fetch(questionMarkUrl)
+      const questionMarkBuffer = await questionMarkResponse.arrayBuffer()
 
-      try {
-        const bedrockResponse = await fetch(bedrockSkinUrl)
-        if (bedrockResponse.ok) {
-          const imageBuffer = await bedrockResponse.arrayBuffer()
-          return new NextResponse(imageBuffer, {
-            headers: {
-              "Content-Type": "image/png",
-              "Cache-Control": "public, max-age=3600",
-              "Access-Control-Allow-Origin": "*",
-            },
-          })
-        }
-      } catch (error) {
-        console.error("[v0] Bedrock skin fetch failed:", error)
-      }
+      return new NextResponse(questionMarkBuffer, {
+        headers: {
+          "Content-Type": "image/avif",
+          "Cache-Control": "public, max-age=3600",
+          "Access-Control-Allow-Origin": "*",
+        },
+      })
     }
 
     console.log("[v0] Fetching avatar for Java player:", username)
