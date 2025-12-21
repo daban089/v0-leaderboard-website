@@ -215,6 +215,16 @@ export function LeaderboardTable({
           )}
         </CardHeader>
         <CardContent>
+          <div className="flex items-center gap-6 px-4 pb-3 border-b border-border mb-4">
+            <div className="h-[80px] w-[240px] flex-shrink-0 flex items-center">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-4">#</span>
+            </div>
+            <div className="flex flex-1 items-center justify-between gap-4">
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">PLAYER</span>
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">TIERS</span>
+            </div>
+          </div>
+
           <div className="space-y-4">
             {filteredPlayers.map((player) => (
               <div
