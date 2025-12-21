@@ -221,7 +221,7 @@ export function LeaderboardTable({ category }: LeaderboardTableProps) {
                 <img
                   src={getAvatarUrl(player.username) || "/placeholder.svg"}
                   alt={player.username}
-                  className="absolute right-14 top-[2px] h-[88px] w-[88px] object-contain z-10"
+                  className="absolute right-14 h-[88px] w-[88px] object-contain z-10"
                   style={{ filter: "drop-shadow(-4px 0px 0.8px rgba(0, 0, 0, 0.3))" }}
                   onError={(e) => {
                     e.currentTarget.src = "/placeholder.svg?height=88&width=88"
