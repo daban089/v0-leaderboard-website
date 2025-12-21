@@ -271,14 +271,20 @@ export function LeaderboardTable({
       </div>
 
       <Card className="overflow-hidden rounded-t-none border-t-0">
-        <CardHeader className="p-0">
-          <div className="flex items-center gap-6 px-4 pb-1">
-            <div className="h-[80px] w-[240px] flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider ml-4">#</span>
+        <CardHeader className="p-0 h-8">
+          <div className="flex items-center gap-6 px-4 h-full">
+            <div className="h-full w-[240px] flex-shrink-0 flex items-center">
+              <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider ml-4 leading-none">
+                #
+              </span>
             </div>
             <div className="flex flex-1 items-center justify-between gap-4">
-              <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider">PLAYER</span>
-              <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider">STATS</span>
+              <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
+                PLAYER
+              </span>
+              <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
+                STATS
+              </span>
             </div>
           </div>
         </CardHeader>
