@@ -9,10 +9,34 @@ export async function GET(request: NextRequest) {
       return new NextResponse("Username is required", { status: 400 })
     }
 
-    console.log("[v0] Fetching avatar for:", username)
+    const isBedrockPlayer = username.startsWith(".")
+
+    if (isBedrockPlayer) {
+      console.log("[v0] Bedrock player detected:", username)
+
+      // Use a default Bedrock Steve skin from crafatar
+      const bedrockSkinUrl = "https://crafatar.com/renders/body/8667ba71b85a4004af54457a9734eed7?overlay"
+
+      try {
+        const bedrockResponse = await fetch(bedrockSkinUrl)
+        if (bedrockResponse.ok) {
+          const imageBuffer = await bedrockResponse.arrayBuffer()
+          return new NextResponse(imageBuffer, {
+            headers: {
+              "Content-Type": "image/png",
+              "Cache-Control": "public, max-age=3600",
+              "Access-Control-Allow-Origin": "*",
+            },
+          })
+        }
+      } catch (error) {
+        console.error("[v0] Bedrock skin fetch failed:", error)
+      }
+    }
+
+    console.log("[v0] Fetching avatar for Java player:", username)
 
     try {
-      // Try to fetch player's UUID from Mojang API
       const mojangResponse = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`)
 
       if (mojangResponse.ok) {
@@ -21,7 +45,6 @@ export async function GET(request: NextRequest) {
 
         console.log("[v0] Found UUID:", uuid)
 
-        // Try crafty.gg render with the UUID
         const craftyUrl = `https://render.crafty.gg/3d/bust/${uuid}`
         const craftyResponse = await fetch(craftyUrl, {
           headers: {
