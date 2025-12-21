@@ -10,7 +10,6 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-      // Fetch the mcskins.top page for this username
       const pageResponse = await fetch(`https://mcskins.top/avatar-maker?username=${username}`, {
         headers: {
           "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
@@ -20,44 +19,33 @@ export async function GET(request: NextRequest) {
       if (pageResponse.ok) {
         const html = await pageResponse.text()
 
-        // Parse HTML to find the 7th child link in #output
-        // The pattern looks like: <a href="URL">...</a>
-        const outputMatch = html.match(/<div[^>]*id="output"[^>]*>([\s\S]*?)<\/div>/i)
+        // Look for links containing "avaBody3" or with id/anchor "#avaBody3"
+        const avaBody3Match = html.match(
+          /<a[^>]*(?:href="([^"]*avaBody3[^"]*)"[^>]*|[^>]*id="avaBody3"[^>]*href="([^"]+)")/i,
+        )
 
-        if (outputMatch) {
-          const outputContent = outputMatch[1]
-          // Get all <a> tags
-          const linkMatches = outputContent.match(/<a[^>]*href="([^"]+)"[^>]*>/g)
+        if (avaBody3Match) {
+          const imageUrl = avaBody3Match[1] || avaBody3Match[2]
+          console.log("[v0] Found avaBody3 avatar URL:", imageUrl)
 
-          if (linkMatches && linkMatches.length >= 7) {
-            // Get the 7th link (index 6)
-            const seventhLink = linkMatches[6]
-            const urlMatch = seventhLink.match(/href="([^"]+)"/)
+          // Fetch the actual image
+          const imageResponse = await fetch(imageUrl, {
+            headers: {
+              "User-Agent": "Mozilla/5.0",
+            },
+          })
 
-            if (urlMatch) {
-              const imageUrl = urlMatch[1]
-              console.log("[v0] Found avatar URL from mcskins.top:", imageUrl)
+          if (imageResponse.ok) {
+            const contentType = imageResponse.headers.get("content-type") || "image/png"
+            const imageBuffer = await imageResponse.arrayBuffer()
 
-              // Fetch the actual image
-              const imageResponse = await fetch(imageUrl, {
-                headers: {
-                  "User-Agent": "Mozilla/5.0",
-                },
-              })
-
-              if (imageResponse.ok) {
-                const contentType = imageResponse.headers.get("content-type") || "image/png"
-                const imageBuffer = await imageResponse.arrayBuffer()
-
-                return new NextResponse(imageBuffer, {
-                  headers: {
-                    "Content-Type": contentType,
-                    "Cache-Control": "public, max-age=3600",
-                    "Access-Control-Allow-Origin": "*",
-                  },
-                })
-              }
-            }
+            return new NextResponse(imageBuffer, {
+              headers: {
+                "Content-Type": contentType,
+                "Cache-Control": "public, max-age=3600",
+                "Access-Control-Allow-Origin": "*",
+              },
+            })
           }
         }
       }
