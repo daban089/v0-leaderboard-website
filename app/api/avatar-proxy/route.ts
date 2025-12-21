@@ -1,6 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { readFile } from "fs/promises"
-import { join } from "path"
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,6 +9,8 @@ export async function GET(request: NextRequest) {
       return new NextResponse("Username is required", { status: 400 })
     }
 
+    console.log("[v0] Fetching avatar for:", username)
+
     try {
       // Try to fetch player's UUID from Mojang API
       const mojangResponse = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`)
@@ -18,6 +18,8 @@ export async function GET(request: NextRequest) {
       if (mojangResponse.ok) {
         const mojangData = await mojangResponse.json()
         const uuid = mojangData.id
+
+        console.log("[v0] Found UUID:", uuid)
 
         // Try crafty.gg render with the UUID
         const craftyUrl = `https://render.crafty.gg/3d/bust/${uuid}`
@@ -28,6 +30,7 @@ export async function GET(request: NextRequest) {
         })
 
         if (craftyResponse.ok) {
+          console.log("[v0] crafty.gg success for:", username)
           const contentType = craftyResponse.headers.get("content-type") || "image/png"
           const imageBuffer = await craftyResponse.arrayBuffer()
 
@@ -38,16 +41,21 @@ export async function GET(request: NextRequest) {
               "Access-Control-Allow-Origin": "*",
             },
           })
+        } else {
+          console.log("[v0] crafty.gg failed with status:", craftyResponse.status)
         }
       }
     } catch (error) {
       console.error("[v0] crafty.gg fetch failed:", error)
     }
 
-    const fallbackPath = join(process.cwd(), "public", "skin-404.avif")
-    const fallbackImage = await readFile(fallbackPath)
+    console.log("[v0] Using fallback avatar for:", username)
+    const fallbackUrl = "/images/skin-404.avif"
 
-    return new NextResponse(fallbackImage, {
+    const fallbackResponse = await fetch(fallbackUrl)
+    const fallbackBuffer = await fallbackResponse.arrayBuffer()
+
+    return new NextResponse(fallbackBuffer, {
       headers: {
         "Content-Type": "image/avif",
         "Cache-Control": "public, max-age=3600",
