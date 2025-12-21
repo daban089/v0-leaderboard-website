@@ -36,18 +36,31 @@ export async function GET(request: Request) {
 
       console.log("[v0] Database connected successfully")
 
-      const kitFilter = kit && kit !== "all" ? "WHERE f.kit = ?" : ""
-      const params = kit && kit !== "all" ? [kit] : []
+      let query: string
+      let params: any[] = []
 
-      const query = `SELECT 
+      if (kit && kit !== "all") {
+        // Only use JOIN when filtering by specific kit
+        query = `SELECT 
           fp.username,
           SUM(fp.is_winner) as wins,
           COUNT(*) - SUM(fp.is_winner) as losses,
           MAX(fp.player_data) as player_data
         FROM fight_players fp
         JOIN fights f ON fp.fight = f.id
-        ${kitFilter}
+        WHERE f.kit = ?
         GROUP BY fp.username`
+        params = [kit]
+      } else {
+        // Get all players without JOIN
+        query = `SELECT 
+          username,
+          SUM(is_winner) as wins,
+          COUNT(*) - SUM(is_winner) as losses,
+          MAX(player_data) as player_data
+        FROM fight_players
+        GROUP BY username`
+      }
 
       console.log("[v0] Executing query:", query)
       console.log("[v0] With params:", params)
@@ -81,18 +94,27 @@ export async function GET(request: Request) {
 
       const playersWithStreaks = await Promise.all(
         playersWithElo.map(async (player) => {
-          const streakParams = kit && kit !== "all" ? [player.username, kit] : [player.username]
-          const streakKitFilter = kit && kit !== "all" ? "AND f.kit = ?" : ""
+          let streakQuery: string
+          let streakParams: any[]
 
-          const [streakRows] = await connection.execute<any[]>(
-            `SELECT fp.is_winner 
+          if (kit && kit !== "all") {
+            streakQuery = `SELECT fp.is_winner 
              FROM fight_players fp 
              JOIN fights f ON fp.fight = f.id
-             WHERE fp.username = ? ${streakKitFilter}
+             WHERE fp.username = ? AND f.kit = ?
              ORDER BY fp.id DESC 
-             LIMIT 20`,
-            streakParams,
-          )
+             LIMIT 20`
+            streakParams = [player.username, kit]
+          } else {
+            streakQuery = `SELECT is_winner 
+             FROM fight_players 
+             WHERE username = ? 
+             ORDER BY id DESC 
+             LIMIT 20`
+            streakParams = [player.username]
+          }
+
+          const [streakRows] = await connection.execute<any[]>(streakQuery, streakParams)
 
           let currentStreak = 0
           for (const match of streakRows as any[]) {
