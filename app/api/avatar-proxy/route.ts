@@ -10,33 +10,22 @@ export async function GET(request: NextRequest) {
     }
 
     const isBedrockPlayer = username.startsWith(".")
+    const lookupUsername = isBedrockPlayer ? "Vernito" : username
 
     if (isBedrockPlayer) {
-      console.log("[v0] Bedrock player detected, using question mark avatar:", username)
-
-      const bedrockAvatarUrl = "/images/skin-404.avif"
-      const response = await fetch(bedrockAvatarUrl)
-      const imageBuffer = await response.arrayBuffer()
-
-      return new NextResponse(imageBuffer, {
-        headers: {
-          "Content-Type": "image/avif",
-          "Cache-Control": "public, max-age=86400",
-          "Access-Control-Allow-Origin": "*",
-        },
-      })
+      console.log("[v0] Bedrock player detected, using Vernito skin for:", username)
+    } else {
+      console.log("[v0] Fetching avatar for Java player:", username)
     }
 
-    console.log("[v0] Fetching avatar for Java player:", username)
-
     try {
-      const mojangResponse = await fetch(`https://api.mojang.com/users/profiles/minecraft/${username}`)
+      const mojangResponse = await fetch(`https://api.mojang.com/users/profiles/minecraft/${lookupUsername}`)
 
       if (mojangResponse.ok) {
         const mojangData = await mojangResponse.json()
         const uuid = mojangData.id
 
-        console.log("[v0] Found UUID:", uuid)
+        console.log("[v0] Found UUID:", uuid, "for lookup username:", lookupUsername)
 
         const craftyUrl = `https://render.crafty.gg/3d/bust/${uuid}`
         const craftyResponse = await fetch(craftyUrl, {
@@ -46,7 +35,7 @@ export async function GET(request: NextRequest) {
         })
 
         if (craftyResponse.ok) {
-          console.log("[v0] crafty.gg success for:", username)
+          console.log("[v0] crafty.gg success for:", lookupUsername)
           const contentType = craftyResponse.headers.get("content-type") || "image/png"
           const imageBuffer = await craftyResponse.arrayBuffer()
 
@@ -65,7 +54,7 @@ export async function GET(request: NextRequest) {
       console.error("[v0] crafty.gg fetch failed:", error)
     }
 
-    console.log("[v0] Using fallback avatar for:", username)
+    console.log("[v0] Using fallback avatar for:", lookupUsername)
     const fallbackAvatarUrl = "/images/skin-404.avif"
     const fallbackResponse = await fetch(fallbackAvatarUrl)
     const fallbackBuffer = await fallbackResponse.arrayBuffer()
