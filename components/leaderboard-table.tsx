@@ -226,7 +226,7 @@ export function LeaderboardTable({
               >
                 <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
                   <span
-                    className={`absolute left-1 text-5xl font-black italic font-sans text-white z-10`}
+                    className={`absolute left-0 text-5xl font-black italic font-sans text-white z-10`}
                     style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)" }}
                   >
                     {player.rank}.
