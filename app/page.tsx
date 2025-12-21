@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
 export default function Page() {
-  const [activeCategory, setActiveCategory] = useState<"playtime" | "kills" | "deaths">("playtime")
+  const [activeCategory, setActiveCategory] = useState<"elo" | "wins" | "winstreak">("elo")
+  const [activeKit, setActiveKit] = useState<string>("all")
   const [showLogin, setShowLogin] = useState(false)
   const [loggedInUser, setLoggedInUser] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
@@ -90,7 +91,13 @@ export default function Page() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <LeaderboardTable category={activeCategory} searchQuery={searchQuery} onCategoryChange={setActiveCategory} />
+        <LeaderboardTable
+          category={activeCategory}
+          kit={activeKit}
+          searchQuery={searchQuery}
+          onCategoryChange={setActiveCategory}
+          onKitChange={setActiveKit}
+        />
       </div>
 
       {showLogin && <LoginDialog onLogin={handleLogin} onClose={() => setShowLogin(false)} />}

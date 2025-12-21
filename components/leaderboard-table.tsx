@@ -4,21 +4,32 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Trophy, Crown, Medal, RefreshCw, Clock, Sword, Skull, Award, Star, Zap, Shield, Flame } from "lucide-react"
+import { Trophy, Crown, Medal, RefreshCw, Target, TrendingUp, Flame } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface Player {
   rank: number
   username: string
-  playtime: number
-  kills: number
-  deaths: number
+  elo: number
+  wins: number
+  losses: number
+  winStreak: number
+  kit: string
+  // Game mode specific stats
+  modes: {
+    nodebuff?: { wins: number; losses: number }
+    sumo?: { wins: number; losses: number }
+    gapple?: { wins: number; losses: number }
+    builduhc?: { wins: number; losses: number }
+  }
 }
 
 interface LeaderboardTableProps {
-  category: "playtime" | "kills" | "deaths"
+  category: "elo" | "wins" | "winstreak"
+  kit?: string
   searchQuery?: string
-  onCategoryChange?: (category: "playtime" | "kills" | "deaths") => void
+  onCategoryChange?: (category: "elo" | "wins" | "winstreak") => void
+  onKitChange?: (kit: string) => void
 }
 
 interface Badge {
@@ -32,57 +43,49 @@ interface Badge {
 const getBadges = (player: Player): Badge[] => {
   const badges: Badge[] = []
 
-  // Playtime badges
-  if (player.playtime >= 1000) {
+  // ELO badges
+  if (player.elo >= 2000) {
     badges.push({
-      id: "veteran",
-      name: "Veteran",
-      icon: <Shield className="h-3 w-3" />,
+      id: "master",
+      name: "Master",
+      icon: <Crown className="h-3 w-3" />,
       color: "bg-purple-500/20 text-purple-400 border-purple-500/50",
-      requirement: "1000+ hours",
+      requirement: "2000+ ELO",
     })
-  } else if (player.playtime >= 500) {
+  } else if (player.elo >= 1500) {
     badges.push({
-      id: "dedicated",
-      name: "Dedicated",
-      icon: <Star className="h-3 w-3" />,
+      id: "expert",
+      name: "Expert",
+      icon: <Trophy className="h-3 w-3" />,
       color: "bg-blue-500/20 text-blue-400 border-blue-500/50",
-      requirement: "500+ hours",
+      requirement: "1500+ ELO",
     })
-  } else if (player.playtime >= 100) {
+  } else if (player.elo >= 1000) {
     badges.push({
-      id: "active",
-      name: "Active",
-      icon: <Zap className="h-3 w-3" />,
+      id: "skilled",
+      name: "Skilled",
+      icon: <Target className="h-3 w-3" />,
       color: "bg-green-500/20 text-green-400 border-green-500/50",
-      requirement: "100+ hours",
+      requirement: "1000+ ELO",
     })
   }
 
-  // Kill badges
-  if (player.kills >= 1000) {
+  // Win streak badges
+  if (player.winStreak >= 10) {
     badges.push({
-      id: "legend",
-      name: "Legend",
+      id: "unstoppable",
+      name: "Unstoppable",
       icon: <Flame className="h-3 w-3" />,
       color: "bg-red-500/20 text-red-400 border-red-500/50",
-      requirement: "1000+ kills",
+      requirement: "10+ win streak",
     })
-  } else if (player.kills >= 500) {
+  } else if (player.winStreak >= 5) {
     badges.push({
-      id: "warrior",
-      name: "Warrior",
-      icon: <Sword className="h-3 w-3" />,
+      id: "onfire",
+      name: "On Fire",
+      icon: <TrendingUp className="h-3 w-3" />,
       color: "bg-orange-500/20 text-orange-400 border-orange-500/50",
-      requirement: "500+ kills",
-    })
-  } else if (player.kills >= 100) {
-    badges.push({
-      id: "fighter",
-      name: "Fighter",
-      icon: <Trophy className="h-3 w-3" />,
-      color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
-      requirement: "100+ kills",
+      requirement: "5+ win streak",
     })
   }
 
@@ -107,7 +110,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "third",
       name: "Top 3",
-      icon: <Award className="h-3 w-3" />,
+      icon: <Trophy className="h-3 w-3" />,
       color: "bg-orange-500/20 text-orange-400 border-orange-500/50",
       requirement: "Rank #3",
     })
@@ -118,35 +121,27 @@ const getBadges = (player: Player): Badge[] => {
 
 export function LeaderboardTable({
   category,
+  kit = "all",
   searchQuery: externalSearchQuery,
   onCategoryChange,
+  onKitChange,
 }: LeaderboardTableProps) {
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState(externalSearchQuery || "")
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
-  const [avatarCache, setAvatarCache] = useState<Record<string, string>>({})
+  const [availableKits, setAvailableKits] = useState<string[]>(["all"])
 
   const fetchLeaderboard = async () => {
     try {
       setLoading(true)
-      const response = await fetch("/api/leaderboard")
+      const response = await fetch(`/api/leaderboard?category=${category}&kit=${kit}`)
       const data = await response.json()
       if (Array.isArray(data)) {
-        const sortedPlayers = [...data].sort((a, b) => {
-          if (category === "playtime") return b.playtime - a.playtime
-          if (category === "kills") return b.kills - a.kills
-          if (category === "deaths") return b.deaths - a.deaths
-          return 0
-        })
-
-        const rankedPlayers = sortedPlayers.map((player, index) => ({
-          ...player,
-          rank: index + 1,
-        }))
-
-        setPlayers(rankedPlayers)
+        setPlayers(data)
         setLastUpdated(new Date())
+        const kits = ["all", ...new Set(data.map((p: any) => p.kit).filter(Boolean))]
+        setAvailableKits(kits)
       } else {
         setPlayers([])
       }
@@ -160,7 +155,7 @@ export function LeaderboardTable({
 
   useEffect(() => {
     fetchLeaderboard()
-  }, [category])
+  }, [category, kit])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -168,7 +163,7 @@ export function LeaderboardTable({
     }, 60000)
 
     return () => clearInterval(interval)
-  }, [category])
+  }, [category, kit])
 
   useEffect(() => {
     setSearchQuery(externalSearchQuery || "")
@@ -193,7 +188,7 @@ export function LeaderboardTable({
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Crown className="h-4 w-4" />
     if (rank === 2) return <Medal className="h-4 w-4" />
-    if (rank === 3) return <Award className="h-4 w-4" />
+    if (rank === 3) return <Trophy className="h-4 w-4" />
     return null
   }
 
@@ -202,16 +197,16 @@ export function LeaderboardTable({
   }
 
   const getStatValue = (player: Player) => {
-    if (category === "playtime") return `${player.playtime.toLocaleString()} hours`
-    if (category === "kills") return `${player.kills} kills`
-    if (category === "deaths") return `${player.deaths} deaths`
+    if (category === "elo") return `${player.elo} ELO`
+    if (category === "wins") return `${player.wins}W - ${player.losses}L`
+    if (category === "winstreak") return `${player.winStreak} Win Streak`
     return ""
   }
 
   const getCategoryTitle = () => {
-    if (category === "playtime") return "Top Players by Playtime"
-    if (category === "kills") return "Top Players by Kills"
-    if (category === "deaths") return "Most Deaths"
+    if (category === "elo") return "Top Players by ELO"
+    if (category === "wins") return "Top Players by Wins"
+    if (category === "winstreak") return "Highest Win Streaks"
     return "Player Rankings"
   }
 
@@ -220,6 +215,19 @@ export function LeaderboardTable({
     if (rank === 2) return "/shimmer-silver.svg"
     if (rank === 3) return "/shimmer-bronze.svg"
     return "/shimmer.svg"
+  }
+
+  const getKitIcon = (kitName: string) => {
+    if (kitName === "all") return <Trophy className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
+    if (kitName === "sword") return <Target className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
+    if (kitName === "axe") return <Flame className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
+    if (kitName === "sumo") return <TrendingUp className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
+    return <Trophy className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
+  }
+
+  const getKitDisplayName = (kitName: string) => {
+    if (kitName === "all") return "Overall"
+    return kitName.charAt(0).toUpperCase() + kitName.slice(1)
   }
 
   if (loading) {
@@ -240,41 +248,58 @@ export function LeaderboardTable({
 
   return (
     <div>
+      <div className="flex items-end gap-1 mb-4">
+        {availableKits.map((kitName) => (
+          <button
+            key={kitName}
+            onClick={() => onKitChange?.(kitName)}
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
+              kit === kitName
+                ? "bg-card border-t border-l border-r border-border text-foreground opacity-100 translate-y-0"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+            }`}
+          >
+            {getKitIcon(kitName)}
+            <span className="text-xs font-medium">{getKitDisplayName(kitName)}</span>
+          </button>
+        ))}
+      </div>
+
       <div className="flex items-end gap-1">
         <button
-          onClick={() => onCategoryChange?.("playtime")}
+          onClick={() => onCategoryChange?.("elo")}
           className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
-            category === "playtime"
+            category === "elo"
               ? "bg-card border-t border-l border-r border-border text-foreground opacity-100 translate-y-0"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <Clock className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
-          <span className="text-xs font-medium">Playtime</span>
+          <Trophy className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
+          <span className="text-xs font-medium">ELO</span>
         </button>
 
         <button
-          onClick={() => onCategoryChange?.("kills")}
+          onClick={() => onCategoryChange?.("wins")}
           className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
-            category === "kills"
+            category === "wins"
               ? "bg-card border-t border-l border-r border-border text-foreground opacity-100 translate-y-0"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <Sword className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
-          <span className="text-xs font-medium">Kills</span>
+          <Target className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
+          <span className="text-xs font-medium">Wins</span>
         </button>
 
         <button
-          onClick={() => onCategoryChange?.("deaths")}
+          onClick={() => onCategoryChange?.("winstreak")}
           className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
-            category === "deaths"
+            category === "winstreak"
               ? "bg-card border-t border-l border-r border-border text-foreground opacity-100 translate-y-0"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <Skull className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
-          <span className="text-xs font-medium">Deaths</span>
+          <Flame className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
+          <span className="text-xs font-medium">Win Streak</span>
         </button>
       </div>
 
@@ -284,9 +309,9 @@ export function LeaderboardTable({
             <div>
               <CardTitle>{getCategoryTitle()}</CardTitle>
               <CardDescription>
-                {category === "playtime" && "Players with the most time on the server"}
-                {category === "kills" && "Players with the most player kills"}
-                {category === "deaths" && "Players with the most deaths"}
+                {category === "elo" && "Players with the highest ELO rating"}
+                {category === "wins" && "Players with the most practice wins"}
+                {category === "winstreak" && "Players with the longest active win streaks"}
               </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -304,7 +329,6 @@ export function LeaderboardTable({
             </div>
             <div className="flex flex-1 items-center justify-between gap-4">
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">PLAYER</span>
-              {/* Removed BADGES from header */}
             </div>
           </div>
         </CardHeader>
@@ -342,7 +366,6 @@ export function LeaderboardTable({
                 <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
-                    <p className="text-sm text-muted-foreground">{getStatValue(player)}</p>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {getBadges(player).map((badge) => (
                         <div
