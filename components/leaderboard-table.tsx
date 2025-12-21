@@ -4,8 +4,7 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Trophy, Crown, Medal, RefreshCw, Target, TrendingUp, Flame } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Trophy, Crown, Medal, Target, TrendingUp, Flame } from "lucide-react"
 
 interface Player {
   rank: number
@@ -273,22 +272,7 @@ export function LeaderboardTable({
 
       <Card className="overflow-hidden rounded-t-none border-t-0">
         <CardHeader>
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <CardTitle>{getCategoryTitle()}</CardTitle>
-              <CardDescription>
-                Top players ranked by ELO rating {kit !== "all" ? `in ${kit.toUpperCase()} mode` : "across all modes"}
-              </CardDescription>
-            </div>
-            <Button variant="outline" size="sm" onClick={fetchLeaderboard} disabled={loading}>
-              <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-            </Button>
-          </div>
-          {lastUpdated && (
-            <p className="text-xs text-muted-foreground">Last updated: {lastUpdated.toLocaleTimeString()}</p>
-          )}
-
-          <div className="flex items-center gap-6 pt-4 border-t border-border mt-4">
+          <div className="flex items-center gap-6 pt-4 border-t border-border">
             <div className="h-[80px] w-[240px] flex-shrink-0 flex items-center">
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider ml-4">#</span>
             </div>
