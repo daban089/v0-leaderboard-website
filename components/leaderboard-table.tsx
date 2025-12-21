@@ -95,7 +95,7 @@ export function LeaderboardTable({ category }: LeaderboardTableProps) {
   }
 
   const getAvatarUrl = (username: string) => {
-    return `https://mcskins.top/avatar/${username}/avatarBody3`
+    return `/api/avatar-proxy?username=${encodeURIComponent(username)}`
   }
 
   const getStatValue = (player: Player) => {
