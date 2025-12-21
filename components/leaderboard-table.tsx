@@ -186,6 +186,7 @@ export function LeaderboardTable({
     if (rank === 1) return "/shimmer.svg"
     if (rank === 2) return "/shimmer-silver.svg"
     if (rank === 3) return "/shimmer-bronze.svg"
+    if (rank > 3) return "/images/other.png"
     return null
   }
 
@@ -305,7 +306,7 @@ export function LeaderboardTable({
                 key={player.username}
                 className="relative flex items-center gap-6 rounded-xl border border-border overflow-hidden p-4 transition-all hover:scale-[1.01] hover:shadow-lg"
                 style={
-                  player.rank <= 3
+                  player.rank <= 3 || player.rank > 3
                     ? {
                         backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
                         backgroundSize: "240px 80px",
