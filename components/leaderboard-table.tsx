@@ -211,7 +211,7 @@ export function LeaderboardTable({ category }: LeaderboardTableProps) {
                 backgroundRepeat: "no-repeat",
               }}
             >
-              <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center">
+              <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
                 <span
                   className={`absolute left-4 text-5xl font-black italic font-sans text-white z-10`}
                   style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)" }}
