@@ -126,41 +126,81 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="mb-6 flex gap-2 rounded-lg border border-border bg-card p-1">
-          <button
-            onClick={() => setActiveCategory("playtime")}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-3 text-sm font-medium transition-colors ${
-              activeCategory === "playtime"
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-            }`}
-          >
-            <Clock className="h-4 w-4" />
-            Playtime
-          </button>
-          <button
-            onClick={() => setActiveCategory("kills")}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-3 text-sm font-medium transition-colors ${
-              activeCategory === "kills"
-                ? "bg-accent text-accent-foreground"
-                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-            }`}
-          >
-            <Sword className="h-4 w-4" />
-            Kills
-          </button>
-          <button
-            onClick={() => setActiveCategory("deaths")}
-            className={`flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-3 text-sm font-medium transition-colors ${
-              activeCategory === "deaths"
-                ? "bg-destructive text-destructive-foreground"
-                : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-            }`}
-          >
-            <Skull className="h-4 w-4" />
-            Deaths
-          </button>
-        </div>
+        <section className="w-full mb-8">
+          <div className="flex items-center justify-center gap-3 rounded-lg border border-border bg-card/50 p-3 backdrop-blur-sm">
+            <button
+              onClick={() => setActiveCategory("playtime")}
+              className={`group flex flex-col items-center gap-2 rounded-lg px-6 py-4 transition-all ${
+                activeCategory === "playtime" ? "bg-primary shadow-lg shadow-primary/20" : "hover:bg-secondary"
+              }`}
+            >
+              <div
+                className={`flex h-12 w-12 items-center justify-center rounded-lg transition-colors ${
+                  activeCategory === "playtime" ? "bg-primary-foreground/10" : "bg-primary/10 group-hover:bg-primary/20"
+                }`}
+              >
+                <Clock
+                  className={`h-6 w-6 ${activeCategory === "playtime" ? "text-primary-foreground" : "text-primary"}`}
+                />
+              </div>
+              <span
+                className={`text-sm font-semibold ${
+                  activeCategory === "playtime" ? "text-primary-foreground" : "text-foreground"
+                }`}
+              >
+                Playtime
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveCategory("kills")}
+              className={`group flex flex-col items-center gap-2 rounded-lg px-6 py-4 transition-all ${
+                activeCategory === "kills" ? "bg-accent shadow-lg shadow-accent/20" : "hover:bg-secondary"
+              }`}
+            >
+              <div
+                className={`flex h-12 w-12 items-center justify-center rounded-lg transition-colors ${
+                  activeCategory === "kills" ? "bg-accent-foreground/10" : "bg-accent/10 group-hover:bg-accent/20"
+                }`}
+              >
+                <Sword className={`h-6 w-6 ${activeCategory === "kills" ? "text-accent-foreground" : "text-accent"}`} />
+              </div>
+              <span
+                className={`text-sm font-semibold ${
+                  activeCategory === "kills" ? "text-accent-foreground" : "text-foreground"
+                }`}
+              >
+                Kills
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveCategory("deaths")}
+              className={`group flex flex-col items-center gap-2 rounded-lg px-6 py-4 transition-all ${
+                activeCategory === "deaths" ? "bg-destructive shadow-lg shadow-destructive/20" : "hover:bg-secondary"
+              }`}
+            >
+              <div
+                className={`flex h-12 w-12 items-center justify-center rounded-lg transition-colors ${
+                  activeCategory === "deaths"
+                    ? "bg-destructive-foreground/10"
+                    : "bg-destructive/10 group-hover:bg-destructive/20"
+                }`}
+              >
+                <Skull
+                  className={`h-6 w-6 ${activeCategory === "deaths" ? "text-destructive-foreground" : "text-destructive"}`}
+                />
+              </div>
+              <span
+                className={`text-sm font-semibold ${
+                  activeCategory === "deaths" ? "text-destructive-foreground" : "text-foreground"
+                }`}
+              >
+                Deaths
+              </span>
+            </button>
+          </div>
+        </section>
 
         <LeaderboardTable category={activeCategory} />
       </div>
