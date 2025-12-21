@@ -37,7 +37,7 @@ export default function Page() {
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <img src="/images/jangamar-logo.png" alt="Jangamar SMP" className="h-16 w-auto object-contain" />
+              <img src="/images/jangamar-logo.png" alt="Jangamar's Tiers" className="h-20 w-auto object-contain" />
             </div>
 
             <div className="flex items-center gap-3">
