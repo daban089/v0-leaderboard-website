@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Trophy, Crown, Medal, Search, RefreshCw, Clock, Sword, Skull } from "lucide-react"
+import { Trophy, Crown, Medal, RefreshCw, Clock, Sword, Skull } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface Player {
@@ -206,15 +205,6 @@ export function LeaderboardTable({
                 <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               </Button>
             </div>
-          </div>
-          <div className="relative mt-4">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search players..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
           </div>
           {lastUpdated && (
             <p className="text-xs text-muted-foreground">Last updated: {lastUpdated.toLocaleTimeString()}</p>
