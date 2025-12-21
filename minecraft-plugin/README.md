@@ -28,30 +28,30 @@ A lightweight Minecraft plugin for tracking player statistics (playtime, kills, 
 
 Edit `plugins/SMPStats/config.yml`:
 
-```yaml
+\`\`\`yaml
 database:
   host: your-database-host.com
   port: 3306
   database: your_database_name
   username: your_username
   password: your_password
-```
+\`\`\`
 
 ### Your Current Database Details
-```yaml
+\`\`\`yaml
 database:
   host: node9.partner-hosting.com
   port: 3306
   database: s602_MySQL
   username: u602_YDV9ppr7m2
   password: L4oDmnR=FPLuOtbrXuc4L!E.
-```
+\`\`\`
 
 ## Database Setup
 
 The plugin requires a `player_stats` table. Run this SQL:
 
-```sql
+\`\`\`sql
 CREATE TABLE player_stats (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(16) NOT NULL UNIQUE,
@@ -63,7 +63,7 @@ CREATE TABLE player_stats (
     INDEX idx_username (username),
     INDEX idx_playtime (playtime_hours)
 );
-```
+\`\`\`
 
 ## Commands
 
@@ -92,10 +92,10 @@ CREATE TABLE player_stats (
 
 ## Compiling from Source
 
-```bash
+\`\`\`bash
 cd minecraft-plugin
 mvn clean package
-```
+\`\`\`
 
 The compiled JAR will be in `target/smp-stats-1.0.jar`
 

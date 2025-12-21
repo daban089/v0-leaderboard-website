@@ -12,24 +12,24 @@ You need to have these installed:
 
 Open your terminal/command prompt and run:
 
-```bash
+\`\`\`bash
 java -version
 mvn -version
-```
+\`\`\`
 
 Both should show version information.
 
 ### 2. Navigate to Plugin Directory
 
-```bash
+\`\`\`bash
 cd minecraft-plugin
-```
+\`\`\`
 
 ### 3. Compile the Plugin
 
-```bash
+\`\`\`bash
 mvn clean package
-```
+\`\`\`
 
 This will:
 - Download required dependencies (Spigot API)
@@ -39,9 +39,9 @@ This will:
 ### 4. Locate the Compiled JAR
 
 After successful compilation, find your plugin at:
-```
+\`\`\`
 minecraft-plugin/target/smp-stats-1.0.jar
-```
+\`\`\`
 
 ### 5. Deploy to Server
 
@@ -64,8 +64,8 @@ Upload `smp-stats-1.0.jar` to your server's `plugins` folder and restart.
 
 If you make code changes:
 
-```bash
+\`\`\`bash
 mvn clean package
-```
+\`\`\`
 
 Then replace the old JAR in your server's plugins folder and restart.
