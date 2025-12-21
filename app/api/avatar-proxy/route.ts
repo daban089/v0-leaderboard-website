@@ -1,4 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { readFile } from "fs/promises"
+import { join } from "path"
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,14 +16,13 @@ export async function GET(request: NextRequest) {
     if (isBedrockPlayer) {
       console.log("[v0] Bedrock player detected, using question mark avatar:", username)
 
-      const questionMarkUrl = "/images/skin-404.avif"
-      const questionMarkResponse = await fetch(questionMarkUrl)
-      const questionMarkBuffer = await questionMarkResponse.arrayBuffer()
+      const filePath = join(process.cwd(), "public", "images", "skin-404.avif")
+      const fileBuffer = await readFile(filePath)
 
-      return new NextResponse(questionMarkBuffer, {
+      return new NextResponse(fileBuffer, {
         headers: {
           "Content-Type": "image/avif",
-          "Cache-Control": "public, max-age=3600",
+          "Cache-Control": "public, max-age=86400",
           "Access-Control-Allow-Origin": "*",
         },
       })
@@ -66,10 +67,8 @@ export async function GET(request: NextRequest) {
     }
 
     console.log("[v0] Using fallback avatar for:", username)
-    const fallbackUrl = "/images/skin-404.avif"
-
-    const fallbackResponse = await fetch(fallbackUrl)
-    const fallbackBuffer = await fallbackResponse.arrayBuffer()
+    const fallbackPath = join(process.cwd(), "public", "images", "skin-404.avif")
+    const fallbackBuffer = await readFile(fallbackPath)
 
     return new NextResponse(fallbackBuffer, {
       headers: {
