@@ -149,33 +149,37 @@ export function LeaderboardTable({
       <div className="flex items-end gap-1">
         <button
           onClick={() => onCategoryChange?.("playtime")}
-          className={`flex flex-col items-center gap-1 px-6 py-3 transition-all rounded-t-3xl ${
+          className={`flex flex-col items-center gap-1 px-6 py-3 transition-all duration-300 rounded-t-3xl ${
             category === "playtime"
               ? "bg-card border border-b-0 border-border text-foreground"
-              : "text-muted-foreground"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          <Clock className="h-5 w-5" />
+          <Clock className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
           <span className="text-xs font-medium">Playtime</span>
         </button>
 
         <button
           onClick={() => onCategoryChange?.("kills")}
-          className={`flex flex-col items-center gap-1 px-6 py-3 transition-all rounded-t-3xl ${
-            category === "kills" ? "bg-card border border-b-0 border-border text-foreground" : "text-muted-foreground"
+          className={`flex flex-col items-center gap-1 px-6 py-3 transition-all duration-300 rounded-t-3xl ${
+            category === "kills"
+              ? "bg-card border border-b-0 border-border text-foreground"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          <Sword className="h-5 w-5" />
+          <Sword className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
           <span className="text-xs font-medium">Kills</span>
         </button>
 
         <button
           onClick={() => onCategoryChange?.("deaths")}
-          className={`flex flex-col items-center gap-1 px-6 py-3 transition-all rounded-t-3xl ${
-            category === "deaths" ? "bg-card border border-b-0 border-border text-foreground" : "text-muted-foreground"
+          className={`flex flex-col items-center gap-1 px-6 py-3 transition-all duration-300 rounded-t-3xl ${
+            category === "deaths"
+              ? "bg-card border border-b-0 border-border text-foreground"
+              : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          <Skull className="h-5 w-5" />
+          <Skull className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
           <span className="text-xs font-medium">Deaths</span>
         </button>
       </div>
