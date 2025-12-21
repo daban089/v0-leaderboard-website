@@ -31,26 +31,37 @@ export async function GET(request: Request) {
       let params: any[] = []
 
       if (kit === "all") {
-        // Get all ranked matches regardless of kit
         query = `SELECT 
           fp.username,
           SUM(fp.is_winner) as wins,
           COUNT(*) - SUM(fp.is_winner) as losses,
           COUNT(*) as total_matches,
-          MAX(fp.player_data) as latest_player_data,
+          (SELECT fp2.player_data 
+           FROM fight_players fp2 
+           INNER JOIN fights f2 ON fp2.fight = f2.started
+           WHERE fp2.username = fp.username 
+           AND f2.mode = 'DUEL_QUEUE_RANKED'
+           ORDER BY fp2.id DESC 
+           LIMIT 1) as latest_player_data,
           GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results
         FROM fight_players fp
         INNER JOIN fights f ON fp.fight = f.started
         WHERE f.mode = 'DUEL_QUEUE_RANKED'
         GROUP BY fp.username`
       } else {
-        // Filter by specific ranked kit
         query = `SELECT 
           fp.username,
           SUM(fp.is_winner) as wins,
           COUNT(*) - SUM(fp.is_winner) as losses,
           COUNT(*) as total_matches,
-          MAX(fp.player_data) as latest_player_data,
+          (SELECT fp2.player_data 
+           FROM fight_players fp2 
+           INNER JOIN fights f2 ON fp2.fight = f2.started
+           WHERE fp2.username = fp.username 
+           AND f2.mode = 'DUEL_QUEUE_RANKED'
+           AND (f2.kit = ? OR f2.kit = ?)
+           ORDER BY fp2.id DESC 
+           LIMIT 1) as latest_player_data,
           GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results
         FROM fight_players fp
         INNER JOIN fights f ON fp.fight = f.started
@@ -58,7 +69,7 @@ export async function GET(request: Request) {
         GROUP BY fp.username`
 
         const rankedKit = kit + "elo"
-        params = [kit, rankedKit]
+        params = [kit, rankedKit, kit, rankedKit]
       }
 
       console.log("[v0] Executing query for kit:", kit)
