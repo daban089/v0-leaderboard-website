@@ -69,53 +69,48 @@ export async function GET(request: Request) {
 
       console.log("[v0] Query returned rows:", rows.length)
 
-      const players = (rows as any[])
-        .map((player) => {
-          let elo = 1000
+      const players = (rows as any[]).map((player) => {
+        let elo = 1000
 
-          // Parse the latest player_data JSON to get current ELO
-          try {
-            if (player.latest_player_data) {
-              const data = JSON.parse(player.latest_player_data)
-              elo = data.newElo || data.oldElo || 1000
-              console.log("[v0] Player:", player.username, "ELO:", elo, "Raw data:", player.latest_player_data)
-            }
-          } catch (e) {
-            console.log("[v0] Failed to parse player_data for:", player.username, e)
+        // Parse the latest player_data JSON to get current ELO
+        try {
+          if (player.latest_player_data) {
+            const data = JSON.parse(player.latest_player_data)
+            elo = data.newElo || data.oldElo || 1000
+            console.log("[v0] Player:", player.username, "ELO:", elo, "Raw data:", player.latest_player_data)
           }
+        } catch (e) {
+          console.log("[v0] Failed to parse player_data for:", player.username, e)
+        }
 
-          // Calculate current win streak from recent results
-          let winStreak = 0
-          if (player.recent_results) {
-            const results = player.recent_results.split(",")
-            for (const result of results) {
-              if (result === "1") {
-                winStreak++
-              } else {
-                break
-              }
+        // Calculate current win streak from recent results
+        let winStreak = 0
+        if (player.recent_results) {
+          const results = player.recent_results.split(",")
+          for (const result of results) {
+            if (result === "1") {
+              winStreak++
+            } else {
+              break
             }
           }
+        }
 
-          const wins = Number(player.wins) || 0
-          const losses = Number(player.losses) || 0
-          const totalMatches = Number(player.total_matches) || 0
-          const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0
+        const wins = Number(player.wins) || 0
+        const losses = Number(player.losses) || 0
+        const totalMatches = Number(player.total_matches) || 0
+        const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0
 
-          return {
-            username: player.username,
-            wins,
-            losses,
-            totalMatches,
-            winRate,
-            elo,
-            winStreak,
-          }
-        })
-        .filter((player) => {
-          console.log("[v0] Filtering player:", player.username, "ELO:", player.elo, "Pass?", player.elo > 1000)
-          return player.elo > 1000
-        })
+        return {
+          username: player.username,
+          wins,
+          losses,
+          totalMatches,
+          winRate,
+          elo,
+          winStreak,
+        }
+      })
 
       await connection.end()
 
