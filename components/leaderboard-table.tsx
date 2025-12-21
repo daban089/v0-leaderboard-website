@@ -149,7 +149,7 @@ export function LeaderboardTable({
       <div className="flex items-end gap-1">
         <button
           onClick={() => onCategoryChange?.("playtime")}
-          className={`flex flex-col items-center gap-1 px-6 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
+          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
             category === "playtime"
               ? "bg-card border-t border-l border-r border-border text-foreground opacity-100 translate-y-0"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
@@ -161,7 +161,7 @@ export function LeaderboardTable({
 
         <button
           onClick={() => onCategoryChange?.("kills")}
-          className={`flex flex-col items-center gap-1 px-6 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
+          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
             category === "kills"
               ? "bg-card border-t border-l border-r border-border text-foreground opacity-100 translate-y-0"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
@@ -173,7 +173,7 @@ export function LeaderboardTable({
 
         <button
           onClick={() => onCategoryChange?.("deaths")}
-          className={`flex flex-col items-center gap-1 px-6 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
+          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
             category === "deaths"
               ? "bg-card border-t border-l border-r border-border text-foreground opacity-100 translate-y-0"
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
