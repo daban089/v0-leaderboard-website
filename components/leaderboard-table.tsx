@@ -220,7 +220,7 @@ export function LeaderboardTable({
 
   return (
     <div>
-      <div className="flex items-end gap-1 mb-4">
+      <div className="flex items-end mb-4">
         <button
           onClick={() => onKitChange?.("all")}
           className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
