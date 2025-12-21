@@ -14,10 +14,18 @@ export async function GET(request: Request) {
   const category = searchParams.get("category") || "elo"
   const kit = searchParams.get("kit") || "all"
 
+  console.log("[v0] API called with category:", category, "kit:", kit)
+
   try {
     const mysql = await import("mysql2/promise")
 
     try {
+      console.log("[v0] Connecting to database:", {
+        host: process.env.MYSQL_HOST,
+        user: process.env.MYSQL_USER,
+        database: process.env.MYSQL_DATABASE,
+      })
+
       const connection = await mysql.createConnection({
         host: process.env.MYSQL_HOST || "localhost",
         port: 3306,
@@ -26,41 +34,50 @@ export async function GET(request: Request) {
         database: process.env.MYSQL_DATABASE,
       })
 
-      const kitFilter = kit && kit !== "all" ? "AND f.kit = ?" : ""
+      console.log("[v0] Database connected successfully")
+
+      const kitFilter = kit && kit !== "all" ? "WHERE f.kit = ?" : ""
       const params = kit && kit !== "all" ? [kit] : []
 
-      const [rows] = await connection.execute<any[]>(
-        `SELECT 
+      const query = `SELECT 
           fp.username,
-          f.kit,
           SUM(fp.is_winner) as wins,
           COUNT(*) - SUM(fp.is_winner) as losses,
-          fp.player_data
+          MAX(fp.player_data) as player_data
         FROM fight_players fp
         JOIN fights f ON fp.fight = f.id
         ${kitFilter}
-        GROUP BY fp.username, f.kit`,
-        params,
-      )
+        GROUP BY fp.username`
+
+      console.log("[v0] Executing query:", query)
+      console.log("[v0] With params:", params)
+
+      const [rows] = await connection.execute<any[]>(query, params)
+
+      console.log("[v0] Query returned", rows.length, "players")
+      console.log("[v0] First row sample:", rows[0])
 
       const playersWithElo = (rows as any[]).map((player) => {
         let elo = 1000
 
         try {
-          const data = JSON.parse(player.player_data)
-          elo = data.newElo || data.oldElo || 1000
+          if (player.player_data) {
+            const data = JSON.parse(player.player_data)
+            elo = data.newElo || data.oldElo || 1000
+          }
         } catch (e) {
-          // Keep default ELO if parsing fails
+          console.log("[v0] Failed to parse player_data for", player.username)
         }
 
         return {
           username: player.username,
-          wins: player.wins,
-          losses: player.losses,
+          wins: Number(player.wins) || 0,
+          losses: Number(player.losses) || 0,
           elo: elo,
-          kit: player.kit,
         }
       })
+
+      console.log("[v0] Processed", playersWithElo.length, "players with ELO")
 
       const playersWithStreaks = await Promise.all(
         playersWithElo.map(async (player) => {
@@ -108,6 +125,8 @@ export async function GET(request: Request) {
         ...player,
         rank: index + 1,
       }))
+
+      console.log("[v0] Returning", playersWithRank.length, "players")
 
       return NextResponse.json(playersWithRank)
     } catch (dbError) {
