@@ -1,8 +1,10 @@
 "use client"
 
+import type React from "react"
+
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Trophy, Crown, Medal, RefreshCw, Clock, Sword, Skull } from "lucide-react"
+import { Trophy, Crown, Medal, RefreshCw, Clock, Sword, Skull, Award, Star, Zap, Shield, Flame } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface Player {
@@ -17,6 +19,101 @@ interface LeaderboardTableProps {
   category: "playtime" | "kills" | "deaths"
   searchQuery?: string
   onCategoryChange?: (category: "playtime" | "kills" | "deaths") => void
+}
+
+interface Badge {
+  id: string
+  name: string
+  icon: React.ReactNode
+  color: string
+  requirement: string
+}
+
+const getBadges = (player: Player): Badge[] => {
+  const badges: Badge[] = []
+
+  // Playtime badges
+  if (player.playtime >= 1000) {
+    badges.push({
+      id: "veteran",
+      name: "Veteran",
+      icon: <Shield className="h-3 w-3" />,
+      color: "bg-purple-500/20 text-purple-400 border-purple-500/50",
+      requirement: "1000+ hours",
+    })
+  } else if (player.playtime >= 500) {
+    badges.push({
+      id: "dedicated",
+      name: "Dedicated",
+      icon: <Star className="h-3 w-3" />,
+      color: "bg-blue-500/20 text-blue-400 border-blue-500/50",
+      requirement: "500+ hours",
+    })
+  } else if (player.playtime >= 100) {
+    badges.push({
+      id: "active",
+      name: "Active",
+      icon: <Zap className="h-3 w-3" />,
+      color: "bg-green-500/20 text-green-400 border-green-500/50",
+      requirement: "100+ hours",
+    })
+  }
+
+  // Kill badges
+  if (player.kills >= 1000) {
+    badges.push({
+      id: "legend",
+      name: "Legend",
+      icon: <Flame className="h-3 w-3" />,
+      color: "bg-red-500/20 text-red-400 border-red-500/50",
+      requirement: "1000+ kills",
+    })
+  } else if (player.kills >= 500) {
+    badges.push({
+      id: "warrior",
+      name: "Warrior",
+      icon: <Sword className="h-3 w-3" />,
+      color: "bg-orange-500/20 text-orange-400 border-orange-500/50",
+      requirement: "500+ kills",
+    })
+  } else if (player.kills >= 100) {
+    badges.push({
+      id: "fighter",
+      name: "Fighter",
+      icon: <Trophy className="h-3 w-3" />,
+      color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
+      requirement: "100+ kills",
+    })
+  }
+
+  // Rank badges
+  if (player.rank === 1) {
+    badges.push({
+      id: "first",
+      name: "Champion",
+      icon: <Crown className="h-3 w-3" />,
+      color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
+      requirement: "Rank #1",
+    })
+  } else if (player.rank === 2) {
+    badges.push({
+      id: "second",
+      name: "Runner-up",
+      icon: <Medal className="h-3 w-3" />,
+      color: "bg-gray-400/20 text-gray-300 border-gray-400/50",
+      requirement: "Rank #2",
+    })
+  } else if (player.rank === 3) {
+    badges.push({
+      id: "third",
+      name: "Top 3",
+      icon: <Award className="h-3 w-3" />,
+      color: "bg-orange-500/20 text-orange-400 border-orange-500/50",
+      requirement: "Rank #3",
+    })
+  }
+
+  return badges
 }
 
 export function LeaderboardTable({
@@ -96,7 +193,7 @@ export function LeaderboardTable({
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Crown className="h-4 w-4" />
     if (rank === 2) return <Medal className="h-4 w-4" />
-    if (rank === 3) return <Trophy className="h-4 w-4" />
+    if (rank === 3) return <Award className="h-4 w-4" />
     return null
   }
 
@@ -207,7 +304,7 @@ export function LeaderboardTable({
             </div>
             <div className="flex flex-1 items-center justify-between gap-4">
               <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">PLAYER</span>
-              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">TIERS</span>
+              <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">BADGES</span>
             </div>
           </div>
         </CardHeader>
@@ -244,23 +341,21 @@ export function LeaderboardTable({
 
                 <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xl font-bold text-foreground">{player.username}</p>
+                    <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
                     <p className="text-sm text-muted-foreground">{getStatValue(player)}</p>
                   </div>
 
-                  <div className="flex gap-3">
-                    <div className="rounded-full bg-primary/10 px-3 py-2 text-center">
-                      <p className="text-xs font-medium text-muted-foreground">Time</p>
-                      <p className="text-sm font-bold text-primary">{player.playtime.toLocaleString()}h</p>
-                    </div>
-                    <div className="rounded-full bg-accent/10 px-3 py-2 text-center">
-                      <p className="text-xs font-medium text-muted-foreground">Kills</p>
-                      <p className="text-sm font-bold text-accent">{player.kills}</p>
-                    </div>
-                    <div className="rounded-full bg-destructive/10 px-3 py-2 text-center">
-                      <p className="text-xs font-medium text-muted-foreground">Deaths</p>
-                      <p className="text-sm font-bold text-destructive">{player.deaths}</p>
-                    </div>
+                  <div className="flex flex-wrap gap-2 justify-end max-w-md">
+                    {getBadges(player).map((badge) => (
+                      <div
+                        key={badge.id}
+                        className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 ${badge.color}`}
+                        title={badge.requirement}
+                      >
+                        {badge.icon}
+                        <span className="text-xs font-semibold">{badge.name}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
