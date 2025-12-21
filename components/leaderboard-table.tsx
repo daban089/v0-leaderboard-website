@@ -95,29 +95,6 @@ export function LeaderboardTable({ category }: LeaderboardTableProps) {
   }
 
   const getAvatarUrl = (username: string) => {
-    if (username.toLowerCase() === "bafr") {
-      return "https://render.crafty.gg/3d/bust/9b39e8088ffb8a1fe2f88f64672c4c18384abe204a99e85326ac4947fd1c50f3"
-    }
-
-    // Check cache first
-    if (avatarCache[username]) {
-      return avatarCache[username]
-    }
-
-    // Fetch from crafty.gg API
-    fetch(`/api/crafty-avatar?username=${encodeURIComponent(username)}`)
-      .then((res) => res.json())
-      .then((data) => {
-        const url = data.avatarUrl || data.fallback
-        setAvatarCache((prev) => ({ ...prev, [username]: url }))
-      })
-      .catch(() => {
-        // Fallback to mcskins.top avatarBody3 (3D bust render)
-        const fallbackUrl = `https://mcskins.top/avatar/${username}/avatarBody3`
-        setAvatarCache((prev) => ({ ...prev, [username]: fallbackUrl }))
-      })
-
-    // Return temporary mcskins.top URL while loading
     return `https://mcskins.top/avatar/${username}/avatarBody3`
   }
 
