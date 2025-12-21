@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Trophy, Crown, Medal, Search, RefreshCw } from "lucide-react"
+import { Trophy, Crown, Medal, Search, RefreshCw, Clock, Sword, Skull } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 interface Player {
@@ -16,12 +16,18 @@ interface Player {
 
 interface LeaderboardTableProps {
   category: "playtime" | "kills" | "deaths"
+  searchQuery?: string
+  onCategoryChange?: (category: "playtime" | "kills" | "deaths") => void
 }
 
-export function LeaderboardTable({ category }: LeaderboardTableProps) {
+export function LeaderboardTable({
+  category,
+  searchQuery: externalSearchQuery,
+  onCategoryChange,
+}: LeaderboardTableProps) {
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState(externalSearchQuery || "")
   const [autoRefresh, setAutoRefresh] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [avatarCache, setAvatarCache] = useState<Record<string, string>>({})
@@ -70,6 +76,10 @@ export function LeaderboardTable({ category }: LeaderboardTableProps) {
 
     return () => clearInterval(interval)
   }, [autoRefresh, category])
+
+  useEffect(() => {
+    setSearchQuery(externalSearchQuery || "")
+  }, [externalSearchQuery])
 
   const filteredPlayers = players.filter((player) => player.username.toLowerCase().includes(searchQuery.toLowerCase()))
 
@@ -137,6 +147,76 @@ export function LeaderboardTable({ category }: LeaderboardTableProps) {
 
   return (
     <Card>
+      <div className="border-b border-border bg-card/50 backdrop-blur-sm rounded-t-xl p-4">
+        <div className="flex items-center justify-center gap-3">
+          <button
+            onClick={() => onCategoryChange?.("playtime")}
+            className={`group flex flex-col items-center gap-2 rounded-lg px-6 py-4 transition-all ${
+              category === "playtime" ? "bg-primary shadow-lg shadow-primary/20" : ""
+            }`}
+          >
+            <div
+              className={`flex h-12 w-12 items-center justify-center rounded-lg transition-colors ${
+                category === "playtime" ? "bg-primary-foreground/10" : "bg-primary/10"
+              }`}
+            >
+              <Clock className={`h-6 w-6 ${category === "playtime" ? "text-primary-foreground" : "text-primary"}`} />
+            </div>
+            <span
+              className={`text-sm font-semibold ${
+                category === "playtime" ? "text-primary-foreground" : "text-foreground"
+              }`}
+            >
+              Playtime
+            </span>
+          </button>
+
+          <button
+            onClick={() => onCategoryChange?.("kills")}
+            className={`group flex flex-col items-center gap-2 rounded-lg px-6 py-4 transition-all ${
+              category === "kills" ? "bg-accent shadow-lg shadow-accent/20" : ""
+            }`}
+          >
+            <div
+              className={`flex h-12 w-12 items-center justify-center rounded-lg transition-colors ${
+                category === "kills" ? "bg-accent-foreground/10" : "bg-accent/10"
+              }`}
+            >
+              <Sword className={`h-6 w-6 ${category === "kills" ? "text-accent-foreground" : "text-accent"}`} />
+            </div>
+            <span
+              className={`text-sm font-semibold ${category === "kills" ? "text-accent-foreground" : "text-foreground"}`}
+            >
+              Kills
+            </span>
+          </button>
+
+          <button
+            onClick={() => onCategoryChange?.("deaths")}
+            className={`group flex flex-col items-center gap-2 rounded-lg px-6 py-4 transition-all ${
+              category === "deaths" ? "bg-destructive shadow-lg shadow-destructive/20" : ""
+            }`}
+          >
+            <div
+              className={`flex h-12 w-12 items-center justify-center rounded-lg transition-colors ${
+                category === "deaths" ? "bg-destructive-foreground/10" : "bg-destructive/10"
+              }`}
+            >
+              <Skull
+                className={`h-6 w-6 ${category === "deaths" ? "text-destructive-foreground" : "text-destructive"}`}
+              />
+            </div>
+            <span
+              className={`text-sm font-semibold ${
+                category === "deaths" ? "text-destructive-foreground" : "text-foreground"
+              }`}
+            >
+              Deaths
+            </span>
+          </button>
+        </div>
+      </div>
+
       <CardHeader>
         <div className="flex items-start justify-between gap-4">
           <div>
