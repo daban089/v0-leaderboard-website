@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Trophy, ImageIcon } from "lucide-react"
+import { Trophy } from "lucide-react"
+import Image from "next/image"
 import { PlayerModal } from "./player-modal"
 
 interface Player {
@@ -202,33 +203,41 @@ export function LeaderboardTable({
     if (kitName === "all") return <Trophy className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
     if (kitName === "sword")
       return (
-        <ImageIcon
+        <Image
           src="/images/diamond-sword.png"
           alt="Sword"
+          width={20}
+          height={20}
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
       )
     if (kitName === "axe")
       return (
-        <ImageIcon
+        <Image
           src="/images/diamond-axe.png"
           alt="Axe"
+          width={20}
+          height={20}
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
       )
     if (kitName === "sumo")
       return (
-        <ImageIcon
+        <Image
           src="/images/lead.png"
           alt="Lead"
+          width={20}
+          height={20}
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
       )
     if (kitName === "mace")
       return (
-        <ImageIcon
+        <Image
           src="/images/mace.png"
           alt="Mace"
+          width={20}
+          height={20}
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
       )
@@ -296,12 +305,12 @@ export function LeaderboardTable({
           {mode === "high-tiers" && (
             <div className="absolute inset-0 bg-gradient-to-br from-red-800/20 via-transparent to-transparent pointer-events-none" />
           )}
-          <ImageIcon
+          <Image
             src="/images/reckless-icon.png"
             alt="High Tiers"
             width={20}
             height={20}
-            className="relative z-10"
+            className="relative z-10 pixelated"
           />
           <span className="relative z-10">High Tiers</span>
           {mode === "high-tiers" && <div className="h-2 w-2 bg-red-700 rounded-full animate-pulse relative z-10" />}
@@ -345,7 +354,7 @@ export function LeaderboardTable({
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            <ImageIcon src="/images/diamond-sword.png" alt="Sword" className="h-8 w-8 object-contain" />
+            <Image src="/images/diamond-sword.png" alt="Sword" className="h-8 w-8 object-contain" />
             <span className="text-xs font-medium">Sword</span>
           </button>
 
@@ -357,7 +366,7 @@ export function LeaderboardTable({
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            <ImageIcon src="/images/diamond-axe.png" alt="Axe" className="h-8 w-8 object-contain" />
+            <Image src="/images/diamond-axe.png" alt="Axe" className="h-8 w-8 object-contain" />
             <span className="text-xs font-medium">Axe</span>
           </button>
 
@@ -369,7 +378,7 @@ export function LeaderboardTable({
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            <ImageIcon src="/images/lead.png" alt="Lead" className="h-8 w-8 object-contain" />
+            <Image src="/images/lead.png" alt="Lead" className="h-8 w-8 object-contain" />
             <span className="text-xs font-medium">Sumo</span>
           </button>
 
@@ -381,7 +390,7 @@ export function LeaderboardTable({
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            <ImageIcon src="/images/mace.png" alt="Mace" className="h-8 w-8 object-contain" />
+            <Image src="/images/mace.png" alt="Mace" className="h-8 w-8 object-contain" />
             <span className="text-xs font-medium">Mace</span>
           </button>
         </div>
