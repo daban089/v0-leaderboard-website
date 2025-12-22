@@ -308,13 +308,12 @@ export function LeaderboardTable({
           }}
           className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
             mode === "ranked"
-              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/50"
+              ? "bg-card text-foreground border-2 border-primary"
               : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
           }`}
         >
           <Trophy className="h-5 w-5" />
           <span>Ranked</span>
-          {mode === "ranked" && <div className="h-2 w-2 bg-white rounded-full animate-pulse" />}
         </button>
       </div>
 
