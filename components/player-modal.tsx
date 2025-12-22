@@ -122,6 +122,10 @@ export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerMod
     { name: "Mace", icon: "/images/mace.png", elo: gamemodeElos?.mace || player.elo },
   ]
 
+  const getAvatarUrl = (username: string) => {
+    return `/api/avatar-proxy?username=${encodeURIComponent(username)}`
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
@@ -145,17 +149,18 @@ export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerMod
         </button>
 
         <div className="p-8">
-          {/* 3D Skin Render */}
           <div className="flex flex-col items-center mb-6">
-            <div className="relative w-64 h-96 flex items-center justify-center mb-4">
-              <iframe
-                ref={iframeRef}
-                src={`https://render.crafty.gg/3d/fullbody/${player.username}`}
-                className="w-full h-full"
+            <div className="relative w-48 h-48 flex items-center justify-center mb-4 rounded-full overflow-hidden bg-muted/20 border-4 border-border">
+              <img
+                src={getAvatarUrl(player.username) || "/placeholder.svg"}
+                alt={player.username}
+                className="w-full h-full object-contain"
                 style={{
-                  border: "none",
+                  imageRendering: "pixelated",
                 }}
-                title={`${player.username} skin`}
+                onError={(e) => {
+                  e.currentTarget.src = "/placeholder.svg?height=192&width=192"
+                }}
               />
             </div>
             <h2 className="text-3xl font-bold text-foreground">{player.username}</h2>
@@ -216,17 +221,6 @@ export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerMod
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes slowRotate {
-          from {
-            transform: rotateY(0deg);
-          }
-          to {
-            transform: rotateY(360deg);
-          }
-        }
-      `}</style>
     </div>
   )
 }
