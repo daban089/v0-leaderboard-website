@@ -1,10 +1,7 @@
 "use client"
 
-import type React from "react"
-
 import { useEffect, useRef } from "react"
 import { X } from "lucide-react"
-import { Trophy } from "lucide-react"
 
 interface PlayerModalProps {
   isOpen: boolean
@@ -28,7 +25,7 @@ interface PlayerModalProps {
 interface Badge {
   id: string
   name: string
-  icon: React.ReactNode
+  icon: string // Changed to string URL for image source
   color: string
   requirement: string
 }
@@ -40,7 +37,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
     badges.push({
       id: "grandmaster",
       name: "Combat Grandmaster",
-      icon: <Trophy className="h-4 w-4" />,
+      icon: "/images/combat-grandmaster.webp",
       color: "bg-purple-500/20 text-purple-400 border-purple-500/50",
       requirement: "2500+ ELO",
     })
@@ -48,7 +45,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
     badges.push({
       id: "master",
       name: "Combat Master",
-      icon: <Trophy className="h-4 w-4" />,
+      icon: "/images/combat-master.webp",
       color: "bg-pink-500/20 text-pink-400 border-pink-500/50",
       requirement: "2200+ ELO",
     })
@@ -56,7 +53,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
     badges.push({
       id: "ace",
       name: "Combat Ace",
-      icon: <Trophy className="h-4 w-4" />,
+      icon: "/images/combat-ace.svg",
       color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/50",
       requirement: "2000+ ELO",
     })
@@ -64,7 +61,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
     badges.push({
       id: "specialist",
       name: "Combat Specialist",
-      icon: <Trophy className="h-4 w-4" />,
+      icon: "/images/combat-specialist.svg",
       color: "bg-blue-500/20 text-blue-400 border-blue-500/50",
       requirement: "1800+ ELO",
     })
@@ -72,7 +69,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
     badges.push({
       id: "cadet",
       name: "Combat Cadet",
-      icon: <Trophy className="h-4 w-4" />,
+      icon: "/images/combat-cadet.svg",
       color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
       requirement: "1500+ ELO",
     })
@@ -80,7 +77,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
     badges.push({
       id: "novice",
       name: "Combat Novice",
-      icon: <Trophy className="h-4 w-4" />,
+      icon: "/images/combat-novice.svg",
       color: "bg-gray-400/20 text-gray-300 border-gray-400/50",
       requirement: "1300+ ELO",
     })
@@ -88,29 +85,13 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
     badges.push({
       id: "rookie",
       name: "Combat Rookie",
-      icon: <Trophy className="h-4 w-4" />,
+      icon: "/images/rookie.svg",
       color: "bg-orange-600/20 text-orange-400 border-orange-600/50",
       requirement: "<1300 ELO",
     })
   }
 
-  if (player.winStreak >= 10) {
-    badges.push({
-      id: "unstoppable",
-      name: "Unstoppable",
-      icon: <Trophy className="h-4 w-4" />,
-      color: "bg-red-500/20 text-red-400 border-red-500/50",
-      requirement: "10+ win streak",
-    })
-  } else if (player.winStreak >= 5) {
-    badges.push({
-      id: "onfire",
-      name: "On Fire",
-      icon: <Trophy className="h-4 w-4" />,
-      color: "bg-orange-500/20 text-orange-400 border-orange-500/50",
-      requirement: "5+ win streak",
-    })
-  }
+  // Win streak badges - removed as per user request
 
   return badges
 }
@@ -193,8 +174,8 @@ export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerMod
                   className={`flex items-center gap-2 rounded-full border px-4 py-2 ${badge.color}`}
                   title={badge.requirement}
                 >
-                  {badge.icon}
-                  <span className="text-sm font-semibold">{badge.name}</span>
+                  <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-5 w-5" />
+                  <span className="text-sm font-medium">{badge.name}</span>
                 </div>
               ))}
               {getBadges(player).length === 0 && <p className="text-muted-foreground text-sm">No badges earned yet</p>}

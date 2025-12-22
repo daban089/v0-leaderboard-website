@@ -127,107 +127,12 @@
 }
 
 @layer utilities {
-  @keyframes pulse-glow {
-    0%,
-    100% {
-      box-shadow: 0 0 8px rgba(168, 85, 247, 0.4);
-      transform: scale(1);
-    }
-    50% {
-      box-shadow: 0 0 16px rgba(168, 85, 247, 0.8);
-      transform: scale(1.05);
-    }
-  }
+  /* Removed all badge animation classes (pulse-glow, shimmer-rotate, bounce-subtle, shake, flame, fade-in) */
 
-  @keyframes shimmer-rotate {
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes bounce-subtle {
-    0%,
-    100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-4px);
-    }
-  }
-
-  @keyframes shake {
-    0%,
-    100% {
-      transform: translateX(0);
-    }
-    10%,
-    30%,
-    50%,
-    70%,
-    90% {
-      transform: translateX(-2px);
-    }
-    20%,
-    40%,
-    60%,
-    80% {
-      transform: translateX(2px);
-    }
-  }
-
-  @keyframes flame {
-    0%,
-    100% {
-      box-shadow: 0 0 8px rgba(249, 115, 22, 0.6);
-    }
-    50% {
-      box-shadow: 0 0 16px rgba(249, 115, 22, 1);
-    }
-  }
-
-  @keyframes fade-in {
-    0% {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-
-  .animate-shimmer-rotate {
-    animation: shimmer-rotate 4s linear infinite;
-  }
-
-  .animate-bounce-subtle {
-    animation: bounce-subtle 1.5s ease-in-out infinite;
-  }
-
-  .animate-shake {
-    animation: shake 0.5s ease-in-out infinite;
-  }
-
-  .animate-flame {
-    animation: flame 1s ease-in-out infinite;
-  }
-
-  .animate-fade-in {
-    animation: fade-in 0.6s ease-out forwards;
-  }
-
-  /* Simplified rank 1 glow animation */
+  /* Kept only rank card glow animations */
   @keyframes glow-pulse {
     0%,
     100% {
-      /* Reduced glow intensity and spread for thinner effect */
       box-shadow: 0 0 8px rgba(234, 179, 8, 0.15);
     }
     50% {
@@ -235,7 +140,6 @@
     }
   }
 
-  /* Added fiery lava-like particle animation */
   @keyframes fire-rise {
     0% {
       transform: translateY(0) scale(1);
@@ -253,7 +157,6 @@
     }
   }
 
-  /* Added silver glow animation for rank 2 */
   @keyframes silver-glow-pulse {
     0%,
     100% {
@@ -264,7 +167,6 @@
     }
   }
 
-  /* Added bronze glow animation for rank 3 */
   @keyframes bronze-glow-pulse {
     0%,
     100% {
@@ -275,7 +177,6 @@
     }
   }
 
-  /* Added silver particle rise animation */
   @keyframes silver-rise {
     0% {
       transform: translateY(0) scale(1);
@@ -293,7 +194,6 @@
     }
   }
 
-  /* Added bronze particle rise animation */
   @keyframes bronze-rise {
     0% {
       transform: translateY(0) scale(1);
@@ -311,13 +211,10 @@
     }
   }
 
-  /* Removed border-glow, float, text-glow, avatar-glow, and gradient animations */
-
   .animate-glow-pulse {
     animation: glow-pulse 3s ease-in-out infinite;
   }
 
-  /* Added fire particle animation */
   .animate-fire-rise {
     animation: fire-rise 4s ease-out infinite;
   }
@@ -338,7 +235,6 @@
     animation: bronze-rise 4s ease-out infinite;
   }
 
-  /* Fire particle styling - golden lava-like embers */
   .fire-particle {
     width: 6px;
     height: 6px;
@@ -348,7 +244,6 @@
     filter: blur(0.5px);
   }
 
-  /* Silver particle styling - cool metallic shimmer */
   .silver-particle {
     width: 6px;
     height: 6px;
@@ -358,7 +253,6 @@
     filter: blur(0.5px);
   }
 
-  /* Bronze particle styling - warm metallic glow */
   .bronze-particle {
     width: 6px;
     height: 6px;
@@ -367,6 +261,4 @@
     box-shadow: 0 0 8px #fb923c, 0 0 12px #f97316, 0 0 16px rgba(194, 65, 12, 0.5);
     filter: blur(0.5px);
   }
-
-  /* Removed unused animation classes */
 }

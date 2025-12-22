@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Trophy } from "lucide-react"
@@ -27,7 +25,7 @@ interface LeaderboardTableProps {
 interface Badge {
   id: string
   name: string
-  icon: React.ReactNode
+  icon: string // Changed to string URL for image source
   color: string
   requirement: string
 }
@@ -40,7 +38,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "grandmaster",
       name: "Combat Grandmaster",
-      icon: <Trophy className="h-3 w-3" />,
+      icon: "/images/combat-grandmaster.webp",
       color: "bg-purple-500/20 text-purple-400 border-purple-500/50",
       requirement: "2500+ ELO",
     })
@@ -48,7 +46,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "master",
       name: "Combat Master",
-      icon: <Trophy className="h-3 w-3" />,
+      icon: "/images/combat-master.webp",
       color: "bg-pink-500/20 text-pink-400 border-pink-500/50",
       requirement: "2200+ ELO",
     })
@@ -56,7 +54,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "ace",
       name: "Combat Ace",
-      icon: <Trophy className="h-3 w-3" />,
+      icon: "/images/combat-ace.svg",
       color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/50",
       requirement: "2000+ ELO",
     })
@@ -64,7 +62,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "specialist",
       name: "Combat Specialist",
-      icon: <Trophy className="h-3 w-3" />,
+      icon: "/images/combat-specialist.svg",
       color: "bg-blue-500/20 text-blue-400 border-blue-500/50",
       requirement: "1800+ ELO",
     })
@@ -72,7 +70,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "cadet",
       name: "Combat Cadet",
-      icon: <Trophy className="h-3 w-3" />,
+      icon: "/images/combat-cadet.svg",
       color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
       requirement: "1500+ ELO",
     })
@@ -80,7 +78,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "novice",
       name: "Combat Novice",
-      icon: <Trophy className="h-3 w-3" />,
+      icon: "/images/combat-novice.svg",
       color: "bg-gray-400/20 text-gray-300 border-gray-400/50",
       requirement: "1300+ ELO",
     })
@@ -88,28 +86,9 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "rookie",
       name: "Combat Rookie",
-      icon: <Trophy className="h-3 w-3" />,
+      icon: "/images/rookie.svg",
       color: "bg-orange-600/20 text-orange-400 border-orange-600/50",
       requirement: "<1300 ELO",
-    })
-  }
-
-  // Win streak badges
-  if (player.winStreak >= 10) {
-    badges.push({
-      id: "unstoppable",
-      name: "Unstoppable",
-      icon: <Trophy className="h-3 w-3" />,
-      color: "bg-red-500/20 text-red-400 border-red-500/50",
-      requirement: "10+ win streak",
-    })
-  } else if (player.winStreak >= 5) {
-    badges.push({
-      id: "onfire",
-      name: "On Fire",
-      icon: <Trophy className="h-3 w-3" />,
-      color: "bg-orange-500/20 text-orange-400 border-orange-500/50",
-      requirement: "5+ win streak",
     })
   }
 
@@ -486,31 +465,14 @@ export function LeaderboardTable({
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {getBadges(player).map((badge, index) => (
+                      {getBadges(player).map((badge) => (
                         <div
                           key={badge.id}
-                          className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 ${badge.color} ${
-                            badge.id === "grandmaster"
-                              ? "animate-pulse-glow"
-                              : badge.id === "master"
-                                ? "animate-shimmer-rotate"
-                                : badge.id === "ace"
-                                  ? "animate-bounce-subtle"
-                                  : badge.id === "specialist"
-                                    ? "animate-shake"
-                                    : badge.id === "cadet"
-                                      ? "animate-flame"
-                                      : badge.id === "novice"
-                                        ? "animate-fade-in"
-                                        : "animate-fade-in"
-                          }`}
-                          style={{
-                            animationDelay: `${index * 0.1}s`,
-                          }}
+                          className={`flex items-center gap-2 rounded-full border px-3 py-1.5 ${badge.color}`}
                           title={badge.requirement}
                         >
-                          {badge.icon}
-                          <span className="text-xs font-semibold">{badge.name}</span>
+                          <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-4 w-4" />
+                          <span className="text-xs font-medium">{badge.name}</span>
                         </div>
                       ))}
                     </div>
