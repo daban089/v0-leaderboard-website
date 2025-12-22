@@ -274,6 +274,21 @@ export function LeaderboardTable({
     <div>
       <div className="flex items-end mb-4">
         <button
+          onClick={() => onKitChange?.("high-tiers")}
+          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+            kit === "high-tiers"
+              ? "text-white opacity-100"
+              : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+          }`}
+        >
+          <div className="relative">
+            <Trophy className="h-5 w-5" />
+            <div className="absolute -top-1 -right-1 h-2 w-2 bg-amber-500 rounded-full animate-pulse" />
+          </div>
+          <span className="text-xs font-medium">High Tiers</span>
+        </button>
+
+        <button
           onClick={() => onKitChange?.("all")}
           className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
             kit === "all"
