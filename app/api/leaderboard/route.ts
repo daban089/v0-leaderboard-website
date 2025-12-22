@@ -76,7 +76,6 @@ export async function GET(request: Request) {
           let elo = 1000
 
           if (kit === "all") {
-            // Calculate global ELO as average of all kit ELOs (one value per kit, not per ranked/unranked)
             const kits = [
               { base: "sword", ranked: "swordelo" },
               { base: "axe", ranked: "axeelo" },
@@ -86,6 +85,8 @@ export async function GET(request: Request) {
             const kitElos: number[] = []
 
             for (const kit of kits) {
+              let foundElo = false
+
               // Try ranked first, then unranked
               const [rankedRows] = await connection.execute<any[]>(
                 `SELECT fp.player_data 
@@ -104,41 +105,47 @@ export async function GET(request: Request) {
                   const data = JSON.parse((rankedRows[0] as any).player_data)
                   const kitElo = data.newElo || data.oldElo || 1000
                   kitElos.push(kitElo)
-                  continue
+                  foundElo = true
                 } catch (e) {
                   // Ignore parse errors
                 }
               }
 
               // Try unranked if ranked doesn't exist
-              const [unrankedRows] = await connection.execute<any[]>(
-                `SELECT fp.player_data 
-               FROM fight_players fp 
-               INNER JOIN fights f ON fp.fight = f.started
-               WHERE fp.username = ? 
-               AND f.mode = 'DUEL_QUEUE_RANKED'
-               AND f.kit = ?
-               ORDER BY fp.id DESC 
-               LIMIT 1`,
-                [player.username, kit.base],
-              )
+              if (!foundElo) {
+                const [unrankedRows] = await connection.execute<any[]>(
+                  `SELECT fp.player_data 
+                 FROM fight_players fp 
+                 INNER JOIN fights f ON fp.fight = f.started
+                 WHERE fp.username = ? 
+                 AND f.mode = 'DUEL_QUEUE_RANKED'
+                 AND f.kit = ?
+                 ORDER BY fp.id DESC 
+                 LIMIT 1`,
+                  [player.username, kit.base],
+                )
 
-              if (unrankedRows.length > 0) {
-                try {
-                  const data = JSON.parse((unrankedRows[0] as any).player_data)
-                  const kitElo = data.newElo || data.oldElo || 1000
-                  kitElos.push(kitElo)
-                } catch (e) {
-                  // Ignore parse errors
+                if (unrankedRows.length > 0) {
+                  try {
+                    const data = JSON.parse((unrankedRows[0] as any).player_data)
+                    const kitElo = data.newElo || data.oldElo || 1000
+                    kitElos.push(kitElo)
+                    foundElo = true
+                  } catch (e) {
+                    // Ignore parse errors
+                  }
                 }
+              }
+
+              if (!foundElo) {
+                kitElos.push(1000)
               }
             }
 
             // Calculate average and floor it (Strike Practice formula)
-            if (kitElos.length > 0) {
-              const sum = kitElos.reduce((a, b) => a + b, 0)
-              elo = Math.floor(sum / kitElos.length)
-            }
+            // Always averages exactly 4 kits (sword, axe, sumo, mace)
+            const sum = kitElos.reduce((a, b) => a + b, 0)
+            elo = Math.floor(sum / 4)
           } else {
             // Parse the latest player_data JSON to get current ELO for specific kit
             try {
