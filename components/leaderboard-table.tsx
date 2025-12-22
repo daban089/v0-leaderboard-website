@@ -296,7 +296,7 @@ export function LeaderboardTable({
             setMode("high-tiers")
             onKitChange?.(undefined)
           }}
-          className={`relative flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 overflow-hidden ${
+          className={`relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
             mode === "high-tiers"
               ? "bg-gradient-to-r from-red-950/90 via-red-900/90 to-red-950/90 text-red-100 shadow-lg shadow-red-900/70 border border-red-800/60 backdrop-blur-xl crimson-glow"
               : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
@@ -310,7 +310,7 @@ export function LeaderboardTable({
             alt="High Tiers"
             width={64}
             height={64}
-            className="relative z-10 pixelated"
+            className="h-6 w-6 relative z-10 pixelated"
           />
           <span className="relative z-10">High Tiers</span>
           {mode === "high-tiers" && <div className="h-2 w-2 bg-red-700 rounded-full animate-pulse relative z-10" />}
@@ -321,13 +321,13 @@ export function LeaderboardTable({
             setMode("ranked")
             onKitChange?.("all")
           }}
-          className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+          className={`flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
             mode === "ranked"
               ? "bg-card text-foreground border-2 border-primary"
               : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
           }`}
         >
-          <Trophy className="h-5 w-5" />
+          <Image src="/images/fire-focus-icon.png" alt="Ranked" width={64} height={64} className="h-6 w-6 pixelated" />
           <span>Ranked</span>
         </button>
       </div>
