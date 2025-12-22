@@ -115,6 +115,7 @@ export function LeaderboardTable({
   const [gamemodeElos, setGamemodeElos] = useState<{ sword: number; axe: number; sumo: number; mace: number } | null>(
     null,
   )
+  const [hasPlayedCoinDrop, setHasPlayedCoinDrop] = useState<Set<string>>(new Set())
 
   const fetchLeaderboard = async () => {
     try {
@@ -370,6 +371,11 @@ export function LeaderboardTable({
                     : "hover:translate-x-1 hover:shadow-md"
                 }`}
                 onClick={() => handlePlayerClick(player)}
+                onMouseEnter={() => {
+                  if (player.rank === 1 && !hasPlayedCoinDrop.has(player.username)) {
+                    setHasPlayedCoinDrop((prev) => new Set(prev).add(player.username))
+                  }
+                }}
                 style={
                   player.rank <= 3 || player.rank > 3
                     ? {
@@ -381,6 +387,24 @@ export function LeaderboardTable({
                     : undefined
                 }
               >
+                {player.rank === 1 && hasPlayedCoinDrop.has(player.username) && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {[...Array(8)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="absolute animate-coin-drop"
+                        style={{
+                          left: `${20 + i * 10}%`,
+                          animationDelay: `${i * 0.1}s`,
+                          animationDuration: "1s",
+                        }}
+                      >
+                        <div className="text-3xl">🪙</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
                   <span
                     className="absolute left-0 text-5xl font-black italic font-sans text-white z-10"
@@ -403,10 +427,25 @@ export function LeaderboardTable({
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {getBadges(player).map((badge) => (
+                      {getBadges(player).map((badge, index) => (
                         <div
                           key={badge.id}
-                          className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 ${badge.color}`}
+                          className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 ${badge.color} ${
+                            badge.id === "master"
+                              ? "animate-pulse-glow"
+                              : badge.id === "diamond"
+                                ? "animate-shimmer-rotate"
+                                : badge.id === "gold"
+                                  ? "animate-bounce-subtle"
+                                  : badge.id === "unstoppable"
+                                    ? "animate-shake"
+                                    : badge.id === "onfire"
+                                      ? "animate-flame"
+                                      : "animate-fade-in"
+                          }`}
+                          style={{
+                            animationDelay: `${index * 0.1}s`,
+                          }}
                           title={badge.requirement}
                         >
                           {badge.icon}
