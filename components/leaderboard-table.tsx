@@ -5,6 +5,7 @@ import type React from "react"
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Trophy } from "lucide-react"
+import { PlayerModal } from "./player-modal"
 
 interface Player {
   rank: number
@@ -109,6 +110,8 @@ export function LeaderboardTable({
   const [searchQuery, setSearchQuery] = useState(externalSearchQuery || "")
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [availableKits, setAvailableKits] = useState<string[]>(["all"])
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const fetchLeaderboard = async () => {
     try {
@@ -231,6 +234,16 @@ export function LeaderboardTable({
     return kitName.charAt(0).toUpperCase() + kitName.slice(1)
   }
 
+  const handlePlayerClick = (player: Player) => {
+    setSelectedPlayer(player)
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setTimeout(() => setSelectedPlayer(null), 200)
+  }
+
   if (loading) {
     return (
       <Card>
@@ -335,7 +348,8 @@ export function LeaderboardTable({
             {filteredPlayers.map((player) => (
               <div
                 key={player.username}
-                className="relative flex items-center gap-6 rounded-xl border border-border overflow-hidden p-4 transition-all hover:scale-[1.01] hover:shadow-lg"
+                className="relative flex items-center gap-6 rounded-xl border border-border overflow-hidden p-4 transition-all hover:scale-[1.01] hover:shadow-lg cursor-pointer select-none"
+                onClick={() => handlePlayerClick(player)}
                 style={
                   player.rank <= 3 || player.rank > 3
                     ? {
@@ -404,6 +418,21 @@ export function LeaderboardTable({
           </div>
         </CardContent>
       </Card>
+
+      {selectedPlayer && (
+        <PlayerModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          player={{
+            username: selectedPlayer.username,
+            elo: selectedPlayer.elo,
+            wins: selectedPlayer.wins,
+            losses: selectedPlayer.losses,
+            rank: selectedPlayer.rank,
+            winStreak: selectedPlayer.winStreak,
+          }}
+        />
+      )}
     </div>
   )
 }
