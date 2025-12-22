@@ -145,14 +145,13 @@ export function PlayerModal({ isOpen, onClose, player }: PlayerModalProps) {
         <div className="p-8">
           {/* 3D Skin Render */}
           <div className="flex flex-col items-center mb-6">
-            <div className="relative w-64 h-64 rounded-full overflow-hidden bg-muted/20 border-4 border-border mb-4">
+            <div className="relative w-64 h-96 flex items-center justify-center mb-4">
               <iframe
                 ref={iframeRef}
-                src={`https://visage.surgeplay.com/full/512/${player.username}`}
-                className="w-full h-full scale-150"
+                src={`https://render.crafty.gg/3d/fullbody/${player.username}`}
+                className="w-full h-full"
                 style={{
                   border: "none",
-                  animation: "slowRotate 20s linear infinite",
                 }}
                 title={`${player.username} skin`}
               />
