@@ -194,7 +194,7 @@ export function LeaderboardTable({
     if (kitName === "sword")
       return (
         <img
-          src="/images/diamond-sword.jpg"
+          src="/images/diamond-sword.png"
           alt="Sword"
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
@@ -202,7 +202,7 @@ export function LeaderboardTable({
     if (kitName === "axe")
       return (
         <img
-          src="/images/diamond-axe.jpg"
+          src="/images/diamond-axe.png"
           alt="Axe"
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
@@ -210,7 +210,7 @@ export function LeaderboardTable({
     if (kitName === "sumo")
       return (
         <img
-          src="/images/lead.jpg"
+          src="/images/lead.png"
           alt="Lead"
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
@@ -218,7 +218,7 @@ export function LeaderboardTable({
     if (kitName === "mace")
       return (
         <img
-          src="/images/mace.jpg"
+          src="/images/mace.png"
           alt="Mace"
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
@@ -270,7 +270,7 @@ export function LeaderboardTable({
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <img src="/images/diamond-sword.jpg" alt="Sword" className="h-8 w-8 object-contain" />
+          <img src="/images/diamond-sword.png" alt="Sword" className="h-8 w-8 object-contain" />
           <span className="text-xs font-medium">Sword</span>
         </button>
 
@@ -282,7 +282,7 @@ export function LeaderboardTable({
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <img src="/images/diamond-axe.jpg" alt="Axe" className="h-8 w-8 object-contain" />
+          <img src="/images/diamond-axe.png" alt="Axe" className="h-8 w-8 object-contain" />
           <span className="text-xs font-medium">Axe</span>
         </button>
 
@@ -294,7 +294,7 @@ export function LeaderboardTable({
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <img src="/images/lead.jpg" alt="Lead" className="h-8 w-8 object-contain" />
+          <img src="/images/lead.png" alt="Lead" className="h-8 w-8 object-contain" />
           <span className="text-xs font-medium">Sumo</span>
         </button>
 
@@ -306,7 +306,7 @@ export function LeaderboardTable({
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <img src="/images/mace.jpg" alt="Mace" className="h-8 w-8 object-contain" />
+          <img src="/images/mace.png" alt="Mace" className="h-8 w-8 object-contain" />
           <span className="text-xs font-medium">Mace</span>
         </button>
       </div>
