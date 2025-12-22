@@ -109,6 +109,15 @@ export function LeaderboardTable({
   const [gamemodeElos, setGamemodeElos] = useState<{ sword: number; axe: number; sumo: number; mace: number } | null>(
     null,
   )
+  const [mode, setMode] = useState<"high-tiers" | "ranked">(kit === "high-tiers" ? "high-tiers" : "ranked")
+
+  useEffect(() => {
+    if (kit === "high-tiers") {
+      setMode("high-tiers")
+    } else {
+      setMode("ranked")
+    }
+  }, [kit])
 
   const fetchLeaderboard = async () => {
     try {
@@ -272,248 +281,285 @@ export function LeaderboardTable({
 
   return (
     <div>
-      <div className="flex items-end mb-4">
+      <div className="flex gap-3 mb-6">
         <button
-          onClick={() => onKitChange?.("high-tiers")}
-          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
-            kit === "high-tiers"
-              ? "text-white opacity-100"
-              : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
-          }`}
-        >
-          <div className="relative">
-            <Trophy className="h-5 w-5" />
-            <div className="absolute -top-1 -right-1 h-2 w-2 bg-amber-500 rounded-full animate-pulse" />
-          </div>
-          <span className="text-xs font-medium">High Tiers</span>
-        </button>
-
-        <button
-          onClick={() => onKitChange?.("all")}
-          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
-            kit === "all"
-              ? "text-white opacity-100"
-              : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+          onClick={() => {
+            setMode("high-tiers")
+            onKitChange?.("high-tiers")
+          }}
+          className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+            mode === "high-tiers"
+              ? "bg-gradient-to-r from-amber-500 to-yellow-600 text-white shadow-lg shadow-amber-500/50"
+              : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
           }`}
         >
           <Trophy className="h-5 w-5" />
-          <span className="text-xs font-medium">Overall</span>
+          <span>High Tiers</span>
+          {mode === "high-tiers" && <div className="h-2 w-2 bg-white rounded-full animate-pulse" />}
         </button>
 
         <button
-          onClick={() => onKitChange?.("sword")}
-          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
-            kit === "sword"
-              ? "text-white opacity-100"
-              : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+          onClick={() => {
+            setMode("ranked")
+            onKitChange?.("all")
+          }}
+          className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
+            mode === "ranked"
+              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/50"
+              : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
           }`}
         >
-          <img src="/images/diamond-sword.png" alt="Sword" className="h-8 w-8 object-contain" />
-          <span className="text-xs font-medium">Sword</span>
-        </button>
-
-        <button
-          onClick={() => onKitChange?.("axe")}
-          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
-            kit === "axe"
-              ? "text-white opacity-100"
-              : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
-          }`}
-        >
-          <img src="/images/diamond-axe.png" alt="Axe" className="h-8 w-8 object-contain" />
-          <span className="text-xs font-medium">Axe</span>
-        </button>
-
-        <button
-          onClick={() => onKitChange?.("sumo")}
-          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
-            kit === "sumo"
-              ? "text-white opacity-100"
-              : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
-          }`}
-        >
-          <img src="/images/lead.png" alt="Lead" className="h-8 w-8 object-contain" />
-          <span className="text-xs font-medium">Sumo</span>
-        </button>
-
-        <button
-          onClick={() => onKitChange?.("mace")}
-          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
-            kit === "mace"
-              ? "text-white opacity-100"
-              : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
-          }`}
-        >
-          <img src="/images/mace.png" alt="Mace" className="h-8 w-8 object-contain" />
-          <span className="text-xs font-medium">Mace</span>
+          <Trophy className="h-5 w-5" />
+          <span>Ranked</span>
+          {mode === "ranked" && <div className="h-2 w-2 bg-white rounded-full animate-pulse" />}
         </button>
       </div>
 
-      <Card className="overflow-hidden rounded-t-none border-t-0">
-        <CardHeader className="p-0 h-8">
-          <div className="flex items-center gap-6 px-4 h-full">
-            <div className="h-full w-[240px] flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider ml-4 leading-none">
-                #
-              </span>
+      {mode === "ranked" && (
+        <div className="flex items-end mb-4">
+          <button
+            onClick={() => onKitChange?.("all")}
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+              kit === "all"
+                ? "text-white opacity-100"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+            }`}
+          >
+            <Trophy className="h-5 w-5" />
+            <span className="text-xs font-medium">Overall</span>
+          </button>
+
+          <button
+            onClick={() => onKitChange?.("sword")}
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+              kit === "sword"
+                ? "text-white opacity-100"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+            }`}
+          >
+            <img src="/images/diamond-sword.png" alt="Sword" className="h-8 w-8 object-contain" />
+            <span className="text-xs font-medium">Sword</span>
+          </button>
+
+          <button
+            onClick={() => onKitChange?.("axe")}
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+              kit === "axe"
+                ? "text-white opacity-100"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+            }`}
+          >
+            <img src="/images/diamond-axe.png" alt="Axe" className="h-8 w-8 object-contain" />
+            <span className="text-xs font-medium">Axe</span>
+          </button>
+
+          <button
+            onClick={() => onKitChange?.("sumo")}
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+              kit === "sumo"
+                ? "text-white opacity-100"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+            }`}
+          >
+            <img src="/images/lead.png" alt="Lead" className="h-8 w-8 object-contain" />
+            <span className="text-xs font-medium">Sumo</span>
+          </button>
+
+          <button
+            onClick={() => onKitChange?.("mace")}
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+              kit === "mace"
+                ? "text-white opacity-100"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+            }`}
+          >
+            <img src="/images/mace.png" alt="Mace" className="h-8 w-8 object-contain" />
+            <span className="text-xs font-medium">Mace</span>
+          </button>
+        </div>
+      )}
+
+      {mode === "high-tiers" ? (
+        <Card className="overflow-hidden">
+          <CardHeader>
+            <CardTitle className="text-3xl font-black bg-gradient-to-r from-amber-400 to-yellow-600 bg-clip-text text-transparent">
+              High Tiers
+            </CardTitle>
+            <CardDescription>Manually curated top players tested by staff</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">High Tiers content coming soon...</p>
             </div>
-            <div className="flex flex-1 items-center justify-between gap-4">
-              <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
-                PLAYER
-              </span>
-              <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
-                STATS
-              </span>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="overflow-hidden rounded-t-none border-t-0">
+          <CardHeader className="p-0 h-8">
+            <div className="flex items-center gap-6 px-4 h-full">
+              <div className="h-full w-[240px] flex-shrink-0 flex items-center">
+                <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider ml-4 leading-none">
+                  #
+                </span>
+              </div>
+              <div className="flex flex-1 items-center justify-between gap-4">
+                <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
+                  PLAYER
+                </span>
+                <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
+                  STATS
+                </span>
+              </div>
             </div>
-          </div>
-        </CardHeader>
+          </CardHeader>
 
-        <CardContent className="p-4 pt-0">
-          <div className="space-y-4">
-            {filteredPlayers.map((player) => (
-              <div
-                key={player.username}
-                className={`relative flex items-center gap-6 rounded-xl border overflow-hidden p-4 select-none transition-all duration-300 ${
-                  player.rank === 1
-                    ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
-                    : player.rank === 2
-                      ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
-                      : player.rank === 3
-                        ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
-                        : kit === "all"
-                          ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
-                          : "border-border hover:translate-x-1 hover:shadow-md"
-                }`}
-                onClick={() => handlePlayerClick(player)}
-                style={
-                  player.rank <= 3 || player.rank > 3
-                    ? {
-                        backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
-                        backgroundSize: "240px 80px",
-                        backgroundPosition: "left center",
-                        backgroundRepeat: "no-repeat",
-                      }
-                    : undefined
-                }
-              >
-                {player.rank === 1 && (
-                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {[...Array(12)].map((_, i) => (
-                      <div
-                        key={`fire-${i}`}
-                        className="absolute animate-fire-rise"
-                        style={{
-                          left: `${5 + Math.random() * 90}%`,
-                          bottom: `${-10}px`,
-                          animationDelay: `${Math.random() * 3}s`,
-                          animationDuration: `${3 + Math.random() * 2}s`,
-                        }}
-                      >
-                        <div className="fire-particle" />
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {player.rank === 2 && (
-                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {[...Array(12)].map((_, i) => (
-                      <div
-                        key={`silver-${i}`}
-                        className="absolute animate-silver-rise"
-                        style={{
-                          left: `${5 + Math.random() * 90}%`,
-                          bottom: `${-10}px`,
-                          animationDelay: `${Math.random() * 3}s`,
-                          animationDuration: `${3 + Math.random() * 2}s`,
-                        }}
-                      >
-                        <div className="silver-particle" />
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {player.rank === 3 && (
-                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {[...Array(12)].map((_, i) => (
-                      <div
-                        key={`bronze-${i}`}
-                        className="absolute animate-bronze-rise"
-                        style={{
-                          left: `${5 + Math.random() * 90}%`,
-                          bottom: `${-10}px`,
-                          animationDelay: `${Math.random() * 3}s`,
-                          animationDuration: `${3 + Math.random() * 2}s`,
-                        }}
-                      >
-                        <div className="bronze-particle" />
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
-                  <span
-                    className="absolute left-0 text-5xl font-black italic font-sans z-10 text-white"
-                    style={{
-                      textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
-                    }}
-                  >
-                    {player.rank}.
-                  </span>
-                  <img
-                    src={getAvatarUrl(player.username) || "/placeholder.svg"}
-                    alt={player.username}
-                    className="absolute right-14 h-[88px] w-[88px] object-contain z-10"
-                    style={{
-                      filter: "drop-shadow(-4px 0px 0.8px rgba(0,0,0,0.3))",
-                    }}
-                    onError={(e) => {
-                      e.currentTarget.src = "/placeholder.svg?height=88&width=88"
-                    }}
-                  />
-                </div>
-
-                <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {getBadges(player).map((badge) => (
+          <CardContent className="p-4 pt-0">
+            <div className="space-y-4">
+              {filteredPlayers.map((player) => (
+                <div
+                  key={player.username}
+                  className={`relative flex items-center gap-6 rounded-xl border overflow-hidden p-4 select-none transition-all duration-300 ${
+                    player.rank === 1
+                      ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
+                      : player.rank === 2
+                        ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
+                        : player.rank === 3
+                          ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
+                          : kit === "all"
+                            ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
+                            : "border-border hover:translate-x-1 hover:shadow-md"
+                  }`}
+                  onClick={() => handlePlayerClick(player)}
+                  style={
+                    player.rank <= 3 || player.rank > 3
+                      ? {
+                          backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
+                          backgroundSize: "240px 80px",
+                          backgroundPosition: "left center",
+                          backgroundRepeat: "no-repeat",
+                        }
+                      : undefined
+                  }
+                >
+                  {player.rank === 1 && (
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      {[...Array(12)].map((_, i) => (
                         <div
-                          key={badge.id}
-                          className={`flex items-center gap-2 ${badge.color}`}
-                          title={badge.requirement}
+                          key={`fire-${i}`}
+                          className="absolute animate-fire-rise"
+                          style={{
+                            left: `${5 + Math.random() * 90}%`,
+                            bottom: `${-10}px`,
+                            animationDelay: `${Math.random() * 3}s`,
+                            animationDuration: `${3 + Math.random() * 2}s`,
+                          }}
                         >
-                          <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-6 w-6" />
-                          <span className="text-sm font-medium">{badge.name}</span>
+                          <div className="fire-particle" />
                         </div>
                       ))}
                     </div>
+                  )}
+
+                  {player.rank === 2 && (
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      {[...Array(12)].map((_, i) => (
+                        <div
+                          key={`silver-${i}`}
+                          className="absolute animate-silver-rise"
+                          style={{
+                            left: `${5 + Math.random() * 90}%`,
+                            bottom: `${-10}px`,
+                            animationDelay: `${Math.random() * 3}s`,
+                            animationDuration: `${3 + Math.random() * 2}s`,
+                          }}
+                        >
+                          <div className="silver-particle" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {player.rank === 3 && (
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      {[...Array(12)].map((_, i) => (
+                        <div
+                          key={`bronze-${i}`}
+                          className="absolute animate-bronze-rise"
+                          style={{
+                            left: `${5 + Math.random() * 90}%`,
+                            bottom: `${-10}px`,
+                            animationDelay: `${Math.random() * 3}s`,
+                            animationDuration: `${3 + Math.random() * 2}s`,
+                          }}
+                        >
+                          <div className="bronze-particle" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
+                    <span
+                      className="absolute left-0 text-5xl font-black italic font-sans z-10 text-white"
+                      style={{
+                        textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
+                      }}
+                    >
+                      {player.rank}.
+                    </span>
+                    <img
+                      src={getAvatarUrl(player.username) || "/placeholder.svg"}
+                      alt={player.username}
+                      className="absolute right-14 h-[88px] w-[88px] object-contain z-10"
+                      style={{
+                        filter: "drop-shadow(-4px 0px 0.8px rgba(0,0,0,0.3))",
+                      }}
+                      onError={(e) => {
+                        e.currentTarget.src = "/placeholder.svg?height=88&width=88"
+                      }}
+                    />
                   </div>
 
-                  <div className="flex flex-col gap-2 items-end">
-                    <div className="flex items-center gap-2">
-                      <span className="text-3xl font-black text-white">{player.elo}</span>
-                      <span className="text-sm text-muted-foreground">ELO</span>
+                  <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {getBadges(player).map((badge) => (
+                          <div
+                            key={badge.id}
+                            className={`flex items-center gap-2 ${badge.color}`}
+                            title={badge.requirement}
+                          >
+                            <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-6 w-6" />
+                            <span className="text-sm font-medium">{badge.name}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="flex gap-3 text-sm">
-                      <span className="text-green-500 font-semibold">{player.wins}W</span>
-                      <span className="text-red-500 font-semibold">{player.losses}L</span>
+
+                    <div className="flex flex-col gap-2 items-end">
+                      <div className="flex items-center gap-2">
+                        <span className="text-3xl font-black text-white">{player.elo}</span>
+                        <span className="text-sm text-muted-foreground">ELO</span>
+                      </div>
+                      <div className="flex gap-3 text-sm">
+                        <span className="text-green-500 font-semibold">{player.wins}W</span>
+                        <span className="text-red-500 font-semibold">{player.losses}L</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
 
-            {filteredPlayers.length === 0 && !loading && (
-              <div className="py-12 text-center">
-                <p className="text-muted-foreground">No players found</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+              {filteredPlayers.length === 0 && !loading && (
+                <div className="py-12 text-center">
+                  <p className="text-muted-foreground">No players found</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {selectedPlayer && (
         <PlayerModal
