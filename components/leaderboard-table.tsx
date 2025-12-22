@@ -310,7 +310,7 @@ export function LeaderboardTable({
             alt="High Tiers"
             width={64}
             height={64}
-            className="h-6 w-6 relative z-10 pixelated"
+            className="h-8 w-8 relative z-10 pixelated"
           />
           <span className="relative z-10">High Tiers</span>
           {mode === "high-tiers" && <div className="h-2 w-2 bg-red-700 rounded-full animate-pulse relative z-10" />}
@@ -327,7 +327,7 @@ export function LeaderboardTable({
               : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
           }`}
         >
-          <Image src="/images/fire-focus-icon.png" alt="Ranked" width={64} height={64} className="h-6 w-6 pixelated" />
+          <Image src="/images/fire-focus-icon.png" alt="Ranked" width={64} height={64} className="h-8 w-8 pixelated" />
           <span>Ranked</span>
         </button>
       </div>
