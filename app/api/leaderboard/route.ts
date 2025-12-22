@@ -76,12 +76,18 @@ export async function GET(request: Request) {
           let elo = 1000
 
           if (kit === "all") {
-            // Calculate global ELO as average of all kit ELOs
-            const kits = ["sword", "swordelo", "axe", "axelo", "sumo", "sumoelo", "mace", "maceelo"]
+            // Calculate global ELO as average of all kit ELOs (one value per kit, not per ranked/unranked)
+            const kits = [
+              { base: "sword", ranked: "swordelo" },
+              { base: "axe", ranked: "axeelo" },
+              { base: "sumo", ranked: "sumoelo" },
+              { base: "mace", ranked: "maceelo" },
+            ]
             const kitElos: number[] = []
 
-            for (const kitName of kits) {
-              const [kitRows] = await connection.execute<any[]>(
+            for (const kit of kits) {
+              // Try ranked first, then unranked
+              const [rankedRows] = await connection.execute<any[]>(
                 `SELECT fp.player_data 
                FROM fight_players fp 
                INNER JOIN fights f ON fp.fight = f.started
@@ -90,28 +96,45 @@ export async function GET(request: Request) {
                AND f.kit = ?
                ORDER BY fp.id DESC 
                LIMIT 1`,
-                [player.username, kitName],
+                [player.username, kit.ranked],
               )
 
-              if (kitRows.length > 0) {
+              if (rankedRows.length > 0) {
                 try {
-                  const data = JSON.parse((kitRows[0] as any).player_data)
+                  const data = JSON.parse((rankedRows[0] as any).player_data)
                   const kitElo = data.newElo || data.oldElo || 1000
-                  // Only add if player has played this kit and has a unique ELO
-                  if (kitElo !== 1000 || kitRows.length > 0) {
-                    // Track unique kits by base name (sword/swordelo = same kit)
-                    const baseKit = kitName.replace("elo", "")
-                    if (!kitElos.some((_, idx) => kits[idx]?.replace("elo", "") === baseKit)) {
-                      kitElos.push(kitElo)
-                    }
-                  }
+                  kitElos.push(kitElo)
+                  continue
+                } catch (e) {
+                  // Ignore parse errors
+                }
+              }
+
+              // Try unranked if ranked doesn't exist
+              const [unrankedRows] = await connection.execute<any[]>(
+                `SELECT fp.player_data 
+               FROM fight_players fp 
+               INNER JOIN fights f ON fp.fight = f.started
+               WHERE fp.username = ? 
+               AND f.mode = 'DUEL_QUEUE_RANKED'
+               AND f.kit = ?
+               ORDER BY fp.id DESC 
+               LIMIT 1`,
+                [player.username, kit.base],
+              )
+
+              if (unrankedRows.length > 0) {
+                try {
+                  const data = JSON.parse((unrankedRows[0] as any).player_data)
+                  const kitElo = data.newElo || data.oldElo || 1000
+                  kitElos.push(kitElo)
                 } catch (e) {
                   // Ignore parse errors
                 }
               }
             }
 
-            // Calculate average and floor it
+            // Calculate average and floor it (Strike Practice formula)
             if (kitElos.length > 0) {
               const sum = kitElos.reduce((a, b) => a + b, 0)
               elo = Math.floor(sum / kitElos.length)

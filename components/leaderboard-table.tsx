@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Trophy, Crown, Medal, Target, TrendingUp, Flame } from "lucide-react"
+import { Trophy } from "lucide-react"
 
 interface Player {
   rank: number
@@ -39,7 +39,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "master",
       name: "Master",
-      icon: <Crown className="h-3 w-3" />,
+      icon: <Trophy className="h-3 w-3" />,
       color: "bg-purple-500/20 text-purple-400 border-purple-500/50",
       requirement: "1800+ ELO",
     })
@@ -55,7 +55,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "gold",
       name: "Gold",
-      icon: <Medal className="h-3 w-3" />,
+      icon: <Trophy className="h-3 w-3" />,
       color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
       requirement: "1400+ ELO",
     })
@@ -63,7 +63,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "silver",
       name: "Silver",
-      icon: <Target className="h-3 w-3" />,
+      icon: <Trophy className="h-3 w-3" />,
       color: "bg-gray-400/20 text-gray-300 border-gray-400/50",
       requirement: "1200+ ELO",
     })
@@ -71,7 +71,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "bronze",
       name: "Bronze",
-      icon: <TrendingUp className="h-3 w-3" />,
+      icon: <Trophy className="h-3 w-3" />,
       color: "bg-orange-600/20 text-orange-400 border-orange-600/50",
       requirement: "1000+ ELO",
     })
@@ -82,7 +82,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "unstoppable",
       name: "Unstoppable",
-      icon: <Flame className="h-3 w-3" />,
+      icon: <Trophy className="h-3 w-3" />,
       color: "bg-red-500/20 text-red-400 border-red-500/50",
       requirement: "10+ win streak",
     })
@@ -90,7 +90,7 @@ const getBadges = (player: Player): Badge[] => {
     badges.push({
       id: "onfire",
       name: "On Fire",
-      icon: <Flame className="h-3 w-3" />,
+      icon: <Trophy className="h-3 w-3" />,
       color: "bg-orange-500/20 text-orange-400 border-orange-500/50",
       requirement: "5+ win streak",
     })
@@ -162,8 +162,8 @@ export function LeaderboardTable({
   }
 
   const getRankIcon = (rank: number) => {
-    if (rank === 1) return <Crown className="h-4 w-4" />
-    if (rank === 2) return <Medal className="h-4 w-4" />
+    if (rank === 1) return <Trophy className="h-4 w-4" />
+    if (rank === 2) return <Trophy className="h-4 w-4" />
     if (rank === 3) return <Trophy className="h-4 w-4" />
     return null
   }
@@ -191,9 +191,38 @@ export function LeaderboardTable({
 
   const getKitIcon = (kitName: string) => {
     if (kitName === "all") return <Trophy className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
-    if (kitName === "sword") return <Target className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
-    if (kitName === "axe") return <Flame className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
-    if (kitName === "sumo") return <TrendingUp className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
+    if (kitName === "sword")
+      return (
+        <img
+          src="/images/diamond-sword.jpg"
+          alt="Sword"
+          className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
+        />
+      )
+    if (kitName === "axe")
+      return (
+        <img
+          src="/images/diamond-axe.jpg"
+          alt="Axe"
+          className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
+        />
+      )
+    if (kitName === "sumo")
+      return (
+        <img
+          src="/images/lead.jpg"
+          alt="Lead"
+          className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
+        />
+      )
+    if (kitName === "mace")
+      return (
+        <img
+          src="/images/mace.jpg"
+          alt="Mace"
+          className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
+        />
+      )
     return <Trophy className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
   }
 
@@ -241,7 +270,7 @@ export function LeaderboardTable({
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <Target className="h-5 w-5" />
+          <img src="/images/diamond-sword.jpg" alt="Sword" className="h-8 w-8 object-contain" />
           <span className="text-xs font-medium">Sword</span>
         </button>
 
@@ -253,7 +282,7 @@ export function LeaderboardTable({
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <Flame className="h-5 w-5" />
+          <img src="/images/diamond-axe.jpg" alt="Axe" className="h-8 w-8 object-contain" />
           <span className="text-xs font-medium">Axe</span>
         </button>
 
@@ -265,8 +294,20 @@ export function LeaderboardTable({
               : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
           }`}
         >
-          <TrendingUp className="h-5 w-5" />
+          <img src="/images/lead.jpg" alt="Lead" className="h-8 w-8 object-contain" />
           <span className="text-xs font-medium">Sumo</span>
+        </button>
+
+        <button
+          onClick={() => onKitChange?.("mace")}
+          className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+            kit === "mace"
+              ? "text-white opacity-100"
+              : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+          }`}
+        >
+          <img src="/images/mace.jpg" alt="Mace" className="h-8 w-8 object-contain" />
+          <span className="text-xs font-medium">Mace</span>
         </button>
       </div>
 
@@ -353,7 +394,7 @@ export function LeaderboardTable({
                     </div>
                     {player.winStreak > 0 && (
                       <div className="flex items-center gap-1 text-orange-500">
-                        <Flame className="h-3 w-3" />
+                        <Trophy className="h-3 w-3" />
                         <span className="text-xs font-semibold">{player.winStreak} streak</span>
                       </div>
                     )}
