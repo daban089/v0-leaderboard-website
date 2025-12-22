@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Trophy } from "lucide-react"
+import { Trophy, ImageIcon } from "lucide-react"
 import { PlayerModal } from "./player-modal"
 
 interface Player {
@@ -19,7 +19,7 @@ interface Player {
 interface LeaderboardTableProps {
   kit?: string
   searchQuery?: string
-  onKitChange?: (kit: string) => void
+  onKitChange?: (kit: string | undefined) => void
 }
 
 interface Badge {
@@ -202,7 +202,7 @@ export function LeaderboardTable({
     if (kitName === "all") return <Trophy className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
     if (kitName === "sword")
       return (
-        <img
+        <ImageIcon
           src="/images/diamond-sword.png"
           alt="Sword"
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
@@ -210,7 +210,7 @@ export function LeaderboardTable({
       )
     if (kitName === "axe")
       return (
-        <img
+        <ImageIcon
           src="/images/diamond-axe.png"
           alt="Axe"
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
@@ -218,7 +218,7 @@ export function LeaderboardTable({
       )
     if (kitName === "sumo")
       return (
-        <img
+        <ImageIcon
           src="/images/lead.png"
           alt="Lead"
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
@@ -226,7 +226,7 @@ export function LeaderboardTable({
       )
     if (kitName === "mace")
       return (
-        <img
+        <ImageIcon
           src="/images/mace.png"
           alt="Mace"
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
@@ -285,7 +285,7 @@ export function LeaderboardTable({
         <button
           onClick={() => {
             setMode("high-tiers")
-            onKitChange?.("high-tiers")
+            onKitChange?.(undefined)
           }}
           className={`relative flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 overflow-hidden ${
             mode === "high-tiers"
@@ -296,7 +296,13 @@ export function LeaderboardTable({
           {mode === "high-tiers" && (
             <div className="absolute inset-0 bg-gradient-to-br from-red-800/20 via-transparent to-transparent pointer-events-none" />
           )}
-          <Trophy className="h-5 w-5 relative z-10" />
+          <ImageIcon
+            src="/images/reckless-icon.png"
+            alt="High Tiers"
+            width={20}
+            height={20}
+            className="relative z-10"
+          />
           <span className="relative z-10">High Tiers</span>
           {mode === "high-tiers" && <div className="h-2 w-2 bg-red-700 rounded-full animate-pulse relative z-10" />}
         </button>
@@ -339,7 +345,7 @@ export function LeaderboardTable({
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            <img src="/images/diamond-sword.png" alt="Sword" className="h-8 w-8 object-contain" />
+            <ImageIcon src="/images/diamond-sword.png" alt="Sword" className="h-8 w-8 object-contain" />
             <span className="text-xs font-medium">Sword</span>
           </button>
 
@@ -351,7 +357,7 @@ export function LeaderboardTable({
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            <img src="/images/diamond-axe.png" alt="Axe" className="h-8 w-8 object-contain" />
+            <ImageIcon src="/images/diamond-axe.png" alt="Axe" className="h-8 w-8 object-contain" />
             <span className="text-xs font-medium">Axe</span>
           </button>
 
@@ -363,7 +369,7 @@ export function LeaderboardTable({
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            <img src="/images/lead.png" alt="Lead" className="h-8 w-8 object-contain" />
+            <ImageIcon src="/images/lead.png" alt="Lead" className="h-8 w-8 object-contain" />
             <span className="text-xs font-medium">Sumo</span>
           </button>
 
@@ -375,7 +381,7 @@ export function LeaderboardTable({
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            <img src="/images/mace.png" alt="Mace" className="h-8 w-8 object-contain" />
+            <ImageIcon src="/images/mace.png" alt="Mace" className="h-8 w-8 object-contain" />
             <span className="text-xs font-medium">Mace</span>
           </button>
         </div>
