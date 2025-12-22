@@ -199,17 +199,6 @@
     }
   }
 
-  @keyframes coin-drop {
-    0% {
-      transform: translateY(-100px) rotate(0deg);
-      opacity: 1;
-    }
-    100% {
-      transform: translateY(400px) rotate(720deg);
-      opacity: 0;
-    }
-  }
-
   .animate-pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite;
   }
@@ -232,10 +221,6 @@
 
   .animate-fade-in {
     animation: fade-in 0.6s ease-out forwards;
-  }
-
-  .animate-coin-drop {
-    animation: coin-drop 1s ease-in forwards;
   }
 
   /* Simplified rank 1 glow animation */

@@ -115,7 +115,6 @@ export function LeaderboardTable({
   const [gamemodeElos, setGamemodeElos] = useState<{ sword: number; axe: number; sumo: number; mace: number } | null>(
     null,
   )
-  const [hasPlayedCoinDrop, setHasPlayedCoinDrop] = useState<Set<string>>(new Set())
 
   const fetchLeaderboard = async () => {
     try {
@@ -373,11 +372,6 @@ export function LeaderboardTable({
                       : "border-border hover:translate-x-1 hover:shadow-md"
                 }`}
                 onClick={() => handlePlayerClick(player)}
-                onMouseEnter={() => {
-                  if (player.rank === 1 && !hasPlayedCoinDrop.has(player.username)) {
-                    setHasPlayedCoinDrop((prev) => new Set(prev).add(player.username))
-                  }
-                }}
                 style={
                   player.rank <= 3 || player.rank > 3
                     ? {
@@ -390,41 +384,19 @@ export function LeaderboardTable({
                 }
               >
                 {player.rank === 1 && (
-                  <>
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                      {[...Array(15)].map((_, i) => (
-                        <div
-                          key={`sparkle-${i}`}
-                          className="absolute animate-sparkle"
-                          style={{
-                            left: `${Math.random() * 100}%`,
-                            top: `${Math.random() * 100}%`,
-                            animationDelay: `${Math.random() * 3}s`,
-                            animationDuration: `${2 + Math.random() * 2}s`,
-                          }}
-                        >
-                          <div className="text-yellow-400 text-xs">✨</div>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-
-                {player.rank === 1 && hasPlayedCoinDrop.has(player.username) && (
-                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {[...Array(20)].map((_, i) => (
+                  <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    {[...Array(15)].map((_, i) => (
                       <div
-                        key={i}
-                        className="absolute animate-coin-drop"
+                        key={`sparkle-${i}`}
+                        className="absolute animate-sparkle"
                         style={{
-                          left: `${10 + i * 4.5}%`,
-                          animationDelay: `${i * 0.05}s`,
-                          animationDuration: `${0.8 + Math.random() * 0.4}s`,
+                          left: `${Math.random() * 100}%`,
+                          top: `${Math.random() * 100}%`,
+                          animationDelay: `${Math.random() * 3}s`,
+                          animationDuration: `${2 + Math.random() * 2}s`,
                         }}
                       >
-                        <div className="text-3xl drop-shadow-[0_0_8px_rgba(234,179,8,1)]">
-                          {i % 3 === 0 ? "🪙" : i % 3 === 1 ? "💰" : "✨"}
-                        </div>
+                        <div className="text-yellow-400 text-xs">✨</div>
                       </div>
                     ))}
                   </div>
