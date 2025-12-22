@@ -38,7 +38,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
       id: "grandmaster",
       name: "Combat Grandmaster",
       icon: "/images/combat-grandmaster.webp",
-      color: "bg-purple-500/20 text-purple-400 border-purple-500/50",
+      color: "text-gray-400",
       requirement: "2500+ ELO",
     })
   } else if (player.elo >= 2200) {
@@ -46,7 +46,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
       id: "master",
       name: "Combat Master",
       icon: "/images/combat-master.webp",
-      color: "bg-pink-500/20 text-pink-400 border-pink-500/50",
+      color: "text-gray-400",
       requirement: "2200+ ELO",
     })
   } else if (player.elo >= 2000) {
@@ -54,7 +54,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
       id: "ace",
       name: "Combat Ace",
       icon: "/images/combat-ace.svg",
-      color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/50",
+      color: "text-gray-400",
       requirement: "2000+ ELO",
     })
   } else if (player.elo >= 1800) {
@@ -62,7 +62,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
       id: "specialist",
       name: "Combat Specialist",
       icon: "/images/combat-specialist.svg",
-      color: "bg-blue-500/20 text-blue-400 border-blue-500/50",
+      color: "text-gray-400",
       requirement: "1800+ ELO",
     })
   } else if (player.elo >= 1500) {
@@ -70,7 +70,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
       id: "cadet",
       name: "Combat Cadet",
       icon: "/images/combat-cadet.svg",
-      color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
+      color: "text-gray-400",
       requirement: "1500+ ELO",
     })
   } else if (player.elo >= 1300) {
@@ -78,7 +78,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
       id: "novice",
       name: "Combat Novice",
       icon: "/images/combat-novice.svg",
-      color: "bg-gray-400/20 text-gray-300 border-gray-400/50",
+      color: "text-gray-400",
       requirement: "1300+ ELO",
     })
   } else {
@@ -86,7 +86,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
       id: "rookie",
       name: "Combat Rookie",
       icon: "/images/rookie.svg",
-      color: "bg-orange-600/20 text-orange-400 border-orange-600/50",
+      color: "text-gray-400",
       requirement: "<1300 ELO",
     })
   }
@@ -169,11 +169,7 @@ export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerMod
             <h3 className="text-xl font-semibold text-foreground mb-4">Badges</h3>
             <div className="flex flex-wrap gap-3">
               {getBadges(player).map((badge) => (
-                <div
-                  key={badge.id}
-                  className={`flex items-center gap-2 rounded-full border px-4 py-2 ${badge.color}`}
-                  title={badge.requirement}
-                >
+                <div key={badge.id} className={`flex items-center gap-2 ${badge.color}`} title={badge.requirement}>
                   <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-5 w-5" />
                   <span className="text-sm font-medium">{badge.name}</span>
                 </div>

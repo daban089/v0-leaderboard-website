@@ -33,13 +33,12 @@ interface Badge {
 const getBadges = (player: Player): Badge[] => {
   const badges: Badge[] = []
 
-  // ELO tier badges
   if (player.elo >= 2500) {
     badges.push({
       id: "grandmaster",
       name: "Combat Grandmaster",
       icon: "/images/combat-grandmaster.webp",
-      color: "bg-purple-500/20 text-purple-400 border-purple-500/50",
+      color: "text-gray-400", // Changed to light gray text, removed background
       requirement: "2500+ ELO",
     })
   } else if (player.elo >= 2200) {
@@ -47,7 +46,7 @@ const getBadges = (player: Player): Badge[] => {
       id: "master",
       name: "Combat Master",
       icon: "/images/combat-master.webp",
-      color: "bg-pink-500/20 text-pink-400 border-pink-500/50",
+      color: "text-gray-400",
       requirement: "2200+ ELO",
     })
   } else if (player.elo >= 2000) {
@@ -55,7 +54,7 @@ const getBadges = (player: Player): Badge[] => {
       id: "ace",
       name: "Combat Ace",
       icon: "/images/combat-ace.svg",
-      color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/50",
+      color: "text-gray-400",
       requirement: "2000+ ELO",
     })
   } else if (player.elo >= 1800) {
@@ -63,7 +62,7 @@ const getBadges = (player: Player): Badge[] => {
       id: "specialist",
       name: "Combat Specialist",
       icon: "/images/combat-specialist.svg",
-      color: "bg-blue-500/20 text-blue-400 border-blue-500/50",
+      color: "text-gray-400",
       requirement: "1800+ ELO",
     })
   } else if (player.elo >= 1500) {
@@ -71,7 +70,7 @@ const getBadges = (player: Player): Badge[] => {
       id: "cadet",
       name: "Combat Cadet",
       icon: "/images/combat-cadet.svg",
-      color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
+      color: "text-gray-400",
       requirement: "1500+ ELO",
     })
   } else if (player.elo >= 1300) {
@@ -79,7 +78,7 @@ const getBadges = (player: Player): Badge[] => {
       id: "novice",
       name: "Combat Novice",
       icon: "/images/combat-novice.svg",
-      color: "bg-gray-400/20 text-gray-300 border-gray-400/50",
+      color: "text-gray-400",
       requirement: "1300+ ELO",
     })
   } else {
@@ -87,7 +86,7 @@ const getBadges = (player: Player): Badge[] => {
       id: "rookie",
       name: "Combat Rookie",
       icon: "/images/rookie.svg",
-      color: "bg-orange-600/20 text-orange-400 border-orange-600/50",
+      color: "text-gray-400",
       requirement: "<1300 ELO",
     })
   }
@@ -468,7 +467,7 @@ export function LeaderboardTable({
                       {getBadges(player).map((badge) => (
                         <div
                           key={badge.id}
-                          className={`flex items-center gap-2 rounded-full border px-3 py-1.5 ${badge.color}`}
+                          className={`flex items-center gap-2 ${badge.color}`}
                           title={badge.requirement}
                         >
                           <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-4 w-4" />
