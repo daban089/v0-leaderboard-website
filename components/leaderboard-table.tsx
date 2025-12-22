@@ -206,8 +206,8 @@ export function LeaderboardTable({
         <Image
           src="/images/diamond-sword.png"
           alt="Sword"
-          width={20}
-          height={20}
+          width={64}
+          height={64}
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
       )
@@ -216,8 +216,8 @@ export function LeaderboardTable({
         <Image
           src="/images/diamond-axe.png"
           alt="Axe"
-          width={20}
-          height={20}
+          width={64}
+          height={64}
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
       )
@@ -226,8 +226,8 @@ export function LeaderboardTable({
         <Image
           src="/images/lead.png"
           alt="Lead"
-          width={20}
-          height={20}
+          width={64}
+          height={64}
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
       )
@@ -236,8 +236,8 @@ export function LeaderboardTable({
         <Image
           src="/images/mace.png"
           alt="Mace"
-          width={20}
-          height={20}
+          width={64}
+          height={64}
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
       )
@@ -308,8 +308,8 @@ export function LeaderboardTable({
           <Image
             src="/images/reckless-icon.png"
             alt="High Tiers"
-            width={20}
-            height={20}
+            width={64}
+            height={64}
             className="relative z-10 pixelated"
           />
           <span className="relative z-10">High Tiers</span>
@@ -357,8 +357,8 @@ export function LeaderboardTable({
             <Image
               src="/images/diamond-sword.png"
               alt="Sword"
-              width={32}
-              height={32}
+              width={64}
+              height={64}
               className="h-8 w-8 object-contain"
             />
             <span className="text-xs font-medium">Sword</span>
@@ -372,7 +372,7 @@ export function LeaderboardTable({
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            <Image src="/images/diamond-axe.png" alt="Axe" width={32} height={32} className="h-8 w-8 object-contain" />
+            <Image src="/images/diamond-axe.png" alt="Axe" width={64} height={64} className="h-8 w-8 object-contain" />
             <span className="text-xs font-medium">Axe</span>
           </button>
 
@@ -384,7 +384,7 @@ export function LeaderboardTable({
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            <Image src="/images/lead.png" alt="Lead" width={32} height={32} className="h-8 w-8 object-contain" />
+            <Image src="/images/lead.png" alt="Lead" width={64} height={64} className="h-8 w-8 object-contain" />
             <span className="text-xs font-medium">Sumo</span>
           </button>
 
@@ -396,7 +396,7 @@ export function LeaderboardTable({
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            <Image src="/images/mace.png" alt="Mace" width={32} height={32} className="h-8 w-8 object-contain" />
+            <Image src="/images/mace.png" alt="Mace" width={64} height={64} className="h-8 w-8 object-contain" />
             <span className="text-xs font-medium">Mace</span>
           </button>
         </div>
