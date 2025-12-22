@@ -238,38 +238,18 @@
     animation: coin-drop 1s ease-in forwards;
   }
 
-  /* Added premium animations for rank 1 player */
+  /* Simplified rank 1 glow animation */
   @keyframes glow-pulse {
     0%,
     100% {
-      box-shadow: 0 0 30px rgba(234, 179, 8, 0.5), inset 0 0 20px rgba(234, 179, 8, 0.1);
+      box-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
     }
     50% {
-      box-shadow: 0 0 50px rgba(234, 179, 8, 0.8), inset 0 0 30px rgba(234, 179, 8, 0.2);
+      box-shadow: 0 0 35px rgba(234, 179, 8, 0.5);
     }
   }
 
-  @keyframes border-glow {
-    0%,
-    100% {
-      opacity: 0.5;
-      box-shadow: inset 0 0 20px rgba(234, 179, 8, 0.5);
-    }
-    50% {
-      opacity: 1;
-      box-shadow: inset 0 0 40px rgba(234, 179, 8, 1);
-    }
-  }
-
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
+  /* Removed border-glow, float, text-glow, avatar-glow, and gradient animations */
 
   @keyframes sparkle {
     0%,
@@ -283,63 +263,13 @@
     }
   }
 
-  @keyframes text-glow {
-    0%,
-    100% {
-      text-shadow: 0 0 20px rgba(234, 179, 8, 1), 2px 2px 4px rgba(0, 0, 0, 0.8);
-    }
-    50% {
-      text-shadow: 0 0 40px rgba(234, 179, 8, 1), 0 0 60px rgba(234, 179, 8, 0.8), 2px 2px 4px rgba(0, 0, 0, 0.8);
-    }
-  }
-
-  @keyframes avatar-glow {
-    0%,
-    100% {
-      filter: drop-shadow(0 0 15px rgba(234, 179, 8, 0.8)) drop-shadow(-4px 0px 0.8px rgba(0, 0, 0, 0.3));
-    }
-    50% {
-      filter: drop-shadow(0 0 30px rgba(234, 179, 8, 1)) drop-shadow(0 0 45px rgba(234, 179, 8, 0.6))
-        drop-shadow(-4px 0px 0.8px rgba(0, 0, 0, 0.3));
-    }
-  }
-
-  @keyframes gradient {
-    0%,
-    100% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-  }
-
   .animate-glow-pulse {
     animation: glow-pulse 2s ease-in-out infinite;
-  }
-
-  .animate-border-glow {
-    animation: border-glow 2s ease-in-out infinite;
-  }
-
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
   }
 
   .animate-sparkle {
     animation: sparkle 3s ease-in-out infinite;
   }
 
-  .animate-text-glow {
-    animation: text-glow 2s ease-in-out infinite;
-  }
-
-  .animate-avatar-glow {
-    animation: avatar-glow 2s ease-in-out infinite;
-  }
-
-  .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient 3s ease infinite;
-  }
+  /* Removed unused animation classes */
 }
