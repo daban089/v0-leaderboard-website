@@ -36,13 +36,6 @@ export async function GET(request: Request) {
           SUM(fp.is_winner) as wins,
           COUNT(*) - SUM(fp.is_winner) as losses,
           COUNT(*) as total_matches,
-          (SELECT fp2.player_data 
-           FROM fight_players fp2 
-           INNER JOIN fights f2 ON fp2.fight = f2.started
-           WHERE fp2.username = fp.username 
-           AND f2.mode = 'DUEL_QUEUE_RANKED'
-           ORDER BY fp2.id DESC 
-           LIMIT 1) as latest_player_data,
           GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results
         FROM fight_players fp
         INNER JOIN fights f ON fp.fight = f.started
@@ -73,55 +66,97 @@ export async function GET(request: Request) {
       }
 
       console.log("[v0] Executing query for kit:", kit)
-      console.log("[v0] Query:", query)
-      console.log("[v0] Params:", params)
 
       const [rows] = await connection.execute<any[]>(query, params)
 
       console.log("[v0] Query returned rows:", rows.length)
 
-      const players = (rows as any[]).map((player) => {
-        let elo = 1000
+      const players = await Promise.all(
+        (rows as any[]).map(async (player) => {
+          let elo = 1000
 
-        // Parse the latest player_data JSON to get current ELO
-        try {
-          if (player.latest_player_data) {
-            const data = JSON.parse(player.latest_player_data)
-            elo = data.newElo || data.oldElo || 1000
-            console.log("[v0] Player:", player.username, "ELO:", elo, "Raw data:", player.latest_player_data)
-          }
-        } catch (e) {
-          console.log("[v0] Failed to parse player_data for:", player.username, e)
-        }
+          if (kit === "all") {
+            // Calculate global ELO as average of all kit ELOs
+            const kits = ["sword", "swordelo", "axe", "axelo", "sumo", "sumoelo", "mace", "maceelo"]
+            const kitElos: number[] = []
 
-        // Calculate current win streak from recent results
-        let winStreak = 0
-        if (player.recent_results) {
-          const results = player.recent_results.split(",")
-          for (const result of results) {
-            if (result === "1") {
-              winStreak++
-            } else {
-              break
+            for (const kitName of kits) {
+              const [kitRows] = await connection.execute<any[]>(
+                `SELECT fp.player_data 
+               FROM fight_players fp 
+               INNER JOIN fights f ON fp.fight = f.started
+               WHERE fp.username = ? 
+               AND f.mode = 'DUEL_QUEUE_RANKED'
+               AND f.kit = ?
+               ORDER BY fp.id DESC 
+               LIMIT 1`,
+                [player.username, kitName],
+              )
+
+              if (kitRows.length > 0) {
+                try {
+                  const data = JSON.parse((kitRows[0] as any).player_data)
+                  const kitElo = data.newElo || data.oldElo || 1000
+                  // Only add if player has played this kit and has a unique ELO
+                  if (kitElo !== 1000 || kitRows.length > 0) {
+                    // Track unique kits by base name (sword/swordelo = same kit)
+                    const baseKit = kitName.replace("elo", "")
+                    if (!kitElos.some((_, idx) => kits[idx]?.replace("elo", "") === baseKit)) {
+                      kitElos.push(kitElo)
+                    }
+                  }
+                } catch (e) {
+                  // Ignore parse errors
+                }
+              }
+            }
+
+            // Calculate average and floor it
+            if (kitElos.length > 0) {
+              const sum = kitElos.reduce((a, b) => a + b, 0)
+              elo = Math.floor(sum / kitElos.length)
+            }
+          } else {
+            // Parse the latest player_data JSON to get current ELO for specific kit
+            try {
+              if (player.latest_player_data) {
+                const data = JSON.parse(player.latest_player_data)
+                elo = data.newElo || data.oldElo || 1000
+              }
+            } catch (e) {
+              console.log("[v0] Failed to parse player_data for:", player.username, e)
             }
           }
-        }
 
-        const wins = Number(player.wins) || 0
-        const losses = Number(player.losses) || 0
-        const totalMatches = Number(player.total_matches) || 0
-        const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0
+          // Calculate current win streak from recent results
+          let winStreak = 0
+          if (player.recent_results) {
+            const results = player.recent_results.split(",")
+            for (const result of results) {
+              if (result === "1") {
+                winStreak++
+              } else {
+                break
+              }
+            }
+          }
 
-        return {
-          username: player.username,
-          wins,
-          losses,
-          totalMatches,
-          winRate,
-          elo,
-          winStreak,
-        }
-      })
+          const wins = Number(player.wins) || 0
+          const losses = Number(player.losses) || 0
+          const totalMatches = Number(player.total_matches) || 0
+          const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 100) : 0
+
+          return {
+            username: player.username,
+            wins,
+            losses,
+            totalMatches,
+            winRate,
+            elo,
+            winStreak,
+          }
+        }),
+      )
 
       await connection.end()
 
