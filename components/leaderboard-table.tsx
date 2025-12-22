@@ -289,16 +289,16 @@ export function LeaderboardTable({
           }}
           className={`relative flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 overflow-hidden ${
             mode === "high-tiers"
-              ? "bg-gradient-to-r from-red-950/80 via-red-900/80 to-rose-900/80 text-white shadow-lg shadow-red-500/50 border border-red-500/50 backdrop-blur-xl crimson-glow"
+              ? "bg-gradient-to-r from-red-950/90 via-red-900/90 to-red-950/90 text-red-100 shadow-lg shadow-red-900/70 border border-red-800/60 backdrop-blur-xl crimson-glow"
               : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
           }`}
         >
           {mode === "high-tiers" && (
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-red-800/20 via-transparent to-transparent pointer-events-none" />
           )}
           <Trophy className="h-5 w-5 relative z-10" />
           <span className="relative z-10">High Tiers</span>
-          {mode === "high-tiers" && <div className="h-2 w-2 bg-red-400 rounded-full animate-pulse relative z-10" />}
+          {mode === "high-tiers" && <div className="h-2 w-2 bg-red-700 rounded-full animate-pulse relative z-10" />}
         </button>
 
         <button
