@@ -227,10 +227,11 @@
   @keyframes glow-pulse {
     0%,
     100% {
-      box-shadow: 0 0 15px rgba(234, 179, 8, 0.25);
+      /* Reduced glow intensity and spread for thinner effect */
+      box-shadow: 0 0 8px rgba(234, 179, 8, 0.15);
     }
     50% {
-      box-shadow: 0 0 25px rgba(234, 179, 8, 0.4);
+      box-shadow: 0 0 12px rgba(234, 179, 8, 0.25);
     }
   }
 
