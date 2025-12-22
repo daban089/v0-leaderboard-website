@@ -384,20 +384,13 @@ export function LeaderboardTable({
 
                   <div className="flex flex-col gap-2 items-end">
                     <div className="flex items-center gap-2">
-                      <span className="text-3xl font-black text-primary">{player.elo}</span>
+                      <span className="text-3xl font-black text-white">{player.elo}</span>
                       <span className="text-sm text-muted-foreground">ELO</span>
                     </div>
                     <div className="flex gap-3 text-sm">
                       <span className="text-green-500 font-semibold">{player.wins}W</span>
                       <span className="text-red-500 font-semibold">{player.losses}L</span>
-                      <span className="text-muted-foreground">({player.winRate}%)</span>
                     </div>
-                    {player.winStreak > 0 && (
-                      <div className="flex items-center gap-1 text-orange-500">
-                        <Trophy className="h-3 w-3" />
-                        <span className="text-xs font-semibold">{player.winStreak} streak</span>
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
