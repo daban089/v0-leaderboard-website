@@ -366,7 +366,7 @@ export function LeaderboardTable({
                 key={player.username}
                 className={`relative flex items-center gap-6 rounded-xl border overflow-hidden p-4 select-none transition-all duration-300 ${
                   player.rank === 1
-                    ? "border-yellow-500/80 shadow-[0_0_30px_rgba(234,179,8,0.5)] hover:shadow-[0_0_50px_rgba(234,179,8,0.8)] hover:scale-[1.03] animate-glow-pulse cursor-pointer"
+                    ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
                     : kit === "all"
                       ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
                       : "border-border hover:translate-x-1 hover:shadow-md"
@@ -385,18 +385,18 @@ export function LeaderboardTable({
               >
                 {player.rank === 1 && (
                   <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                    {[...Array(15)].map((_, i) => (
+                    {[...Array(12)].map((_, i) => (
                       <div
-                        key={`sparkle-${i}`}
-                        className="absolute animate-sparkle"
+                        key={`fire-${i}`}
+                        className="absolute animate-fire-rise"
                         style={{
-                          left: `${Math.random() * 100}%`,
-                          top: `${Math.random() * 100}%`,
+                          left: `${5 + Math.random() * 90}%`,
+                          bottom: `${-10}px`,
                           animationDelay: `${Math.random() * 3}s`,
-                          animationDuration: `${2 + Math.random() * 2}s`,
+                          animationDuration: `${3 + Math.random() * 2}s`,
                         }}
                       >
-                        <div className="text-yellow-400 text-xs">✨</div>
+                        <div className="fire-particle" />
                       </div>
                     ))}
                   </div>
