@@ -470,8 +470,8 @@ export function LeaderboardTable({
                           className={`flex items-center gap-2 ${badge.color}`}
                           title={badge.requirement}
                         >
-                          <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-4 w-4" />
-                          <span className="text-xs font-medium">{badge.name}</span>
+                          <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-6 w-6" />
+                          <span className="text-sm font-medium">{badge.name}</span>
                         </div>
                       ))}
                     </div>

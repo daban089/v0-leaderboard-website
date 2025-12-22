@@ -170,8 +170,8 @@ export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerMod
             <div className="flex flex-wrap gap-3">
               {getBadges(player).map((badge) => (
                 <div key={badge.id} className={`flex items-center gap-2 ${badge.color}`} title={badge.requirement}>
-                  <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-5 w-5" />
-                  <span className="text-sm font-medium">{badge.name}</span>
+                  <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-8 w-8" />
+                  <span className="text-base font-medium">{badge.name}</span>
                 </div>
               ))}
               {getBadges(player).length === 0 && <p className="text-muted-foreground text-sm">No badges earned yet</p>}
@@ -188,7 +188,7 @@ export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerMod
                   className="flex flex-col items-center gap-3 p-4 rounded-xl bg-muted/20 border border-border hover:border-primary/50 transition-colors"
                 >
                   <img src={mode.icon || "/placeholder.svg"} alt={mode.name} className="h-12 w-12 object-contain" />
-                  <span className="text-sm font-medium text-muted-foreground">{mode.name}</span>
+                  <span className="text-sm text-muted-foreground">{mode.name}</span>
                   <span className="text-2xl font-bold text-white">{mode.elo}</span>
                 </div>
               ))}
