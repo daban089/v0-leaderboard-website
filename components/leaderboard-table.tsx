@@ -365,10 +365,12 @@ export function LeaderboardTable({
             {filteredPlayers.map((player) => (
               <div
                 key={player.username}
-                className={`relative flex items-center gap-6 rounded-xl border border-border overflow-hidden p-4 select-none transition-all duration-300 ${
-                  kit === "all"
-                    ? "cursor-pointer hover:scale-[1.02] hover:shadow-xl"
-                    : "hover:translate-x-1 hover:shadow-md"
+                className={`relative flex items-center gap-6 rounded-xl border overflow-hidden p-4 select-none transition-all duration-300 ${
+                  player.rank === 1
+                    ? "border-yellow-500/80 shadow-[0_0_30px_rgba(234,179,8,0.5)] hover:shadow-[0_0_50px_rgba(234,179,8,0.8)] hover:scale-[1.03] animate-glow-pulse cursor-pointer"
+                    : kit === "all"
+                      ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
+                      : "border-border hover:translate-x-1 hover:shadow-md"
                 }`}
                 onClick={() => handlePlayerClick(player)}
                 onMouseEnter={() => {
@@ -387,19 +389,48 @@ export function LeaderboardTable({
                     : undefined
                 }
               >
+                {player.rank === 1 && (
+                  <>
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      {[...Array(20)].map((_, i) => (
+                        <div
+                          key={`sparkle-${i}`}
+                          className="absolute animate-sparkle"
+                          style={{
+                            left: `${Math.random() * 100}%`,
+                            top: `${Math.random() * 100}%`,
+                            animationDelay: `${Math.random() * 3}s`,
+                            animationDuration: `${2 + Math.random() * 2}s`,
+                          }}
+                        >
+                          <div className="text-yellow-400 text-xs">✨</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="absolute inset-0 pointer-events-none">
+                      <div className="absolute inset-0 rounded-xl border-2 border-yellow-400/50 animate-border-glow" />
+                    </div>
+                    <div className="absolute top-2 right-4 animate-float pointer-events-none z-20">
+                      <div className="text-5xl drop-shadow-[0_0_10px_rgba(234,179,8,0.8)]">👑</div>
+                    </div>
+                  </>
+                )}
+
                 {player.rank === 1 && hasPlayedCoinDrop.has(player.username) && (
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {[...Array(8)].map((_, i) => (
+                    {[...Array(20)].map((_, i) => (
                       <div
                         key={i}
                         className="absolute animate-coin-drop"
                         style={{
-                          left: `${20 + i * 10}%`,
-                          animationDelay: `${i * 0.1}s`,
-                          animationDuration: "1s",
+                          left: `${10 + i * 4.5}%`,
+                          animationDelay: `${i * 0.05}s`,
+                          animationDuration: `${0.8 + Math.random() * 0.4}s`,
                         }}
                       >
-                        <div className="text-3xl">🪙</div>
+                        <div className="text-3xl drop-shadow-[0_0_8px_rgba(234,179,8,1)]">
+                          {i % 3 === 0 ? "🪙" : i % 3 === 1 ? "💰" : "✨"}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -407,16 +438,30 @@ export function LeaderboardTable({
 
                 <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
                   <span
-                    className="absolute left-0 text-5xl font-black italic font-sans text-white z-10"
-                    style={{ textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)" }}
+                    className={`absolute left-0 text-5xl font-black italic font-sans z-10 ${
+                      player.rank === 1 ? "text-yellow-400 animate-text-glow" : "text-white"
+                    }`}
+                    style={{
+                      textShadow:
+                        player.rank === 1
+                          ? "0 0 20px rgba(234,179,8,1), 2px 2px 4px rgba(0,0,0,0.8)"
+                          : "2px 2px 4px rgba(0, 0, 0, 0.5)",
+                    }}
                   >
                     {player.rank}.
                   </span>
                   <img
                     src={getAvatarUrl(player.username) || "/placeholder.svg"}
                     alt={player.username}
-                    className="absolute right-14 h-[88px] w-[88px] object-contain z-10"
-                    style={{ filter: "drop-shadow(-4px 0px 0.8px rgba(0, 0, 0, 0.3))" }}
+                    className={`absolute right-14 h-[88px] w-[88px] object-contain z-10 ${
+                      player.rank === 1 ? "animate-avatar-glow" : ""
+                    }`}
+                    style={{
+                      filter:
+                        player.rank === 1
+                          ? "drop-shadow(0 0 15px rgba(234,179,8,0.8)) drop-shadow(-4px 0px 0.8px rgba(0,0,0,0.3))"
+                          : "drop-shadow(-4px 0px 0.8px rgba(0,0,0,0.3))",
+                    }}
                     onError={(e) => {
                       e.currentTarget.src = "/placeholder.svg?height=88&width=88"
                     }}
@@ -425,7 +470,15 @@ export function LeaderboardTable({
 
                 <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
+                    <p
+                      className={`truncate text-2xl font-extrabold ${
+                        player.rank === 1
+                          ? "bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-300 bg-clip-text text-transparent animate-gradient"
+                          : "text-foreground"
+                      }`}
+                    >
+                      {player.username}
+                    </p>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {getBadges(player).map((badge, index) => (
                         <div
@@ -457,7 +510,13 @@ export function LeaderboardTable({
 
                   <div className="flex flex-col gap-2 items-end">
                     <div className="flex items-center gap-2">
-                      <span className="text-3xl font-black text-white">{player.elo}</span>
+                      <span
+                        className={`text-3xl font-black ${
+                          player.rank === 1 ? "text-yellow-400 animate-text-glow" : "text-white"
+                        }`}
+                      >
+                        {player.elo}
+                      </span>
                       <span className="text-sm text-muted-foreground">ELO</span>
                     </div>
                     <div className="flex gap-3 text-sm">
