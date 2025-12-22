@@ -36,45 +36,61 @@ interface Badge {
 const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
   const badges: Badge[] = []
 
-  if (player.elo >= 1800) {
+  if (player.elo >= 2500) {
     badges.push({
-      id: "master",
-      name: "Master",
+      id: "grandmaster",
+      name: "Combat Grandmaster",
       icon: <Trophy className="h-4 w-4" />,
       color: "bg-purple-500/20 text-purple-400 border-purple-500/50",
-      requirement: "1800+ ELO",
+      requirement: "2500+ ELO",
     })
-  } else if (player.elo >= 1600) {
+  } else if (player.elo >= 2200) {
     badges.push({
-      id: "diamond",
-      name: "Diamond",
+      id: "master",
+      name: "Combat Master",
+      icon: <Trophy className="h-4 w-4" />,
+      color: "bg-pink-500/20 text-pink-400 border-pink-500/50",
+      requirement: "2200+ ELO",
+    })
+  } else if (player.elo >= 2000) {
+    badges.push({
+      id: "ace",
+      name: "Combat Ace",
       icon: <Trophy className="h-4 w-4" />,
       color: "bg-cyan-500/20 text-cyan-400 border-cyan-500/50",
-      requirement: "1600+ ELO",
+      requirement: "2000+ ELO",
     })
-  } else if (player.elo >= 1400) {
+  } else if (player.elo >= 1800) {
     badges.push({
-      id: "gold",
-      name: "Gold",
+      id: "specialist",
+      name: "Combat Specialist",
+      icon: <Trophy className="h-4 w-4" />,
+      color: "bg-blue-500/20 text-blue-400 border-blue-500/50",
+      requirement: "1800+ ELO",
+    })
+  } else if (player.elo >= 1500) {
+    badges.push({
+      id: "cadet",
+      name: "Combat Cadet",
       icon: <Trophy className="h-4 w-4" />,
       color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/50",
-      requirement: "1400+ ELO",
+      requirement: "1500+ ELO",
     })
-  } else if (player.elo >= 1200) {
+  } else if (player.elo >= 1300) {
     badges.push({
-      id: "silver",
-      name: "Silver",
+      id: "novice",
+      name: "Combat Novice",
       icon: <Trophy className="h-4 w-4" />,
       color: "bg-gray-400/20 text-gray-300 border-gray-400/50",
-      requirement: "1200+ ELO",
+      requirement: "1300+ ELO",
     })
-  } else if (player.elo >= 1000) {
+  } else {
     badges.push({
-      id: "bronze",
-      name: "Bronze",
+      id: "rookie",
+      name: "Combat Rookie",
       icon: <Trophy className="h-4 w-4" />,
       color: "bg-orange-600/20 text-orange-400 border-orange-600/50",
-      requirement: "1000+ ELO",
+      requirement: "<1300 ELO",
     })
   }
 
