@@ -16,10 +16,12 @@ interface PlayerModalProps {
     losses: number
     rank: number
     winStreak: number
-    swordElo?: number
-    axeElo?: number
-    sumoElo?: number
-    maceElo?: number
+  }
+  gamemodeElos?: {
+    sword: number
+    axe: number
+    sumo: number
+    mace: number
   }
 }
 
@@ -97,7 +99,7 @@ const getBadges = (player: PlayerModalProps["player"]): Badge[] => {
   return badges
 }
 
-export function PlayerModal({ isOpen, onClose, player }: PlayerModalProps) {
+export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerModalProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
   useEffect(() => {
@@ -114,10 +116,10 @@ export function PlayerModal({ isOpen, onClose, player }: PlayerModalProps) {
   if (!isOpen) return null
 
   const gamemodes = [
-    { name: "Sword", icon: "/images/diamond-sword.png", elo: player.swordElo || player.elo },
-    { name: "Axe", icon: "/images/diamond-axe.png", elo: player.axeElo || player.elo },
-    { name: "Sumo", icon: "/images/lead.png", elo: player.sumoElo || player.elo },
-    { name: "Mace", icon: "/images/mace.png", elo: player.maceElo || player.elo },
+    { name: "Sword", icon: "/images/diamond-sword.png", elo: gamemodeElos?.sword || player.elo },
+    { name: "Axe", icon: "/images/diamond-axe.png", elo: gamemodeElos?.axe || player.elo },
+    { name: "Sumo", icon: "/images/lead.png", elo: gamemodeElos?.sumo || player.elo },
+    { name: "Mace", icon: "/images/mace.png", elo: gamemodeElos?.mace || player.elo },
   ]
 
   return (

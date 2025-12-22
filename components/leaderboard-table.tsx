@@ -112,6 +112,9 @@ export function LeaderboardTable({
   const [availableKits, setAvailableKits] = useState<string[]>(["all"])
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [gamemodeElos, setGamemodeElos] = useState<{ sword: number; axe: number; sumo: number; mace: number } | null>(
+    null,
+  )
 
   const fetchLeaderboard = async () => {
     try {
@@ -234,13 +237,26 @@ export function LeaderboardTable({
     return kitName.charAt(0).toUpperCase() + kitName.slice(1)
   }
 
-  const handlePlayerClick = (player: Player) => {
+  const handlePlayerClick = async (player: Player) => {
+    if (kit !== "all") return
+
     setSelectedPlayer(player)
     setIsModalOpen(true)
+
+    try {
+      const response = await fetch(`/api/player-details?username=${encodeURIComponent(player.username)}`)
+      const data = await response.json()
+      if (data.gamemodeElos) {
+        setGamemodeElos(data.gamemodeElos)
+      }
+    } catch (error) {
+      console.error("[v0] Failed to fetch player details:", error)
+    }
   }
 
   const closeModal = () => {
     setIsModalOpen(false)
+    setGamemodeElos(null)
     setTimeout(() => setSelectedPlayer(null), 200)
   }
 
@@ -348,7 +364,11 @@ export function LeaderboardTable({
             {filteredPlayers.map((player) => (
               <div
                 key={player.username}
-                className="relative flex items-center gap-6 rounded-xl border border-border overflow-hidden p-4 transition-all hover:scale-[1.01] hover:shadow-lg cursor-pointer select-none"
+                className={`relative flex items-center gap-6 rounded-xl border border-border overflow-hidden p-4 select-none transition-all duration-300 ${
+                  kit === "all"
+                    ? "cursor-pointer hover:scale-[1.02] hover:shadow-xl"
+                    : "hover:translate-x-1 hover:shadow-md"
+                }`}
                 onClick={() => handlePlayerClick(player)}
                 style={
                   player.rank <= 3 || player.rank > 3
@@ -431,6 +451,7 @@ export function LeaderboardTable({
             rank: selectedPlayer.rank,
             winStreak: selectedPlayer.winStreak,
           }}
+          gamemodeElos={gamemodeElos || undefined}
         />
       )}
     </div>
