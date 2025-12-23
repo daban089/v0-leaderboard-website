@@ -21,7 +21,6 @@ interface LeaderboardTableProps {
   kit?: string
   searchQuery?: string
   onKitChange?: (kit: string | undefined) => void
-  onModeChange?: (mode: "high-tiers" | "ranked") => void
 }
 
 interface Badge {
@@ -98,9 +97,8 @@ const getBadges = (player: Player): Badge[] => {
 
 export function LeaderboardTable({
   kit = "all",
-  searchQuery: externalSearchQuery = "",
+  searchQuery: externalSearchQuery,
   onKitChange,
-  onModeChange,
 }: LeaderboardTableProps) {
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
@@ -117,12 +115,10 @@ export function LeaderboardTable({
   useEffect(() => {
     if (kit === "high-tiers") {
       setMode("high-tiers")
-      onModeChange?.("high-tiers")
     } else {
       setMode("ranked")
-      onModeChange?.("ranked")
     }
-  }, [kit, onModeChange])
+  }, [kit])
 
   const fetchLeaderboard = async () => {
     try {
@@ -162,12 +158,6 @@ export function LeaderboardTable({
   const filteredPlayers = players.filter((player) => player.username.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const getRankColor = (rank: number) => {
-    if (mode === "ranked") {
-      if (rank === 1) return "from-purple-500/20 to-purple-700/20 border-purple-500/50"
-      if (rank === 2) return "from-purple-400/20 to-purple-600/20 border-purple-400/50"
-      if (rank === 3) return "from-purple-300/20 to-purple-500/20 border-purple-300/50"
-      return "from-purple-950/40 to-purple-900/40 border-purple-800/50"
-    }
     if (rank === 1) return "from-yellow-400/20 to-yellow-600/20 border-yellow-500/50"
     if (rank === 2) return "from-gray-300/20 to-gray-500/20 border-gray-400/50"
     if (rank === 3) return "from-orange-400/20 to-orange-600/20 border-orange-500/50"
@@ -175,12 +165,6 @@ export function LeaderboardTable({
   }
 
   const getRankBadgeColor = (rank: number) => {
-    if (mode === "ranked") {
-      if (rank === 1) return "bg-purple-600/90 text-purple-50 border-purple-500"
-      if (rank === 2) return "bg-purple-500/90 text-purple-50 border-purple-400"
-      if (rank === 3) return "bg-purple-400/90 text-purple-50 border-purple-300"
-      return "bg-purple-900/70 text-purple-200 border-purple-800"
-    }
     if (rank === 1) return "bg-yellow-500/90 text-yellow-950 border-yellow-400"
     if (rank === 2) return "bg-gray-400/90 text-gray-950 border-gray-300"
     if (rank === 3) return "bg-orange-500/90 text-orange-950 border-orange-400"
@@ -305,145 +289,118 @@ export function LeaderboardTable({
   }
 
   return (
-    <div className="space-y-6">
-      <div
-        className={`transition-all duration-500 ${
-          mode === "high-tiers"
-            ? "bg-gradient-to-b from-red-950/20 via-transparent to-transparent rounded-2xl p-6 -m-6"
-            : "bg-gradient-to-b from-purple-950/20 via-transparent to-transparent rounded-2xl p-6 -m-6"
-        }`}
-      >
-        {/* Mode Selector (High Tiers vs Ranked) */}
-        <div className="flex gap-3 mb-6">
+    <div>
+      <div className="flex gap-3 mb-6">
+        <button
+          onClick={() => {
+            setMode("high-tiers")
+            onKitChange?.(undefined)
+          }}
+          className={`relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
+            mode === "high-tiers"
+              ? "bg-gradient-to-r from-red-950/90 via-red-900/90 to-red-950/90 text-red-100 shadow-lg shadow-red-900/70 border border-red-800/60 backdrop-blur-xl crimson-glow"
+              : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
+          }`}
+        >
+          {mode === "high-tiers" && (
+            <div className="absolute inset-0 bg-gradient-to-br from-red-800/20 via-transparent to-transparent pointer-events-none" />
+          )}
+          <Image
+            src="/images/reckless-icon.png"
+            alt="High Tiers"
+            width={64}
+            height={64}
+            className="h-8 w-8 relative z-10 pixelated"
+          />
+          <span className="relative z-10">High Tiers</span>
+          {mode === "high-tiers" && <div className="h-2 w-2 bg-red-700 rounded-full animate-pulse relative z-10" />}
+        </button>
+
+        <button
+          onClick={() => {
+            setMode("ranked")
+            onKitChange?.("all")
+          }}
+          className={`flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+            mode === "ranked"
+              ? "bg-card text-foreground border-2 border-primary"
+              : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
+          }`}
+        >
+          <Image src="/images/fire-focus-icon.png" alt="Ranked" width={64} height={64} className="h-8 w-8 pixelated" />
+          <span>Ranked</span>
+        </button>
+      </div>
+
+      {mode === "ranked" && (
+        <div className="flex items-end mb-4">
           <button
-            onClick={() => {
-              setMode("high-tiers")
-              onKitChange?.(undefined)
-              onModeChange?.("high-tiers")
-            }}
-            className={`relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
-              mode === "high-tiers"
-                ? "bg-gradient-to-r from-red-950/90 via-red-900/90 to-red-950/90 text-red-100 shadow-lg shadow-red-900/70 border border-red-800/60 backdrop-blur-xl crimson-glow"
-                : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
+            onClick={() => onKitChange?.("all")}
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+              kit === "all"
+                ? "text-white opacity-100"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            {mode === "high-tiers" && (
-              <div className="absolute inset-0 bg-gradient-to-br from-red-800/20 via-transparent to-transparent pointer-events-none" />
-            )}
-            <Image
-              src="/images/fire-focus-icon.png"
-              alt="High Tiers"
-              width={64}
-              height={64}
-              className="h-8 w-8 relative z-10 pixelated"
-            />
-            <span className="relative z-10">High Tiers</span>
-            {mode === "high-tiers" && <div className="h-2 w-2 bg-red-700 rounded-full animate-pulse relative z-10" />}
+            <Trophy className="h-5 w-5" />
+            <span className="text-xs font-medium">Overall</span>
           </button>
 
           <button
-            onClick={() => {
-              setMode("ranked")
-              onKitChange?.("all")
-              onModeChange?.("ranked")
-            }}
-            className={`relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
-              mode === "ranked"
-                ? "bg-gradient-to-r from-purple-950/90 via-purple-900/90 to-purple-950/90 text-purple-100 shadow-lg shadow-purple-900/70 border border-purple-700/60 backdrop-blur-xl purple-glow"
-                : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
+            onClick={() => onKitChange?.("sword")}
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+              kit === "sword"
+                ? "text-white opacity-100"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            {mode === "ranked" && (
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-800/20 via-transparent to-transparent pointer-events-none" />
-            )}
             <Image
-              src="/images/soul-focus-icon.png"
-              alt="Ranked"
+              src="/images/diamond-sword.png"
+              alt="Sword"
               width={64}
               height={64}
-              className="h-8 w-8 relative z-10 pixelated"
+              className="h-8 w-8 object-contain"
             />
-            <span className="relative z-10">Ranked</span>
-            {mode === "ranked" && <div className="h-2 w-2 bg-purple-600 rounded-full animate-pulse relative z-10" />}
+            <span className="text-xs font-medium">Sword</span>
+          </button>
+
+          <button
+            onClick={() => onKitChange?.("axe")}
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+              kit === "axe"
+                ? "text-white opacity-100"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+            }`}
+          >
+            <Image src="/images/diamond-axe.png" alt="Axe" width={64} height={64} className="h-8 w-8 object-contain" />
+            <span className="text-xs font-medium">Axe</span>
+          </button>
+
+          <button
+            onClick={() => onKitChange?.("sumo")}
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+              kit === "sumo"
+                ? "text-white opacity-100"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+            }`}
+          >
+            <Image src="/images/lead.png" alt="Lead" width={64} height={64} className="h-8 w-8 object-contain" />
+            <span className="text-xs font-medium">Sumo</span>
+          </button>
+
+          <button
+            onClick={() => onKitChange?.("mace")}
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+              kit === "mace"
+                ? "text-white opacity-100"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+            }`}
+          >
+            <Image src="/images/mace.png" alt="Mace" width={64} height={64} className="h-8 w-8 object-contain" />
+            <span className="text-xs font-medium">Mace</span>
           </button>
         </div>
-
-        {mode === "ranked" && (
-          <div className="flex items-end mb-4">
-            <button
-              onClick={() => onKitChange?.("all")}
-              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
-                kit === "all"
-                  ? "bg-purple-950/50 text-purple-100 opacity-100 border-t-2 border-l-2 border-r-2 border-purple-500/70 shadow-lg shadow-purple-900/50"
-                  : "bg-card text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-t border-l border-r border-border"
-              }`}
-            >
-              <Trophy className="h-5 w-5" />
-              <span className="text-xs font-medium">Overall</span>
-            </button>
-
-            <button
-              onClick={() => onKitChange?.("sword")}
-              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
-                kit === "sword"
-                  ? "bg-purple-950/50 text-purple-100 opacity-100 border-t-2 border-l-2 border-r-2 border-purple-500/70 shadow-lg shadow-purple-900/50"
-                  : "bg-card text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-t border-l border-r border-border"
-              }`}
-            >
-              <Image
-                src="/images/diamond-sword.png"
-                alt="Sword"
-                width={64}
-                height={64}
-                className="h-8 w-8 object-contain"
-              />
-              <span className="text-xs font-medium">Sword</span>
-            </button>
-
-            <button
-              onClick={() => onKitChange?.("axe")}
-              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
-                kit === "axe"
-                  ? "bg-purple-950/50 text-purple-100 opacity-100 border-t-2 border-l-2 border-r-2 border-purple-500/70 shadow-lg shadow-purple-900/50"
-                  : "bg-card text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-t border-l border-r border-border"
-              }`}
-            >
-              <Image
-                src="/images/diamond-axe.png"
-                alt="Axe"
-                width={64}
-                height={64}
-                className="h-8 w-8 object-contain"
-              />
-              <span className="text-xs font-medium">Axe</span>
-            </button>
-
-            <button
-              onClick={() => onKitChange?.("sumo")}
-              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
-                kit === "sumo"
-                  ? "bg-purple-950/50 text-purple-100 opacity-100 border-t-2 border-l-2 border-r-2 border-purple-500/70 shadow-lg shadow-purple-900/50"
-                  : "bg-card text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-t border-l border-r border-border"
-              }`}
-            >
-              <Image src="/images/lead.png" alt="Lead" width={64} height={64} className="h-8 w-8 object-contain" />
-              <span className="text-xs font-medium">Sumo</span>
-            </button>
-
-            <button
-              onClick={() => onKitChange?.("mace")}
-              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
-                kit === "mace"
-                  ? "bg-purple-950/50 text-purple-100 opacity-100 border-t-2 border-l-2 border-r-2 border-purple-500/70 shadow-lg shadow-purple-900/50"
-                  : "bg-card text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-t border-l border-r border-border"
-              }`}
-            >
-              <Image src="/images/mace.png" alt="Mace" width={64} height={64} className="h-8 w-8 object-contain" />
-              <span className="text-xs font-medium">Mace</span>
-            </button>
-          </div>
-        )}
-      </div>
+      )}
 
       {mode === "high-tiers" ? (
         <Card className="overflow-hidden">
@@ -460,35 +417,19 @@ export function LeaderboardTable({
           </CardContent>
         </Card>
       ) : (
-        <Card
-          className={`overflow-hidden rounded-t-none border-t-0 ${
-            mode === "ranked" ? "bg-purple-950/30 border-purple-800/40" : ""
-          }`}
-        >
+        <Card className="overflow-hidden rounded-t-none border-t-0">
           <CardHeader className="p-0 h-8">
-            <div className={`flex items-center gap-6 px-4 h-full ${mode === "ranked" ? "bg-purple-950/40" : ""}`}>
+            <div className="flex items-center gap-6 px-4 h-full">
               <div className="h-full w-[240px] flex-shrink-0 flex items-center">
-                <span
-                  className={`text-xl font-bold uppercase tracking-wider ml-4 leading-none ${
-                    mode === "ranked" ? "text-purple-300" : "text-muted-foreground"
-                  }`}
-                >
+                <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider ml-4 leading-none">
                   #
                 </span>
               </div>
               <div className="flex flex-1 items-center justify-between gap-4">
-                <span
-                  className={`text-xl font-bold uppercase tracking-wider leading-none ${
-                    mode === "ranked" ? "text-purple-300" : "text-muted-foreground"
-                  }`}
-                >
+                <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
                   PLAYER
                 </span>
-                <span
-                  className={`text-xl font-bold uppercase tracking-wider leading-none ${
-                    mode === "ranked" ? "text-purple-300" : "text-muted-foreground"
-                  }`}
-                >
+                <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
                   STATS
                 </span>
               </div>
@@ -501,23 +442,15 @@ export function LeaderboardTable({
                 <div
                   key={player.username}
                   className={`relative flex items-center gap-6 rounded-xl border overflow-hidden p-4 select-none transition-all duration-300 ${
-                    mode === "ranked" && player.rank === 1
-                      ? "border-purple-500/80 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)] hover:scale-[1.02] animate-purple-glow-pulse cursor-pointer"
-                      : mode === "ranked" && player.rank === 2
-                        ? "border-purple-400/80 shadow-[0_0_20px_rgba(192,132,252,0.4)] hover:shadow-[0_0_30px_rgba(192,132,252,0.5)] hover:scale-[1.02] animate-purple-glow-pulse cursor-pointer"
-                        : mode === "ranked" && player.rank === 3
-                          ? "border-purple-300/80 shadow-[0_0_20px_rgba(216,180,254,0.4)] hover:shadow-[0_0_30px_rgba(216,180,254,0.5)] hover:scale-[1.02] animate-purple-glow-pulse cursor-pointer"
-                          : mode === "ranked"
-                            ? "border-purple-800/60 bg-purple-950/30 cursor-pointer hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-900/30"
-                            : player.rank === 1
-                              ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
-                              : player.rank === 2
-                                ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
-                                : player.rank === 3
-                                  ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
-                                  : kit === "all"
-                                    ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
-                                    : "border-border hover:translate-x-1 hover:shadow-md"
+                    player.rank === 1
+                      ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
+                      : player.rank === 2
+                        ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
+                        : player.rank === 3
+                          ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
+                          : kit === "all"
+                            ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
+                            : "border-border hover:translate-x-1 hover:shadow-md"
                   }`}
                   onClick={() => handlePlayerClick(player)}
                   style={
@@ -531,64 +464,7 @@ export function LeaderboardTable({
                       : undefined
                   }
                 >
-                  {mode === "ranked" && player.rank === 1 && (
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                      {[...Array(12)].map((_, i) => (
-                        <div
-                          key={`purple-fire-${i}`}
-                          className="absolute animate-fire-rise"
-                          style={{
-                            left: `${5 + Math.random() * 90}%`,
-                            bottom: `${-10}px`,
-                            animationDelay: `${Math.random() * 3}s`,
-                            animationDuration: `${3 + Math.random() * 2}s`,
-                          }}
-                        >
-                          <div className="purple-particle" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {mode === "ranked" && player.rank === 2 && (
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                      {[...Array(12)].map((_, i) => (
-                        <div
-                          key={`purple-silver-${i}`}
-                          className="absolute animate-silver-rise"
-                          style={{
-                            left: `${5 + Math.random() * 90}%`,
-                            bottom: `${-10}px`,
-                            animationDelay: `${Math.random() * 3}s`,
-                            animationDuration: `${3 + Math.random() * 2}s`,
-                          }}
-                        >
-                          <div className="purple-silver-particle" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {mode === "ranked" && player.rank === 3 && (
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                      {[...Array(12)].map((_, i) => (
-                        <div
-                          key={`purple-bronze-${i}`}
-                          className="absolute animate-bronze-rise"
-                          style={{
-                            left: `${5 + Math.random() * 90}%`,
-                            bottom: `${-10}px`,
-                            animationDelay: `${Math.random() * 3}s`,
-                            animationDuration: `${3 + Math.random() * 2}s`,
-                          }}
-                        >
-                          <div className="purple-bronze-particle" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {mode !== "ranked" && player.rank === 1 && (
+                  {player.rank === 1 && (
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                       {[...Array(12)].map((_, i) => (
                         <div
@@ -607,7 +483,7 @@ export function LeaderboardTable({
                     </div>
                   )}
 
-                  {mode !== "ranked" && player.rank === 2 && (
+                  {player.rank === 2 && (
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                       {[...Array(12)].map((_, i) => (
                         <div
@@ -626,7 +502,7 @@ export function LeaderboardTable({
                     </div>
                   )}
 
-                  {mode !== "ranked" && player.rank === 3 && (
+                  {player.rank === 3 && (
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                       {[...Array(12)].map((_, i) => (
                         <div
@@ -686,26 +562,12 @@ export function LeaderboardTable({
 
                     <div className="flex flex-col gap-2 items-end">
                       <div className="flex items-center gap-2">
-                        <span className={`text-3xl font-black ${mode === "ranked" ? "text-purple-200" : "text-white"}`}>
-                          {player.elo}
-                        </span>
-                        <span className={`text-sm ${mode === "ranked" ? "text-purple-400" : "text-muted-foreground"}`}>
-                          ELO
-                        </span>
+                        <span className="text-3xl font-black text-white">{player.elo}</span>
+                        <span className="text-sm text-muted-foreground">ELO</span>
                       </div>
                       <div className="flex gap-3 text-sm">
-                        <span
-                          className={
-                            mode === "ranked" ? "text-purple-300 font-semibold" : "text-green-500 font-semibold"
-                          }
-                        >
-                          {player.wins}W
-                        </span>
-                        <span
-                          className={mode === "ranked" ? "text-purple-400 font-semibold" : "text-red-500 font-semibold"}
-                        >
-                          {player.losses}L
-                        </span>
+                        <span className="text-green-500 font-semibold">{player.wins}W</span>
+                        <span className="text-red-500 font-semibold">{player.losses}L</span>
                       </div>
                     </div>
                   </div>
