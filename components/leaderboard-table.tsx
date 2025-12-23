@@ -664,17 +664,22 @@ export function LeaderboardTable({
                   <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {getBadges(player).map((badge) => (
-                          <div
-                            key={badge.id}
-                            className={`flex items-center gap-2 ${badge.color}`}
-                            title={badge.requirement}
-                          >
-                            <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-6 w-6" />
-                            <span className="text-sm font-medium">{badge.name}</span>
+                      <div className="space-y-2">
+                        {/* Only show badges on Overall tab (kit === "all") */}
+                        {kit === "all" && (
+                          <div className="flex flex-wrap gap-2">
+                            {getBadges(player).map((badge) => (
+                              <div
+                                key={badge.id}
+                                className={`flex items-center gap-2 ${badge.color}`}
+                                title={badge.requirement}
+                              >
+                                <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-6 w-6" />
+                                <span className="text-sm font-medium">{badge.name}</span>
+                              </div>
+                            ))}
                           </div>
-                        ))}
+                        )}
                       </div>
                     </div>
 
