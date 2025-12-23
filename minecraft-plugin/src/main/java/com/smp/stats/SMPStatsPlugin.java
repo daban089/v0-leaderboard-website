@@ -101,6 +101,36 @@ public class SMPStatsPlugin extends JavaPlugin implements Listener {
     
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (command.getName().equalsIgnoreCase("discord")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(ChatColor.RED + "Only players can use this command!");
+                return true;
+            }
+            
+            Player player = (Player) sender;
+            
+            // Create clickable Discord link
+            TextComponent discordComponent = new TextComponent(ChatColor.AQUA + "" + ChatColor.UNDERLINE + "https://discord.gg/gzPjF9JNjn");
+            discordComponent.setClickEvent(new ClickEvent(
+                ClickEvent.Action.OPEN_URL, 
+                "https://discord.gg/gzPjF9JNjn"
+            ));
+            discordComponent.setHoverEvent(new HoverEvent(
+                HoverEvent.Action.SHOW_TEXT,
+                new ComponentBuilder(ChatColor.YELLOW + "Click to join our Discord!").create()
+            ));
+            
+            player.sendMessage(ChatColor.GREEN + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+            player.sendMessage(ChatColor.GOLD + "✦ " + ChatColor.YELLOW + "Join Our Discord Server!");
+            player.sendMessage("");
+            player.spigot().sendMessage(discordComponent);
+            player.sendMessage("");
+            player.sendMessage(ChatColor.GRAY + "Click the link above to join!");
+            player.sendMessage(ChatColor.GREEN + "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+            
+            return true;
+        }
+        
         if (command.getName().equalsIgnoreCase("verify")) {
             if (!(sender instanceof Player)) {
                 sender.sendMessage(ChatColor.RED + "Only players can use this command!");

@@ -10,3 +10,7 @@ commands:
     description: Generate a verification code to login to the website
     usage: /<command>
     aliases: [v]
+  discord:
+    description: Get the Discord server invite link
+    usage: /<command>
+    aliases: [dc]
