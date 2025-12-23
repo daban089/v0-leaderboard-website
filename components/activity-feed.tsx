@@ -15,10 +15,10 @@ type Match = {
 }
 
 const KITS = {
-  sword: { icon: "/images/diamond-sword-icon.png", name: "Sword" },
-  axe: { icon: "/images/diamond-axe-icon.png", name: "Axe" },
-  sumo: { icon: "/images/lead-icon.png", name: "Sumo" },
-  mace: { icon: "/images/mace-icon.png", name: "Mace" },
+  sword: { icon: "/images/diamond-sword.png", name: "Sword" },
+  axe: { icon: "/images/diamond-axe.png", name: "Axe" },
+  sumo: { icon: "/images/lead.png", name: "Sumo" },
+  mace: { icon: "/images/mace.png", name: "Mace" },
   crystalpvp: { icon: "/images/end-crystal.png", name: "Crystal" },
 }
 
