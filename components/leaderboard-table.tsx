@@ -363,19 +363,19 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
         <div className="flex items-end">
           <button
             onClick={() => setSelectedKit("all")}
-            className={`flex flex-col items-center gap-0.5 sm:gap-1 w-[50px] sm:w-28 py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+            className={`flex flex-col items-center gap-0.5 sm:gap-1 w-[60px] sm:w-28 py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "all"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
           >
-            <Trophy className="h-4 w-4 sm:h-8 sm:w-8" />
-            <span className="text-[8px] sm:text-xs font-medium">Overall</span>
+            <Trophy className="h-5 w-5 sm:h-8 sm:w-8" />
+            <span className="text-[9px] sm:text-xs font-medium">Overall</span>
           </button>
 
           <button
             onClick={() => setSelectedKit("sword")}
-            className={`flex flex-col items-center gap-0.5 sm:gap-1 w-[50px] sm:w-28 py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+            className={`flex flex-col items-center gap-0.5 sm:gap-1 w-[60px] sm:w-28 py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "sword"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
@@ -386,14 +386,14 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
               alt="Sword"
               width={64}
               height={64}
-              className="h-4 w-4 sm:h-8 sm:w-8 object-contain"
+              className="h-5 w-5 sm:h-8 sm:w-8 object-contain"
             />
-            <span className="text-[8px] sm:text-xs font-medium">Sword</span>
+            <span className="text-[9px] sm:text-xs font-medium">Sword</span>
           </button>
 
           <button
             onClick={() => setSelectedKit("axe")}
-            className={`flex flex-col items-center gap-0.5 sm:gap-1 w-[50px] sm:w-28 py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+            className={`flex flex-col items-center gap-0.5 sm:gap-1 w-[60px] sm:w-28 py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "axe"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
@@ -404,14 +404,14 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
               alt="Axe"
               width={64}
               height={64}
-              className="h-4 w-4 sm:h-8 sm:w-8 object-contain"
+              className="h-5 w-5 sm:h-8 sm:w-8 object-contain"
             />
-            <span className="text-[8px] sm:text-xs font-medium">Axe</span>
+            <span className="text-[9px] sm:text-xs font-medium">Axe</span>
           </button>
 
           <button
             onClick={() => setSelectedKit("sumo")}
-            className={`flex flex-col items-center gap-0.5 sm:gap-1 w-[50px] sm:w-28 py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+            className={`flex flex-col items-center gap-0.5 sm:gap-1 w-[60px] sm:w-28 py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "sumo"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
@@ -422,14 +422,14 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
               alt="Lead"
               width={64}
               height={64}
-              className="h-4 w-4 sm:h-8 sm:w-8 object-contain"
+              className="h-5 w-5 sm:h-8 sm:w-8 object-contain"
             />
-            <span className="text-[8px] sm:text-xs font-medium">Sumo</span>
+            <span className="text-[9px] sm:text-xs font-medium">Sumo</span>
           </button>
 
           <button
             onClick={() => setSelectedKit("mace")}
-            className={`flex flex-col items-center gap-0.5 sm:gap-1 w-[50px] sm:w-28 py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+            className={`flex flex-col items-center gap-0.5 sm:gap-1 w-[60px] sm:w-28 py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "mace"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
@@ -440,14 +440,14 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
               alt="Mace"
               width={64}
               height={64}
-              className="h-4 w-4 sm:h-8 sm:w-8 object-contain"
+              className="h-5 w-5 sm:h-8 sm:w-8 object-contain"
             />
-            <span className="text-[8px] sm:text-xs font-medium">Mace</span>
+            <span className="text-[9px] sm:text-xs font-medium">Mace</span>
           </button>
 
           <button
             onClick={() => setSelectedKit("crystalpvp")}
-            className={`flex flex-col items-center gap-0.5 sm:gap-1 w-[50px] sm:w-28 py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+            className={`flex flex-col items-center gap-0.5 sm:gap-1 w-[60px] sm:w-28 py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "crystalpvp"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
@@ -458,10 +458,10 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
               alt="Crystal"
               width={64}
               height={64}
-              className="h-4 w-4 sm:h-8 sm:w-8 object-contain"
+              className="h-5 w-5 sm:h-8 sm:w-8 object-contain"
               style={{ imageRendering: "pixelated" }}
             />
-            <span className="text-[8px] sm:text-xs font-medium">Crystal</span>
+            <span className="text-[9px] sm:text-xs font-medium">Crystal</span>
           </button>
         </div>
       )}
