@@ -293,6 +293,7 @@ export function LeaderboardTable({
       <div className="flex gap-3 mb-6">
         <button
           onClick={() => {
+            console.log("[v0] Switching to High Tiers mode")
             setMode("high-tiers")
             onKitChange?.(undefined)
           }}
@@ -311,12 +312,14 @@ export function LeaderboardTable({
             width={64}
             height={64}
             className="h-10 w-10 relative z-10 pixelated"
+            onError={() => console.log("[v0] Failed to load fire-focus-icon")}
           />
           <span className="relative z-10">High Tiers</span>
         </button>
 
         <button
           onClick={() => {
+            console.log("[v0] Switching to Ranked mode")
             setMode("ranked")
             onKitChange?.("all")
           }}
@@ -332,6 +335,7 @@ export function LeaderboardTable({
             width={64}
             height={64}
             className="h-10 w-10 pixelated"
+            onError={() => console.log("[v0] Failed to load soul-focus-icon")}
           />
           <span>Ranked</span>
         </button>
