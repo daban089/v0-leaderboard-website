@@ -435,10 +435,10 @@ export function LeaderboardTable({
         <div className="flex items-end">
           <button
             onClick={() => onKitChange?.("all")}
-            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               kit === "all"
-                ? "text-white opacity-100"
-                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+                ? "text-white opacity-100 border-[#ff3b30] shadow-[0_0_15px_rgba(255,59,48,0.5)]"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
           >
             <Trophy className="h-8 w-8" />
@@ -447,10 +447,10 @@ export function LeaderboardTable({
 
           <button
             onClick={() => onKitChange?.("sword")}
-            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               kit === "sword"
-                ? "text-white opacity-100"
-                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+                ? "text-white opacity-100 border-[#ff3b30] shadow-[0_0_15px_rgba(255,59,48,0.5)]"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
           >
             <Image
@@ -465,10 +465,10 @@ export function LeaderboardTable({
 
           <button
             onClick={() => onKitChange?.("axe")}
-            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               kit === "axe"
-                ? "text-white opacity-100"
-                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+                ? "text-white opacity-100 border-[#ff3b30] shadow-[0_0_15px_rgba(255,59,48,0.5)]"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
           >
             <Image src="/images/diamond-axe.png" alt="Axe" width={64} height={64} className="h-8 w-8 object-contain" />
@@ -477,10 +477,10 @@ export function LeaderboardTable({
 
           <button
             onClick={() => onKitChange?.("sumo")}
-            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               kit === "sumo"
-                ? "text-white opacity-100"
-                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+                ? "text-white opacity-100 border-[#ff3b30] shadow-[0_0_15px_rgba(255,59,48,0.5)]"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
           >
             <Image src="/images/lead.png" alt="Lead" width={64} height={64} className="h-8 w-8 object-contain" />
@@ -489,10 +489,10 @@ export function LeaderboardTable({
 
           <button
             onClick={() => onKitChange?.("mace")}
-            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               kit === "mace"
-                ? "text-white opacity-100"
-                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+                ? "text-white opacity-100 border-[#ff3b30] shadow-[0_0_15px_rgba(255,59,48,0.5)]"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
           >
             <Image src="/images/mace.png" alt="Mace" width={64} height={64} className="h-8 w-8 object-contain" />
@@ -501,10 +501,10 @@ export function LeaderboardTable({
 
           <button
             onClick={() => onKitChange?.("crystalpvp")}
-            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               kit === "crystalpvp"
-                ? "text-white opacity-100"
-                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+                ? "text-white opacity-100 border-[#ff3b30] shadow-[0_0_15px_rgba(255,59,48,0.5)]"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
           >
             <Image
