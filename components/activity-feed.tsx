@@ -49,17 +49,6 @@ export function ActivityFeed() {
     }
 
     fetchMatches()
-
-    // Poll for new matches every 10 seconds
-    const interval = setInterval(fetchMatches, 10000)
-    return () => clearInterval(interval)
-  }, [])
-
-  // Update timestamps every second
-  const [, setTick] = useState(0)
-  useEffect(() => {
-    const interval = setInterval(() => setTick((t) => t + 1), 1000)
-    return () => clearInterval(interval)
   }, [])
 
   return (
@@ -71,13 +60,6 @@ export function ActivityFeed() {
       <div className="relative border-b border-red-950/50 bg-red-950/20 px-6 py-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-foreground">Recent Matches</h2>
-          <div className="flex items-center gap-2">
-            <div className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-red-600" />
-            </div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-red-400">Live</span>
-          </div>
         </div>
       </div>
 
@@ -90,11 +72,7 @@ export function ActivityFeed() {
         ) : (
           <div className="divide-y divide-border/50">
             {matches.map((match) => (
-              <div
-                key={match.id}
-                className="animate-in slide-in-from-top-4 fade-in px-6 py-4 transition-colors hover:bg-red-950/10"
-                style={{ animationDuration: "400ms", animationFillMode: "both" }}
-              >
+              <div key={match.id} className="px-6 py-4 transition-colors hover:bg-red-950/10">
                 <div className="flex items-center justify-between gap-4">
                   {/* Match info */}
                   <div className="flex min-w-0 flex-1 items-center gap-3">
