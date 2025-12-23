@@ -96,6 +96,7 @@ export async function GET(request: Request) {
               { base: "axe", ranked: "axeelo" },
               { base: "sumo", ranked: "sumoelo" },
               { base: "mace", ranked: "maceelo" },
+              { base: "crystalpvp", ranked: "crystalpvpelo" },
             ]
             const kitElos: number[] = []
 
@@ -157,10 +158,8 @@ export async function GET(request: Request) {
               }
             }
 
-            // Calculate average and floor it (Strike Practice formula)
-            // Always averages exactly 4 kits (sword, axe, sumo, mace)
             const sum = kitElos.reduce((a, b) => a + b, 0)
-            elo = Math.floor(sum / 4)
+            elo = Math.floor(sum / 5)
           } else {
             // Parse the latest player_data JSON to get current ELO for specific kit
             try {
@@ -173,7 +172,6 @@ export async function GET(request: Request) {
             }
           }
 
-          // Calculate current win streak from recent results
           let winStreak = 0
           if (player.recent_results) {
             const results = player.recent_results.split(",")
@@ -207,7 +205,6 @@ export async function GET(request: Request) {
 
       players.sort((a, b) => b.elo - a.elo)
 
-      // Add rank to each player
       const playersWithRank = players.map((player, index) => ({
         ...player,
         rank: index + 1,
