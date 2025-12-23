@@ -21,6 +21,7 @@ interface LeaderboardTableProps {
   kit?: string
   searchQuery?: string
   onKitChange?: (kit: string | undefined) => void
+  onModeChange?: (mode: "high-tiers" | "ranked") => void
 }
 
 interface Badge {
@@ -99,6 +100,7 @@ export function LeaderboardTable({
   kit = "all",
   searchQuery: externalSearchQuery = "",
   onKitChange,
+  onModeChange,
 }: LeaderboardTableProps) {
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
@@ -115,10 +117,12 @@ export function LeaderboardTable({
   useEffect(() => {
     if (kit === "high-tiers") {
       setMode("high-tiers")
+      onModeChange?.("high-tiers")
     } else {
       setMode("ranked")
+      onModeChange?.("ranked")
     }
-  }, [kit])
+  }, [kit, onModeChange])
 
   const fetchLeaderboard = async () => {
     try {
@@ -303,6 +307,7 @@ export function LeaderboardTable({
             onClick={() => {
               setMode("high-tiers")
               onKitChange?.(undefined)
+              onModeChange?.("high-tiers")
             }}
             className={`relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
               mode === "high-tiers"
@@ -328,6 +333,7 @@ export function LeaderboardTable({
             onClick={() => {
               setMode("ranked")
               onKitChange?.("all")
+              onModeChange?.("ranked")
             }}
             className={`relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
               mode === "ranked"
