@@ -306,7 +306,7 @@ export function LeaderboardTable({
             <div className="absolute inset-0 bg-gradient-to-br from-red-800/20 via-transparent to-transparent pointer-events-none" />
           )}
           <Image
-            src="/images/soul-focus-icon.png"
+            src="/images/fire-focus-icon.png"
             alt="High Tiers"
             width={64}
             height={64}
@@ -327,7 +327,7 @@ export function LeaderboardTable({
           }`}
         >
           <Image
-            src="/images/fire-focus-icon.png"
+            src="/images/soul-focus-icon.png"
             alt="Ranked"
             width={64}
             height={64}
