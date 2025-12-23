@@ -162,6 +162,12 @@ export function LeaderboardTable({
   const filteredPlayers = players.filter((player) => player.username.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const getRankColor = (rank: number) => {
+    if (mode === "ranked") {
+      if (rank === 1) return "from-purple-500/20 to-purple-700/20 border-purple-500/50"
+      if (rank === 2) return "from-purple-400/20 to-purple-600/20 border-purple-400/50"
+      if (rank === 3) return "from-purple-300/20 to-purple-500/20 border-purple-300/50"
+      return "from-purple-950/40 to-purple-900/40 border-purple-800/50"
+    }
     if (rank === 1) return "from-yellow-400/20 to-yellow-600/20 border-yellow-500/50"
     if (rank === 2) return "from-gray-300/20 to-gray-500/20 border-gray-400/50"
     if (rank === 3) return "from-orange-400/20 to-orange-600/20 border-orange-500/50"
@@ -169,6 +175,12 @@ export function LeaderboardTable({
   }
 
   const getRankBadgeColor = (rank: number) => {
+    if (mode === "ranked") {
+      if (rank === 1) return "bg-purple-600/90 text-purple-50 border-purple-500"
+      if (rank === 2) return "bg-purple-500/90 text-purple-50 border-purple-400"
+      if (rank === 3) return "bg-purple-400/90 text-purple-50 border-purple-300"
+      return "bg-purple-900/70 text-purple-200 border-purple-800"
+    }
     if (rank === 1) return "bg-yellow-500/90 text-yellow-950 border-yellow-400"
     if (rank === 2) return "bg-gray-400/90 text-gray-950 border-gray-300"
     if (rank === 3) return "bg-orange-500/90 text-orange-950 border-orange-400"
@@ -360,10 +372,10 @@ export function LeaderboardTable({
           <div className="flex items-end mb-4">
             <button
               onClick={() => onKitChange?.("all")}
-              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
                 kit === "all"
-                  ? "text-white opacity-100 border-purple-600/50"
-                  : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
+                  ? "bg-purple-950/50 text-purple-100 opacity-100 border-t-2 border-l-2 border-r-2 border-purple-500/70 shadow-lg shadow-purple-900/50"
+                  : "bg-card text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-t border-l border-r border-border"
               }`}
             >
               <Trophy className="h-5 w-5" />
@@ -372,10 +384,10 @@ export function LeaderboardTable({
 
             <button
               onClick={() => onKitChange?.("sword")}
-              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
                 kit === "sword"
-                  ? "text-white opacity-100 border-purple-600/50"
-                  : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
+                  ? "bg-purple-950/50 text-purple-100 opacity-100 border-t-2 border-l-2 border-r-2 border-purple-500/70 shadow-lg shadow-purple-900/50"
+                  : "bg-card text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-t border-l border-r border-border"
               }`}
             >
               <Image
@@ -390,10 +402,10 @@ export function LeaderboardTable({
 
             <button
               onClick={() => onKitChange?.("axe")}
-              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
                 kit === "axe"
-                  ? "text-white opacity-100 border-purple-600/50"
-                  : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
+                  ? "bg-purple-950/50 text-purple-100 opacity-100 border-t-2 border-l-2 border-r-2 border-purple-500/70 shadow-lg shadow-purple-900/50"
+                  : "bg-card text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-t border-l border-r border-border"
               }`}
             >
               <Image
@@ -408,10 +420,10 @@ export function LeaderboardTable({
 
             <button
               onClick={() => onKitChange?.("sumo")}
-              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
                 kit === "sumo"
-                  ? "text-white opacity-100 border-purple-600/50"
-                  : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
+                  ? "bg-purple-950/50 text-purple-100 opacity-100 border-t-2 border-l-2 border-r-2 border-purple-500/70 shadow-lg shadow-purple-900/50"
+                  : "bg-card text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-t border-l border-r border-border"
               }`}
             >
               <Image src="/images/lead.png" alt="Lead" width={64} height={64} className="h-8 w-8 object-contain" />
@@ -420,10 +432,10 @@ export function LeaderboardTable({
 
             <button
               onClick={() => onKitChange?.("mace")}
-              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out ${
                 kit === "mace"
-                  ? "text-white opacity-100 border-purple-600/50"
-                  : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
+                  ? "bg-purple-950/50 text-purple-100 opacity-100 border-t-2 border-l-2 border-r-2 border-purple-500/70 shadow-lg shadow-purple-900/50"
+                  : "bg-card text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-t border-l border-r border-border"
               }`}
             >
               <Image src="/images/mace.png" alt="Mace" width={64} height={64} className="h-8 w-8 object-contain" />
@@ -448,19 +460,35 @@ export function LeaderboardTable({
           </CardContent>
         </Card>
       ) : (
-        <Card className="overflow-hidden rounded-t-none border-t-0">
+        <Card
+          className={`overflow-hidden rounded-t-none border-t-0 ${
+            mode === "ranked" ? "bg-purple-950/30 border-purple-800/40" : ""
+          }`}
+        >
           <CardHeader className="p-0 h-8">
-            <div className="flex items-center gap-6 px-4 h-full">
+            <div className={`flex items-center gap-6 px-4 h-full ${mode === "ranked" ? "bg-purple-950/40" : ""}`}>
               <div className="h-full w-[240px] flex-shrink-0 flex items-center">
-                <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider ml-4 leading-none">
+                <span
+                  className={`text-xl font-bold uppercase tracking-wider ml-4 leading-none ${
+                    mode === "ranked" ? "text-purple-300" : "text-muted-foreground"
+                  }`}
+                >
                   #
                 </span>
               </div>
               <div className="flex flex-1 items-center justify-between gap-4">
-                <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
+                <span
+                  className={`text-xl font-bold uppercase tracking-wider leading-none ${
+                    mode === "ranked" ? "text-purple-300" : "text-muted-foreground"
+                  }`}
+                >
                   PLAYER
                 </span>
-                <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
+                <span
+                  className={`text-xl font-bold uppercase tracking-wider leading-none ${
+                    mode === "ranked" ? "text-purple-300" : "text-muted-foreground"
+                  }`}
+                >
                   STATS
                 </span>
               </div>
