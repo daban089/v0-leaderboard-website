@@ -186,6 +186,7 @@ export function LeaderboardTable({
     null,
   )
   const [mode, setMode] = useState<"high-tiers" | "ranked">(kit === "high-tiers" ? "high-tiers" : "ranked")
+  const [activeTabIndex, setActiveTabIndex] = useState(0)
 
   useEffect(() => {
     if (kit === "high-tiers") {
@@ -233,6 +234,11 @@ export function LeaderboardTable({
   useEffect(() => {
     setSearchQuery(externalSearchQuery || "")
   }, [externalSearchQuery])
+
+  useEffect(() => {
+    const kitOrder = ["all", "sword", "axe", "sumo", "mace", "crystalpvp"]
+    setActiveTabIndex(kitOrder.indexOf(kit))
+  }, [kit])
 
   const filteredPlayers = players.filter((player) => player.username.toLowerCase().includes(searchQuery.toLowerCase()))
 
@@ -535,176 +541,185 @@ export function LeaderboardTable({
           </CardContent>
         </Card>
       ) : (
-        <Card className="overflow-hidden rounded-t-none border-t-0 border-[#ff3b30]">
-          <CardHeader className="p-0 h-8">
-            <div className="flex items-center gap-6 px-4 h-full">
-              <div className="h-full w-[240px] flex-shrink-0 flex items-center">
-                <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider ml-4 leading-none">
-                  #
-                </span>
+        <div className="relative">
+          <div
+            className="absolute top-0 left-0 h-[1px] bg-[#ff3b30] transition-all duration-500"
+            style={{ width: `${activeTabIndex * 112}px` }}
+          />
+          <div
+            className="absolute top-0 right-0 h-[1px] bg-[#ff3b30] transition-all duration-500"
+            style={{ width: `calc(100% - ${(activeTabIndex + 1) * 112}px)` }}
+          />
+          <Card className="overflow-hidden rounded-t-none border-t-0 border-[#ff3b30]">
+            <CardHeader className="p-0 h-8">
+              <div className="flex items-center gap-6 px-4 h-full">
+                <div className="h-full w-[240px] flex-shrink-0 flex items-center">
+                  <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider ml-4 leading-none">
+                    #
+                  </span>
+                </div>
+                <div className="flex flex-1 items-center justify-between gap-4">
+                  <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
+                    PLAYER
+                  </span>
+                  <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
+                    STATS
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-1 items-center justify-between gap-4">
-                <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
-                  PLAYER
-                </span>
-                <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
-                  STATS
-                </span>
-              </div>
-            </div>
-          </CardHeader>
+            </CardHeader>
 
-          <CardContent className="p-4 pt-0">
-            <div className="space-y-4">
-              {filteredPlayers.map((player) => (
-                <div
-                  key={player.username}
-                  className={`relative flex items-center gap-6 rounded-xl border overflow-hidden p-4 select-none transition-all duration-300 ${
-                    player.rank === 1
-                      ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
-                      : player.rank === 2
-                        ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
-                        : player.rank === 3
-                          ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
-                          : kit === "all"
-                            ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
-                            : "border-border hover:translate-x-1 hover:shadow-md"
-                  }`}
-                  onClick={() => handlePlayerClick(player)}
-                  style={
-                    player.rank <= 3 || player.rank > 3
-                      ? {
-                          backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
-                          backgroundSize: "240px 80px",
-                          backgroundPosition: "left center",
-                          backgroundRepeat: "no-repeat",
-                        }
-                      : undefined
-                  }
-                >
-                  {player.rank === 1 && (
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                      {[...Array(12)].map((_, i) => (
-                        <div
-                          key={`fire-${i}`}
-                          className="absolute animate-fire-rise"
-                          style={{
-                            left: `${5 + Math.random() * 90}%`,
-                            bottom: `${-10}px`,
-                            animationDelay: `${Math.random() * 3}s`,
-                            animationDuration: `${3 + Math.random() * 2}s`,
-                          }}
-                        >
-                          <div className="fire-particle" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {player.rank === 2 && (
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                      {[...Array(12)].map((_, i) => (
-                        <div
-                          key={`silver-${i}`}
-                          className="absolute animate-silver-rise"
-                          style={{
-                            left: `${5 + Math.random() * 90}%`,
-                            bottom: `${-10}px`,
-                            animationDelay: `${Math.random() * 3}s`,
-                            animationDuration: `${3 + Math.random() * 2}s`,
-                          }}
-                        >
-                          <div className="silver-particle" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {player.rank === 3 && (
-                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                      {[...Array(12)].map((_, i) => (
-                        <div
-                          key={`bronze-${i}`}
-                          className="absolute animate-bronze-rise"
-                          style={{
-                            left: `${5 + Math.random() * 90}%`,
-                            bottom: `${-10}px`,
-                            animationDelay: `${Math.random() * 3}s`,
-                            animationDuration: `${3 + Math.random() * 2}s`,
-                          }}
-                        >
-                          <div className="bronze-particle" />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
-                    <span
-                      className="absolute left-0 text-5xl font-black italic font-sans z-10 text-white"
-                      style={{
-                        textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
-                      }}
-                    >
-                      {player.rank}.
-                    </span>
-                    <img
-                      src={getAvatarUrl(player.username) || "/placeholder.svg"}
-                      alt={player.username}
-                      className="absolute right-14 h-[88px] w-[88px] object-contain z-10"
-                      style={{
-                        filter: "drop-shadow(-4px 0px 0.8px rgba(0,0,0,0.3))",
-                      }}
-                      onError={(e) => {
-                        e.currentTarget.src = "/placeholder.svg?height=88&width=88"
-                      }}
-                    />
-                  </div>
-
-                  <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
-                      <div className="space-y-2">
-                        {/* Only show badges on Overall tab (kit === "all") */}
-                        {kit === "all" && (
-                          <div className="flex flex-wrap gap-2">
-                            {getBadges(player).map((badge) => (
-                              <div
-                                key={badge.id}
-                                className={`flex items-center gap-2 ${badge.color}`}
-                                title={badge.requirement}
-                              >
-                                <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-6 w-6" />
-                                <span className="text-sm font-medium">{badge.name}</span>
-                              </div>
-                            ))}
+            <CardContent className="p-4 pt-0">
+              <div className="space-y-4">
+                {filteredPlayers.map((player) => (
+                  <div
+                    key={player.username}
+                    className={`relative flex items-center gap-6 rounded-xl border overflow-hidden p-4 select-none transition-all duration-300 ${
+                      player.rank === 1
+                        ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
+                        : player.rank === 2
+                          ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
+                          : player.rank === 3
+                            ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
+                            : kit === "all"
+                              ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
+                              : "border-border hover:translate-x-1 hover:shadow-md"
+                    }`}
+                    onClick={() => handlePlayerClick(player)}
+                    style={
+                      player.rank <= 3 || player.rank > 3
+                        ? {
+                            backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
+                            backgroundSize: "240px 80px",
+                            backgroundPosition: "left center",
+                            backgroundRepeat: "no-repeat",
+                          }
+                        : undefined
+                    }
+                  >
+                    {player.rank === 1 && (
+                      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        {[...Array(12)].map((_, i) => (
+                          <div
+                            key={`fire-${i}`}
+                            className="absolute animate-fire-rise"
+                            style={{
+                              left: `${5 + Math.random() * 90}%`,
+                              bottom: `${-10}px`,
+                              animationDelay: `${Math.random() * 3}s`,
+                              animationDuration: `${3 + Math.random() * 2}s`,
+                            }}
+                          >
+                            <div className="fire-particle" />
                           </div>
-                        )}
+                        ))}
                       </div>
+                    )}
+
+                    {player.rank === 2 && (
+                      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        {[...Array(12)].map((_, i) => (
+                          <div
+                            key={`silver-${i}`}
+                            className="absolute animate-silver-rise"
+                            style={{
+                              left: `${5 + Math.random() * 90}%`,
+                              bottom: `${-10}px`,
+                              animationDelay: `${Math.random() * 3}s`,
+                              animationDuration: `${3 + Math.random() * 2}s`,
+                            }}
+                          >
+                            <div className="silver-particle" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {player.rank === 3 && (
+                      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        {[...Array(12)].map((_, i) => (
+                          <div
+                            key={`bronze-${i}`}
+                            className="absolute animate-bronze-rise"
+                            style={{
+                              left: `${5 + Math.random() * 90}%`,
+                              bottom: `${-10}px`,
+                              animationDelay: `${Math.random() * 3}s`,
+                              animationDuration: `${3 + Math.random() * 2}s`,
+                            }}
+                          >
+                            <div className="bronze-particle" />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
+                      <span
+                        className="absolute left-0 text-5xl font-black italic font-sans z-10 text-white"
+                        style={{
+                          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
+                        }}
+                      >
+                        {player.rank}.
+                      </span>
+                      <img
+                        src={getAvatarUrl(player.username) || "/placeholder.svg"}
+                        alt={player.username}
+                        className="absolute right-14 h-[88px] w-[88px] object-contain z-10"
+                        style={{
+                          filter: "drop-shadow(-4px 0px 0.8px rgba(0,0,0,0.3))",
+                        }}
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.svg?height=88&width=88"
+                        }}
+                      />
                     </div>
 
-                    <div className="flex flex-col gap-2 items-end">
-                      <div className="flex items-center gap-2">
-                        <span className="text-3xl font-black text-white">{player.elo}</span>
-                        <span className="text-sm text-muted-foreground">ELO</span>
+                    <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
+                        <div className="space-y-2">
+                          {kit === "all" && (
+                            <div className="flex flex-wrap gap-2">
+                              {getBadges(player).map((badge) => (
+                                <div
+                                  key={badge.id}
+                                  className={`flex items-center gap-2 ${badge.color}`}
+                                  title={badge.requirement}
+                                >
+                                  <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-6 w-6" />
+                                  <span className="text-sm font-medium">{badge.name}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex gap-3 text-sm">
-                        <span className="text-green-500 font-semibold">{player.wins}W</span>
-                        <span className="text-red-500 font-semibold">{player.losses}L</span>
+
+                      <div className="flex flex-col gap-2 items-end">
+                        <div className="flex items-center gap-2">
+                          <span className="text-3xl font-black text-white">{player.elo}</span>
+                          <span className="text-sm text-muted-foreground">ELO</span>
+                        </div>
+                        <div className="flex gap-3 text-sm">
+                          <span className="text-green-500 font-semibold">{player.wins}W</span>
+                          <span className="text-red-500 font-semibold">{player.losses}L</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
 
-              {filteredPlayers.length === 0 && !loading && (
-                <div className="py-12 text-center">
-                  <p className="text-muted-foreground">No players found</p>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                {filteredPlayers.length === 0 && !loading && (
+                  <div className="py-12 text-center">
+                    <p className="text-muted-foreground">No players found</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {selectedPlayer && (
