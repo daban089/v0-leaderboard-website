@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Trophy } from "lucide-react"
@@ -19,8 +21,6 @@ interface Player {
 
 interface LeaderboardTableProps {
   kit?: string
-  searchQuery?: string
-  onKitChange?: (kit: string | undefined) => void
 }
 
 interface Badge {
@@ -30,6 +30,8 @@ interface Badge {
   color: string
   requirement: string
 }
+
+type KitType = "all" | "sword" | "axe" | "sumo" | "mace" | "crystalpvp"
 
 const getBadges = (player: Player): Badge[] => {
   const badges: Badge[] = []
@@ -95,152 +97,61 @@ const getBadges = (player: Player): Badge[] => {
   return badges
 }
 
-const PLACEHOLDER_DATA: Record<string, Player[]> = {
-  all: [
-    {
-      rank: 1,
-      username: "bafr",
-      elo: 2100,
-      wins: 156,
-      losses: 44,
-      winRate: 78,
-      winStreak: 12,
-      totalMatches: 200,
-    },
-  ],
-  sword: [
-    {
-      rank: 1,
-      username: "bafr",
-      elo: 1850,
-      wins: 42,
-      losses: 18,
-      winRate: 70,
-      winStreak: 5,
-      totalMatches: 60,
-    },
-  ],
-  axe: [
-    {
-      rank: 1,
-      username: "bafr",
-      elo: 1920,
-      wins: 38,
-      losses: 12,
-      winRate: 76,
-      winStreak: 8,
-      totalMatches: 50,
-    },
-  ],
-  sumo: [
-    {
-      rank: 1,
-      username: "bafr",
-      elo: 1780,
-      wins: 45,
-      losses: 25,
-      winRate: 64,
-      winStreak: 3,
-      totalMatches: 70,
-    },
-  ],
-  mace: [
-    {
-      rank: 1,
-      username: "bafr",
-      elo: 1650,
-      wins: 31,
-      losses: 19,
-      winRate: 62,
-      winStreak: 4,
-      totalMatches: 50,
-    },
-  ],
-  crystalpvp: [
-    {
-      rank: 1,
-      username: "bafr",
-      elo: 1990,
-      wins: 52,
-      losses: 28,
-      winRate: 65,
-      winStreak: 6,
-      totalMatches: 80,
-    },
-  ],
-}
-
-export function LeaderboardTable({
-  kit = "all",
-  searchQuery: externalSearchQuery,
-  onKitChange,
-}: LeaderboardTableProps) {
+const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
+  const [selectedKit, setSelectedKit] = useState<KitType>(kit as KitType)
   const [players, setPlayers] = useState<Player[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState(externalSearchQuery || "")
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
-  const [availableKits, setAvailableKits] = useState<string[]>(["all"])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [gamemodeElos, setGamemodeElos] = useState<{ sword: number; axe: number; sumo: number; mace: number } | null>(
-    null,
-  )
-  const [mode, setMode] = useState<"high-tiers" | "ranked">(kit === "high-tiers" ? "high-tiers" : "ranked")
+  const [gamemodeElos, setGamemodeElos] = useState<Record<string, number> | null>(null)
+  const [mode, setMode] = useState<"high-tiers" | "ranked">("ranked")
   const [activeTabIndex, setActiveTabIndex] = useState(0)
 
-  useEffect(() => {
-    if (kit === "high-tiers") {
-      setMode("high-tiers")
-    } else {
-      setMode("ranked")
-    }
-  }, [kit])
-
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = async (kit: KitType) => {
     try {
       setLoading(true)
+      setError(null)
       const response = await fetch(`/api/leaderboard?kit=${kit}`)
-      const data = await response.json()
-      if (Array.isArray(data)) {
-        if (data.length === 0 && PLACEHOLDER_DATA[kit]) {
-          setPlayers(PLACEHOLDER_DATA[kit])
-        } else {
-          setPlayers(data)
-        }
-        setLastUpdated(new Date())
-      } else {
-        setPlayers(PLACEHOLDER_DATA[kit] || [])
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch leaderboard data")
       }
-    } catch (error) {
-      console.error("[v0] Failed to fetch leaderboard:", error)
-      setPlayers(PLACEHOLDER_DATA[kit] || [])
+
+      const data = await response.json()
+
+      if (Array.isArray(data)) {
+        setPlayers(data)
+      } else {
+        setPlayers([])
+      }
+    } catch (err) {
+      console.error("[v0] Error fetching leaderboard:", err)
+      setError("Failed to load leaderboard. Please try again later.")
+      setPlayers([])
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchLeaderboard()
-  }, [kit])
+    fetchLeaderboard(selectedKit)
+  }, [selectedKit])
 
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchLeaderboard()
+      fetchLeaderboard(selectedKit)
     }, 60000)
 
     return () => clearInterval(interval)
-  }, [kit])
+  }, [selectedKit])
 
   useEffect(() => {
-    setSearchQuery(externalSearchQuery || "")
-  }, [externalSearchQuery])
+    const kitOrder: KitType[] = ["all", "sword", "axe", "sumo", "mace", "crystalpvp"]
+    setActiveTabIndex(kitOrder.indexOf(selectedKit))
+  }, [selectedKit])
 
-  useEffect(() => {
-    const kitOrder = ["all", "sword", "axe", "sumo", "mace", "crystalpvp"]
-    setActiveTabIndex(kitOrder.indexOf(kit))
-  }, [kit])
-
-  const filteredPlayers = players.filter((player) => player.username.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredPlayers = players.filter((player) => player.username.toLowerCase().includes(""))
 
   const getRankColor = (rank: number) => {
     if (rank === 1) return "from-yellow-400/20 to-yellow-600/20 border-yellow-500/50"
@@ -268,7 +179,7 @@ export function LeaderboardTable({
   }
 
   const getStatValue = (player: Player) => {
-    if (kit === "all") return `${player.elo} ELO`
+    if (selectedKit === "all") return `${player.elo} ELO`
     return `${player.wins}W - ${player.losses}L`
   }
 
@@ -284,7 +195,7 @@ export function LeaderboardTable({
     return null
   }
 
-  const getKitIcon = (kitName: string) => {
+  const getKitIcon = (kitName: KitType) => {
     if (kitName === "all") return <Trophy className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
     if (kitName === "sword")
       return (
@@ -340,13 +251,13 @@ export function LeaderboardTable({
     return <Trophy className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
   }
 
-  const getKitDisplayName = (kitName: string) => {
+  const getKitDisplayName = (kitName: KitType) => {
     if (kitName === "all") return "Overall"
     return kitName.charAt(0).toUpperCase() + kitName.slice(1)
   }
 
   const handlePlayerClick = async (player: Player) => {
-    if (kit !== "all") return
+    if (selectedKit !== "all") return
 
     setSelectedPlayer(player)
     setIsModalOpen(true)
@@ -384,6 +295,17 @@ export function LeaderboardTable({
     )
   }
 
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>{getCategoryTitle()}</CardTitle>
+          <CardDescription>{error}</CardDescription>
+        </CardHeader>
+      </Card>
+    )
+  }
+
   return (
     <div>
       <div className="flex gap-3 mb-6">
@@ -391,7 +313,7 @@ export function LeaderboardTable({
           onClick={() => {
             console.log("[v0] Switching to High Tiers mode")
             setMode("high-tiers")
-            onKitChange?.(undefined)
+            setSelectedKit("all")
           }}
           className={`relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
             mode === "high-tiers"
@@ -417,7 +339,7 @@ export function LeaderboardTable({
           onClick={() => {
             console.log("[v0] Switching to Ranked mode")
             setMode("ranked")
-            onKitChange?.("all")
+            setSelectedKit("all")
           }}
           className={`flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
             mode === "ranked"
@@ -440,9 +362,9 @@ export function LeaderboardTable({
       {mode === "ranked" && (
         <div className="flex items-end">
           <button
-            onClick={() => onKitChange?.("all")}
+            onClick={() => setSelectedKit("all")}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
-              kit === "all"
+              selectedKit === "all"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
@@ -452,9 +374,9 @@ export function LeaderboardTable({
           </button>
 
           <button
-            onClick={() => onKitChange?.("sword")}
+            onClick={() => setSelectedKit("sword")}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
-              kit === "sword"
+              selectedKit === "sword"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
@@ -470,9 +392,9 @@ export function LeaderboardTable({
           </button>
 
           <button
-            onClick={() => onKitChange?.("axe")}
+            onClick={() => setSelectedKit("axe")}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
-              kit === "axe"
+              selectedKit === "axe"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
@@ -482,9 +404,9 @@ export function LeaderboardTable({
           </button>
 
           <button
-            onClick={() => onKitChange?.("sumo")}
+            onClick={() => setSelectedKit("sumo")}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
-              kit === "sumo"
+              selectedKit === "sumo"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
@@ -494,9 +416,9 @@ export function LeaderboardTable({
           </button>
 
           <button
-            onClick={() => onKitChange?.("mace")}
+            onClick={() => setSelectedKit("mace")}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
-              kit === "mace"
+              selectedKit === "mace"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
@@ -506,9 +428,9 @@ export function LeaderboardTable({
           </button>
 
           <button
-            onClick={() => onKitChange?.("crystalpvp")}
+            onClick={() => setSelectedKit("crystalpvp")}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
-              kit === "crystalpvp"
+              selectedKit === "crystalpvp"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
@@ -581,7 +503,7 @@ export function LeaderboardTable({
                           ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
                           : player.rank === 3
                             ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
-                            : kit === "all"
+                            : selectedKit === "all"
                               ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
                               : "border-border hover:translate-x-1 hover:shadow-md"
                     }`}
@@ -680,7 +602,7 @@ export function LeaderboardTable({
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
                         <div className="space-y-2">
-                          {kit === "all" && (
+                          {selectedKit === "all" && (
                             <div className="flex flex-wrap gap-2">
                               {getBadges(player).map((badge) => (
                                 <div
@@ -740,3 +662,6 @@ export function LeaderboardTable({
     </div>
   )
 }
+
+export default LeaderboardTable
+export { LeaderboardTable }
