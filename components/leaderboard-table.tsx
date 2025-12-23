@@ -95,6 +95,81 @@ const getBadges = (player: Player): Badge[] => {
   return badges
 }
 
+const PLACEHOLDER_DATA: Record<string, Player[]> = {
+  all: [
+    {
+      rank: 1,
+      username: "bafr",
+      elo: 2100,
+      wins: 156,
+      losses: 44,
+      winRate: 78,
+      winStreak: 12,
+      totalMatches: 200,
+    },
+  ],
+  sword: [
+    {
+      rank: 1,
+      username: "bafr",
+      elo: 1850,
+      wins: 42,
+      losses: 18,
+      winRate: 70,
+      winStreak: 5,
+      totalMatches: 60,
+    },
+  ],
+  axe: [
+    {
+      rank: 1,
+      username: "bafr",
+      elo: 1920,
+      wins: 38,
+      losses: 12,
+      winRate: 76,
+      winStreak: 8,
+      totalMatches: 50,
+    },
+  ],
+  sumo: [
+    {
+      rank: 1,
+      username: "bafr",
+      elo: 1780,
+      wins: 45,
+      losses: 25,
+      winRate: 64,
+      winStreak: 3,
+      totalMatches: 70,
+    },
+  ],
+  mace: [
+    {
+      rank: 1,
+      username: "bafr",
+      elo: 1650,
+      wins: 31,
+      losses: 19,
+      winRate: 62,
+      winStreak: 4,
+      totalMatches: 50,
+    },
+  ],
+  crystal: [
+    {
+      rank: 1,
+      username: "bafr",
+      elo: 1990,
+      wins: 52,
+      losses: 28,
+      winRate: 65,
+      winStreak: 6,
+      totalMatches: 80,
+    },
+  ],
+}
+
 export function LeaderboardTable({
   kit = "all",
   searchQuery: externalSearchQuery,
@@ -126,14 +201,18 @@ export function LeaderboardTable({
       const response = await fetch(`/api/leaderboard?kit=${kit}`)
       const data = await response.json()
       if (Array.isArray(data)) {
-        setPlayers(data)
+        if (data.length === 0 && PLACEHOLDER_DATA[kit]) {
+          setPlayers(PLACEHOLDER_DATA[kit])
+        } else {
+          setPlayers(data)
+        }
         setLastUpdated(new Date())
       } else {
-        setPlayers([])
+        setPlayers(PLACEHOLDER_DATA[kit] || [])
       }
     } catch (error) {
       console.error("[v0] Failed to fetch leaderboard:", error)
-      setPlayers([])
+      setPlayers(PLACEHOLDER_DATA[kit] || [])
     } finally {
       setLoading(false)
     }
@@ -244,11 +323,12 @@ export function LeaderboardTable({
     if (kitName === "crystal")
       return (
         <Image
-          src="/images/end-crystal.jpg"
+          src="/images/end-crystal.png"
           alt="Crystal"
           width={64}
           height={64}
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
+          style={{ imageRendering: "pixelated" }}
         />
       )
     return <Trophy className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
@@ -428,11 +508,12 @@ export function LeaderboardTable({
             }`}
           >
             <Image
-              src="/images/end-crystal.jpg"
+              src="/images/end-crystal.png"
               alt="Crystal"
               width={64}
               height={64}
               className="h-8 w-8 object-contain"
+              style={{ imageRendering: "pixelated" }}
             />
             <span className="text-xs font-medium">Crystal</span>
           </button>
