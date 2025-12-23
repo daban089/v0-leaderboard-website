@@ -15,6 +15,21 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const kit = searchParams.get("kit") || "all"
 
+  if (kit === "crystal") {
+    return NextResponse.json([
+      {
+        username: "bafr",
+        wins: 42,
+        losses: 18,
+        totalMatches: 60,
+        winRate: 70,
+        elo: 1850,
+        winStreak: 5,
+        rank: 1,
+      },
+    ])
+  }
+
   try {
     const mysql = await import("mysql2/promise")
 

@@ -241,6 +241,16 @@ export function LeaderboardTable({
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
       )
+    if (kitName === "crystal")
+      return (
+        <Image
+          src="/images/end-crystal.jpg"
+          alt="Crystal"
+          width={64}
+          height={64}
+          className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
+        />
+      )
     return <Trophy className="h-5 w-5 transition-transform duration-300 hover:scale-110" />
   }
 
@@ -407,6 +417,24 @@ export function LeaderboardTable({
           >
             <Image src="/images/mace.png" alt="Mace" width={64} height={64} className="h-8 w-8 object-contain" />
             <span className="text-xs font-medium">Mace</span>
+          </button>
+
+          <button
+            onClick={() => onKitChange?.("crystal")}
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
+              kit === "crystal"
+                ? "text-white opacity-100"
+                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+            }`}
+          >
+            <Image
+              src="/images/end-crystal.jpg"
+              alt="Crystal"
+              width={64}
+              height={64}
+              className="h-8 w-8 object-contain"
+            />
+            <span className="text-xs font-medium">Crystal</span>
           </button>
         </div>
       )}
