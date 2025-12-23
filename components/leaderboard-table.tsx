@@ -441,7 +441,7 @@ export function LeaderboardTable({
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
           >
-            <Trophy className="h-5 w-5" />
+            <Trophy className="h-8 w-8" />
             <span className="text-xs font-medium">Overall</span>
           </button>
 
