@@ -360,7 +360,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
       </div>
 
       {mode === "ranked" && (
-        <div className="flex items-end justify-between sm:justify-center">
+        <div className="flex items-end justify-between sm:justify-start">
           <button
             onClick={() => setSelectedKit("all")}
             className={`flex flex-col items-center gap-0.5 sm:gap-1 flex-1 sm:w-28 sm:flex-none py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
