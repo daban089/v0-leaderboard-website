@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const kit = searchParams.get("kit") || "all"
 
-  if (kit === "crystal") {
+  if (kit === "crystalpvp") {
     return NextResponse.json([
       {
         username: "bafr",

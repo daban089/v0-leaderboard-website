@@ -156,7 +156,7 @@ const PLACEHOLDER_DATA: Record<string, Player[]> = {
       totalMatches: 50,
     },
   ],
-  crystal: [
+  crystalpvp: [
     {
       rank: 1,
       username: "bafr",
@@ -320,7 +320,7 @@ export function LeaderboardTable({
           className="h-8 w-8 object-contain transition-transform duration-300 hover:scale-110"
         />
       )
-    if (kitName === "crystal")
+    if (kitName === "crystalpvp")
       return (
         <Image
           src="/images/end-crystal.png"
@@ -500,9 +500,9 @@ export function LeaderboardTable({
           </button>
 
           <button
-            onClick={() => onKitChange?.("crystal")}
+            onClick={() => onKitChange?.("crystalpvp")}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
-              kit === "crystal"
+              kit === "crystalpvp"
                 ? "text-white opacity-100"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
             }`}
