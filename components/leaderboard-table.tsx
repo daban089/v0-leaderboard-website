@@ -528,7 +528,7 @@ export function LeaderboardTable({
             </CardTitle>
             <CardDescription>Manually curated top players tested by staff</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 min-h-[600px]">
             <div className="text-center py-12">
               <p className="text-muted-foreground">High Tiers content coming soon...</p>
             </div>
@@ -554,7 +554,7 @@ export function LeaderboardTable({
             </div>
           </CardHeader>
 
-          <CardContent className="p-4 pt-0">
+          <CardContent className="p-4 pt-0 min-h-[600px]">
             <div className="space-y-4">
               {filteredPlayers.map((player) => (
                 <div
