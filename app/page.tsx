@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { LeaderboardTable } from "@/components/leaderboard-table"
+import { ActivityFeed } from "@/components/activity-feed"
 import { LoginDialog } from "@/components/login-dialog"
 import { LogIn, LogOut, User, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -90,7 +91,14 @@ export default function Page() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <LeaderboardTable kit={activeKit} searchQuery={searchQuery} onKitChange={setActiveKit} />
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_400px]">
+          <div>
+            <LeaderboardTable kit={activeKit} searchQuery={searchQuery} onKitChange={setActiveKit} />
+          </div>
+          <div className="hidden lg:block">
+            <ActivityFeed />
+          </div>
+        </div>
       </div>
 
       {showLogin && <LoginDialog onLogin={handleLogin} onClose={() => setShowLogin(false)} />}
