@@ -22,52 +22,6 @@ const KITS = {
   crystalpvp: { icon: "/images/end-crystal.png", name: "Crystal" },
 }
 
-const DEMO_NAMES = [
-  "bafr",
-  "xXShadowXx",
-  "CrystalKing",
-  "PvPMaster",
-  "DiamondWarrior",
-  "EnderDragon",
-  "NetherKnight",
-  "IronGolem",
-  "BlazeFighter",
-  "WitherSlayer",
-  "CreeperHunter",
-  "ZombieKiller",
-  "SkeletonArcher",
-  "SpiderNinja",
-]
-
-function getRandomName() {
-  return DEMO_NAMES[Math.floor(Math.random() * DEMO_NAMES.length)]
-}
-
-function getRandomKit(): Match["kit"] {
-  const kits: Match["kit"][] = ["sword", "axe", "sumo", "mace", "crystalpvp"]
-  return kits[Math.floor(Math.random() * kits.length)]
-}
-
-function generateRandomMatch(): Match {
-  const winner = getRandomName()
-  let loser = getRandomName()
-  while (loser === winner) {
-    loser = getRandomName()
-  }
-
-  const eloChange = Math.floor(Math.random() * 21) + 10 // 10-30
-
-  return {
-    id: `${Date.now()}-${Math.random()}`,
-    winner,
-    loser,
-    winnerEloChange: eloChange,
-    loserEloChange: -eloChange,
-    kit: getRandomKit(),
-    timestamp: new Date(),
-  }
-}
-
 function getTimeAgo(date: Date): string {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000)
 
@@ -82,27 +36,22 @@ export function ActivityFeed() {
   const [matches, setMatches] = useState<Match[]>([])
 
   useEffect(() => {
-    // Generate initial matches
-    const initialMatches = Array.from({ length: 10 }, () => {
-      const match = generateRandomMatch()
-      match.timestamp = new Date(Date.now() - Math.random() * 300000) // Random time in last 5 mins
-      return match
-    }).sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+    async function fetchMatches() {
+      try {
+        const response = await fetch("/api/recent-matches")
+        if (response.ok) {
+          const data = await response.json()
+          setMatches(data.matches || [])
+        }
+      } catch (error) {
+        console.error("Failed to fetch matches:", error)
+      }
+    }
 
-    setMatches(initialMatches)
+    fetchMatches()
 
-    // Add new match every 5-10 seconds
-    const interval = setInterval(
-      () => {
-        setMatches((prev) => {
-          const newMatch = generateRandomMatch()
-          const updated = [newMatch, ...prev].slice(0, 20)
-          return updated
-        })
-      },
-      Math.random() * 5000 + 5000,
-    ) // 5-10 seconds
-
+    // Poll for new matches every 10 seconds
+    const interval = setInterval(fetchMatches, 10000)
     return () => clearInterval(interval)
   }, [])
 
@@ -134,55 +83,61 @@ export function ActivityFeed() {
 
       {/* Match list */}
       <div className="relative max-h-[600px] overflow-y-auto">
-        <div className="divide-y divide-border/50">
-          {matches.map((match, index) => (
-            <div
-              key={match.id}
-              className="animate-in slide-in-from-top-4 fade-in px-6 py-4 transition-colors hover:bg-red-950/10"
-              style={{ animationDuration: "400ms", animationFillMode: "both" }}
-            >
-              <div className="flex items-center justify-between gap-4">
-                {/* Match info */}
-                <div className="flex min-w-0 flex-1 items-center gap-3">
-                  {/* Kit icon */}
-                  <div className="relative flex-shrink-0">
-                    <Image
-                      src={KITS[match.kit].icon || "/placeholder.svg"}
-                      alt={KITS[match.kit].name}
-                      width={32}
-                      height={32}
-                      className="h-8 w-8 object-contain"
-                      style={{ imageRendering: "pixelated" }}
-                    />
+        {matches.length === 0 ? (
+          <div className="flex items-center justify-center py-12 text-muted-foreground">
+            <p className="text-sm">No recent matches found</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-border/50">
+            {matches.map((match) => (
+              <div
+                key={match.id}
+                className="animate-in slide-in-from-top-4 fade-in px-6 py-4 transition-colors hover:bg-red-950/10"
+                style={{ animationDuration: "400ms", animationFillMode: "both" }}
+              >
+                <div className="flex items-center justify-between gap-4">
+                  {/* Match info */}
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
+                    {/* Kit icon */}
+                    <div className="relative flex-shrink-0">
+                      <Image
+                        src={KITS[match.kit].icon || "/placeholder.svg"}
+                        alt={KITS[match.kit].name}
+                        width={32}
+                        height={32}
+                        className="h-8 w-8 object-contain"
+                        style={{ imageRendering: "pixelated" }}
+                      />
+                    </div>
+
+                    {/* Players */}
+                    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+                      <button className="truncate font-semibold text-foreground transition-colors hover:text-red-400 hover:underline">
+                        {match.winner}
+                      </button>
+                      <span className="flex-shrink-0 text-xs text-green-500 font-medium">+{match.winnerEloChange}</span>
+                      <span className="flex-shrink-0 text-muted-foreground">defeated</span>
+                      <button className="truncate font-semibold text-foreground transition-colors hover:text-red-400 hover:underline">
+                        {match.loser}
+                      </button>
+                      <span className="flex-shrink-0 text-xs text-red-500 font-medium">{match.loserEloChange}</span>
+                    </div>
                   </div>
 
-                  {/* Players */}
-                  <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-                    <button className="truncate font-semibold text-foreground transition-colors hover:text-red-400 hover:underline">
-                      {match.winner}
-                    </button>
-                    <span className="flex-shrink-0 text-xs text-green-500 font-medium">+{match.winnerEloChange}</span>
-                    <span className="flex-shrink-0 text-muted-foreground">defeated</span>
-                    <button className="truncate font-semibold text-foreground transition-colors hover:text-red-400 hover:underline">
-                      {match.loser}
-                    </button>
-                    <span className="flex-shrink-0 text-xs text-red-500 font-medium">{match.loserEloChange}</span>
-                  </div>
+                  {/* Timestamp */}
+                  <div className="flex-shrink-0 text-xs text-muted-foreground">{getTimeAgo(match.timestamp)}</div>
                 </div>
 
-                {/* Timestamp */}
-                <div className="flex-shrink-0 text-xs text-muted-foreground">{getTimeAgo(match.timestamp)}</div>
+                {/* Kit badge */}
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="inline-flex items-center rounded-full border border-red-950/50 bg-red-950/20 px-2.5 py-0.5 text-xs font-medium text-red-300">
+                    {KITS[match.kit].name}
+                  </span>
+                </div>
               </div>
-
-              {/* Kit badge */}
-              <div className="mt-2 flex items-center gap-2">
-                <span className="inline-flex items-center rounded-full border border-red-950/50 bg-red-950/20 px-2.5 py-0.5 text-xs font-medium text-red-300">
-                  {KITS[match.kit].name}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </Card>
   )
