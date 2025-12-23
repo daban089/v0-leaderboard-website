@@ -535,7 +535,7 @@ export function LeaderboardTable({
           </CardContent>
         </Card>
       ) : (
-        <Card className="overflow-hidden rounded-t-none border-t-0">
+        <Card className="overflow-hidden rounded-t-none border-t-0 border-[#ff3b30]">
           <CardHeader className="p-0 h-8">
             <div className="flex items-center gap-6 px-4 h-full">
               <div className="h-full w-[240px] flex-shrink-0 flex items-center">
