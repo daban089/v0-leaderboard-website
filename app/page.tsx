@@ -1,34 +1,34 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { LeaderboardTable } from "@/components/leaderboard-table"
-import { LoginDialog } from "@/components/login-dialog"
-import { LogIn, LogOut, User, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
+// import { LoginDialog } from "@/components/login-dialog"
+// import { LogIn, LogOut, User } from "lucide-react"
+import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
 export default function Page() {
   const [activeKit, setActiveKit] = useState<string>("all")
-  const [showLogin, setShowLogin] = useState(false)
-  const [loggedInUser, setLoggedInUser] = useState<string | null>(null)
+  // const [showLogin, setShowLogin] = useState(false)
+  // const [loggedInUser, setLoggedInUser] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem("verified_username")
-    if (savedUser) {
-      setLoggedInUser(savedUser)
-    }
-  }, [])
+  // useEffect(() => {
+  //   const savedUser = localStorage.getItem("verified_username")
+  //   if (savedUser) {
+  //     setLoggedInUser(savedUser)
+  //   }
+  // }, [])
 
-  const handleLogin = (username: string) => {
-    setLoggedInUser(username)
-    localStorage.setItem("verified_username", username)
-  }
+  // const handleLogin = (username: string) => {
+  //   setLoggedInUser(username)
+  //   localStorage.setItem("verified_username", username)
+  // }
 
-  const handleLogout = () => {
-    setLoggedInUser(null)
-    localStorage.removeItem("verified_username")
-  }
+  // const handleLogout = () => {
+  //   setLoggedInUser(null)
+  //   localStorage.removeItem("verified_username")
+  // }
 
   return (
     <div className="min-h-screen bg-background">
@@ -43,7 +43,7 @@ export default function Page() {
             <div className="flex items-center gap-3">
               {/* Discord Button */}
               <a
-                href="https://discord.gg/your-server"
+                href="https://discord.gg/gzPjF9JNjn"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-3 py-2 text-foreground h-12"
@@ -66,8 +66,7 @@ export default function Page() {
                 />
               </div>
 
-              {/* Login/Logout */}
-              {loggedInUser ? (
+              {/* {loggedInUser ? (
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 h-12">
                     <User className="h-4 w-4 text-primary" />
@@ -83,7 +82,7 @@ export default function Page() {
                   <LogIn className="mr-2 h-4 w-4" />
                   Verify Account
                 </Button>
-              )}
+              )} */}
             </div>
           </div>
         </div>
@@ -93,7 +92,7 @@ export default function Page() {
         <LeaderboardTable kit={activeKit} searchQuery={searchQuery} onKitChange={setActiveKit} />
       </div>
 
-      {showLogin && <LoginDialog onLogin={handleLogin} onClose={() => setShowLogin(false)} />}
+      {/* {showLogin && <LoginDialog onLogin={handleLogin} onClose={() => setShowLogin(false)} />} */}
     </div>
   )
 }
