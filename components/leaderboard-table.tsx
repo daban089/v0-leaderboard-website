@@ -97,7 +97,7 @@ const getBadges = (player: Player): Badge[] => {
 
 export function LeaderboardTable({
   kit = "all",
-  searchQuery: externalSearchQuery,
+  searchQuery: externalSearchQuery = "",
   onKitChange,
 }: LeaderboardTableProps) {
   const [players, setPlayers] = useState<Player[]>([])
@@ -289,118 +289,143 @@ export function LeaderboardTable({
   }
 
   return (
-    <div>
-      <div className="flex gap-3 mb-6">
-        <button
-          onClick={() => {
-            setMode("high-tiers")
-            onKitChange?.(undefined)
-          }}
-          className={`relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
-            mode === "high-tiers"
-              ? "bg-gradient-to-r from-red-950/90 via-red-900/90 to-red-950/90 text-red-100 shadow-lg shadow-red-900/70 border border-red-800/60 backdrop-blur-xl crimson-glow"
-              : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
-          }`}
-        >
-          {mode === "high-tiers" && (
-            <div className="absolute inset-0 bg-gradient-to-br from-red-800/20 via-transparent to-transparent pointer-events-none" />
-          )}
-          <Image
-            src="/images/reckless-icon.png"
-            alt="High Tiers"
-            width={64}
-            height={64}
-            className="h-8 w-8 relative z-10 pixelated"
-          />
-          <span className="relative z-10">High Tiers</span>
-          {mode === "high-tiers" && <div className="h-2 w-2 bg-red-700 rounded-full animate-pulse relative z-10" />}
-        </button>
-
-        <button
-          onClick={() => {
-            setMode("ranked")
-            onKitChange?.("all")
-          }}
-          className={`flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
-            mode === "ranked"
-              ? "bg-card text-foreground border-2 border-primary"
-              : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
-          }`}
-        >
-          <Image src="/images/fire-focus-icon.png" alt="Ranked" width={64} height={64} className="h-8 w-8 pixelated" />
-          <span>Ranked</span>
-        </button>
-      </div>
-
-      {mode === "ranked" && (
-        <div className="flex items-end mb-4">
+    <div className="space-y-6">
+      <div
+        className={`transition-all duration-500 ${
+          mode === "high-tiers"
+            ? "bg-gradient-to-b from-red-950/20 via-transparent to-transparent rounded-2xl p-6 -m-6"
+            : "bg-gradient-to-b from-purple-950/20 via-transparent to-transparent rounded-2xl p-6 -m-6"
+        }`}
+      >
+        {/* Mode Selector (High Tiers vs Ranked) */}
+        <div className="flex gap-3 mb-6">
           <button
-            onClick={() => onKitChange?.("all")}
-            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
-              kit === "all"
-                ? "text-white opacity-100"
-                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+            onClick={() => {
+              setMode("high-tiers")
+              onKitChange?.(undefined)
+            }}
+            className={`relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
+              mode === "high-tiers"
+                ? "bg-gradient-to-r from-red-950/90 via-red-900/90 to-red-950/90 text-red-100 shadow-lg shadow-red-900/70 border border-red-800/60 backdrop-blur-xl crimson-glow"
+                : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
             }`}
           >
-            <Trophy className="h-5 w-5" />
-            <span className="text-xs font-medium">Overall</span>
-          </button>
-
-          <button
-            onClick={() => onKitChange?.("sword")}
-            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
-              kit === "sword"
-                ? "text-white opacity-100"
-                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
-            }`}
-          >
+            {mode === "high-tiers" && (
+              <div className="absolute inset-0 bg-gradient-to-br from-red-800/20 via-transparent to-transparent pointer-events-none" />
+            )}
             <Image
-              src="/images/diamond-sword.png"
-              alt="Sword"
+              src="/images/fire-focus-icon.png"
+              alt="High Tiers"
               width={64}
               height={64}
-              className="h-8 w-8 object-contain"
+              className="h-8 w-8 relative z-10 pixelated"
             />
-            <span className="text-xs font-medium">Sword</span>
+            <span className="relative z-10">High Tiers</span>
+            {mode === "high-tiers" && <div className="h-2 w-2 bg-red-700 rounded-full animate-pulse relative z-10" />}
           </button>
 
           <button
-            onClick={() => onKitChange?.("axe")}
-            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
-              kit === "axe"
-                ? "text-white opacity-100"
-                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
+            onClick={() => {
+              setMode("ranked")
+              onKitChange?.("all")
+            }}
+            className={`relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
+              mode === "ranked"
+                ? "bg-gradient-to-r from-purple-950/90 via-purple-900/90 to-purple-950/90 text-purple-100 shadow-lg shadow-purple-900/70 border border-purple-700/60 backdrop-blur-xl purple-glow"
+                : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
             }`}
           >
-            <Image src="/images/diamond-axe.png" alt="Axe" width={64} height={64} className="h-8 w-8 object-contain" />
-            <span className="text-xs font-medium">Axe</span>
-          </button>
-
-          <button
-            onClick={() => onKitChange?.("sumo")}
-            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
-              kit === "sumo"
-                ? "text-white opacity-100"
-                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
-            }`}
-          >
-            <Image src="/images/lead.png" alt="Lead" width={64} height={64} className="h-8 w-8 object-contain" />
-            <span className="text-xs font-medium">Sumo</span>
-          </button>
-
-          <button
-            onClick={() => onKitChange?.("mace")}
-            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r border-border ${
-              kit === "mace"
-                ? "text-white opacity-100"
-                : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100"
-            }`}
-          >
-            <Image src="/images/mace.png" alt="Mace" width={64} height={64} className="h-8 w-8 object-contain" />
-            <span className="text-xs font-medium">Mace</span>
+            {mode === "ranked" && (
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-800/20 via-transparent to-transparent pointer-events-none" />
+            )}
+            <Image
+              src="/images/soul-focus-icon.png"
+              alt="Ranked"
+              width={64}
+              height={64}
+              className="h-8 w-8 relative z-10 pixelated"
+            />
+            <span className="relative z-10">Ranked</span>
+            {mode === "ranked" && <div className="h-2 w-2 bg-purple-600 rounded-full animate-pulse relative z-10" />}
           </button>
         </div>
-      )}
+
+        {mode === "ranked" && (
+          <div className="flex items-end mb-4">
+            <button
+              onClick={() => onKitChange?.("all")}
+              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+                kit === "all"
+                  ? "text-white opacity-100 border-purple-600/50"
+                  : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
+              }`}
+            >
+              <Trophy className="h-5 w-5" />
+              <span className="text-xs font-medium">Overall</span>
+            </button>
+
+            <button
+              onClick={() => onKitChange?.("sword")}
+              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+                kit === "sword"
+                  ? "text-white opacity-100 border-purple-600/50"
+                  : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
+              }`}
+            >
+              <Image
+                src="/images/diamond-sword.png"
+                alt="Sword"
+                width={64}
+                height={64}
+                className="h-8 w-8 object-contain"
+              />
+              <span className="text-xs font-medium">Sword</span>
+            </button>
+
+            <button
+              onClick={() => onKitChange?.("axe")}
+              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+                kit === "axe"
+                  ? "text-white opacity-100 border-purple-600/50"
+                  : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
+              }`}
+            >
+              <Image
+                src="/images/diamond-axe.png"
+                alt="Axe"
+                width={64}
+                height={64}
+                className="h-8 w-8 object-contain"
+              />
+              <span className="text-xs font-medium">Axe</span>
+            </button>
+
+            <button
+              onClick={() => onKitChange?.("sumo")}
+              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+                kit === "sumo"
+                  ? "text-white opacity-100 border-purple-600/50"
+                  : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
+              }`}
+            >
+              <Image src="/images/lead.png" alt="Lead" width={64} height={64} className="h-8 w-8 object-contain" />
+              <span className="text-xs font-medium">Sumo</span>
+            </button>
+
+            <button
+              onClick={() => onKitChange?.("mace")}
+              className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+                kit === "mace"
+                  ? "text-white opacity-100 border-purple-600/50"
+                  : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
+              }`}
+            >
+              <Image src="/images/mace.png" alt="Mace" width={64} height={64} className="h-8 w-8 object-contain" />
+              <span className="text-xs font-medium">Mace</span>
+            </button>
+          </div>
+        )}
+      </div>
 
       {mode === "high-tiers" ? (
         <Card className="overflow-hidden">
