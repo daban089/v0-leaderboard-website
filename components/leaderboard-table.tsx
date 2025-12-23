@@ -501,15 +501,23 @@ export function LeaderboardTable({
                 <div
                   key={player.username}
                   className={`relative flex items-center gap-6 rounded-xl border overflow-hidden p-4 select-none transition-all duration-300 ${
-                    player.rank === 1
-                      ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
-                      : player.rank === 2
-                        ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
-                        : player.rank === 3
-                          ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
-                          : kit === "all"
-                            ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
-                            : "border-border hover:translate-x-1 hover:shadow-md"
+                    mode === "ranked" && player.rank === 1
+                      ? "border-purple-500/80 shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)] hover:scale-[1.02] animate-purple-glow-pulse cursor-pointer"
+                      : mode === "ranked" && player.rank === 2
+                        ? "border-purple-400/80 shadow-[0_0_20px_rgba(192,132,252,0.4)] hover:shadow-[0_0_30px_rgba(192,132,252,0.5)] hover:scale-[1.02] animate-purple-glow-pulse cursor-pointer"
+                        : mode === "ranked" && player.rank === 3
+                          ? "border-purple-300/80 shadow-[0_0_20px_rgba(216,180,254,0.4)] hover:shadow-[0_0_30px_rgba(216,180,254,0.5)] hover:scale-[1.02] animate-purple-glow-pulse cursor-pointer"
+                          : mode === "ranked"
+                            ? "border-purple-800/60 bg-purple-950/30 cursor-pointer hover:scale-[1.02] hover:shadow-xl hover:shadow-purple-900/30"
+                            : player.rank === 1
+                              ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
+                              : player.rank === 2
+                                ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
+                                : player.rank === 3
+                                  ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
+                                  : kit === "all"
+                                    ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
+                                    : "border-border hover:translate-x-1 hover:shadow-md"
                   }`}
                   onClick={() => handlePlayerClick(player)}
                   style={
@@ -523,7 +531,64 @@ export function LeaderboardTable({
                       : undefined
                   }
                 >
-                  {player.rank === 1 && (
+                  {mode === "ranked" && player.rank === 1 && (
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      {[...Array(12)].map((_, i) => (
+                        <div
+                          key={`purple-fire-${i}`}
+                          className="absolute animate-fire-rise"
+                          style={{
+                            left: `${5 + Math.random() * 90}%`,
+                            bottom: `${-10}px`,
+                            animationDelay: `${Math.random() * 3}s`,
+                            animationDuration: `${3 + Math.random() * 2}s`,
+                          }}
+                        >
+                          <div className="purple-particle" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {mode === "ranked" && player.rank === 2 && (
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      {[...Array(12)].map((_, i) => (
+                        <div
+                          key={`purple-silver-${i}`}
+                          className="absolute animate-silver-rise"
+                          style={{
+                            left: `${5 + Math.random() * 90}%`,
+                            bottom: `${-10}px`,
+                            animationDelay: `${Math.random() * 3}s`,
+                            animationDuration: `${3 + Math.random() * 2}s`,
+                          }}
+                        >
+                          <div className="purple-silver-particle" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {mode === "ranked" && player.rank === 3 && (
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                      {[...Array(12)].map((_, i) => (
+                        <div
+                          key={`purple-bronze-${i}`}
+                          className="absolute animate-bronze-rise"
+                          style={{
+                            left: `${5 + Math.random() * 90}%`,
+                            bottom: `${-10}px`,
+                            animationDelay: `${Math.random() * 3}s`,
+                            animationDuration: `${3 + Math.random() * 2}s`,
+                          }}
+                        >
+                          <div className="purple-bronze-particle" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {mode !== "ranked" && player.rank === 1 && (
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                       {[...Array(12)].map((_, i) => (
                         <div
@@ -542,7 +607,7 @@ export function LeaderboardTable({
                     </div>
                   )}
 
-                  {player.rank === 2 && (
+                  {mode !== "ranked" && player.rank === 2 && (
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                       {[...Array(12)].map((_, i) => (
                         <div
@@ -561,7 +626,7 @@ export function LeaderboardTable({
                     </div>
                   )}
 
-                  {player.rank === 3 && (
+                  {mode !== "ranked" && player.rank === 3 && (
                     <div className="absolute inset-0 overflow-hidden pointer-events-none">
                       {[...Array(12)].map((_, i) => (
                         <div
@@ -621,12 +686,26 @@ export function LeaderboardTable({
 
                     <div className="flex flex-col gap-2 items-end">
                       <div className="flex items-center gap-2">
-                        <span className="text-3xl font-black text-white">{player.elo}</span>
-                        <span className="text-sm text-muted-foreground">ELO</span>
+                        <span className={`text-3xl font-black ${mode === "ranked" ? "text-purple-200" : "text-white"}`}>
+                          {player.elo}
+                        </span>
+                        <span className={`text-sm ${mode === "ranked" ? "text-purple-400" : "text-muted-foreground"}`}>
+                          ELO
+                        </span>
                       </div>
                       <div className="flex gap-3 text-sm">
-                        <span className="text-green-500 font-semibold">{player.wins}W</span>
-                        <span className="text-red-500 font-semibold">{player.losses}L</span>
+                        <span
+                          className={
+                            mode === "ranked" ? "text-purple-300 font-semibold" : "text-green-500 font-semibold"
+                          }
+                        >
+                          {player.wins}W
+                        </span>
+                        <span
+                          className={mode === "ranked" ? "text-purple-400 font-semibold" : "text-red-500 font-semibold"}
+                        >
+                          {player.losses}L
+                        </span>
                       </div>
                     </div>
                   </div>
