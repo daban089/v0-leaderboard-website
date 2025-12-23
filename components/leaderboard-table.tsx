@@ -306,14 +306,13 @@ export function LeaderboardTable({
             <div className="absolute inset-0 bg-gradient-to-br from-red-800/20 via-transparent to-transparent pointer-events-none" />
           )}
           <Image
-            src="/images/reckless-icon.png"
+            src="/images/soul-focus-icon.png"
             alt="High Tiers"
             width={64}
             height={64}
-            className="h-8 w-8 relative z-10 pixelated"
+            className="h-10 w-10 relative z-10 pixelated"
           />
           <span className="relative z-10">High Tiers</span>
-          {mode === "high-tiers" && <div className="h-2 w-2 bg-red-700 rounded-full animate-pulse relative z-10" />}
         </button>
 
         <button
@@ -327,7 +326,13 @@ export function LeaderboardTable({
               : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
           }`}
         >
-          <Image src="/images/fire-focus-icon.png" alt="Ranked" width={64} height={64} className="h-8 w-8 pixelated" />
+          <Image
+            src="/images/fire-focus-icon.png"
+            alt="Ranked"
+            width={64}
+            height={64}
+            className="h-10 w-10 pixelated"
+          />
           <span>Ranked</span>
         </button>
       </div>
