@@ -80,7 +80,6 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
   const [error, setError] = useState("")
   const [hasExistingNamecard, setHasExistingNamecard] = useState(false)
   const [isCheckingExisting, setIsCheckingExisting] = useState(true)
-  const [extractedColors, setExtractedColors] = useState<string[]>([])
 
   useEffect(() => {
     const checkExistingNamecard = async () => {
@@ -131,11 +130,9 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
 
     try {
       const colors = await extractDominantColors(url)
-      setExtractedColors(colors)
       console.log("[v0] Extracted colors:", colors)
     } catch (err) {
       console.error("[v0] Error extracting colors:", err)
-      setExtractedColors(["#ff6b35", "#f7931e", "#c1121f"]) // Fallback
     }
   }
 
@@ -146,7 +143,6 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
     setSelectedFile(null)
     setPreviewUrl("")
     setError("")
-    setExtractedColors([])
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -182,7 +178,6 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
         body: JSON.stringify({
           username,
           gifUrl: blobUrl,
-          colors: extractedColors.length > 0 ? extractedColors : ["#ff6b35", "#f7931e", "#c1121f"],
         }),
       })
 
@@ -281,21 +276,6 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
                   className="w-full h-full object-cover"
                 />
               </div>
-              {extractedColors.length > 0 && (
-                <div className="mt-2">
-                  <p className="text-xs text-muted-foreground mb-1">Extracted colors for lava effect:</p>
-                  <div className="flex gap-2">
-                    {extractedColors.map((color, i) => (
-                      <div
-                        key={i}
-                        className="w-8 h-8 rounded border border-border"
-                        style={{ backgroundColor: color }}
-                        title={color}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
