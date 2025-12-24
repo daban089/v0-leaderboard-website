@@ -519,6 +519,19 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                         : undefined
                     }
                   >
+                    {player.username.toLowerCase() === "bafr" && (
+                      <div
+                        className="absolute inset-0 z-0"
+                        style={{
+                          backgroundImage: "url('/bafr-custom-bg.gif')",
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
+                          opacity: 0.9,
+                        }}
+                      />
+                    )}
+
                     {player.rank === 1 && (
                       <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         {[...Array(12)].map((_, i) => (
