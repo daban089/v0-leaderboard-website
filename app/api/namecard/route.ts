@@ -27,7 +27,7 @@ export async function POST(request: Request) {
 
     const connection = await getConnection()
 
-    await connection.execute(`UPDATE users SET custom_namecard = ? WHERE LOWER(username) = LOWER(?)`, [
+    await connection.execute(`UPDATE player_stats SET custom_namecard = ? WHERE LOWER(username) = LOWER(?)`, [
       gifUrl,
       username,
     ])
@@ -46,7 +46,7 @@ export async function GET() {
     const connection = await getConnection()
 
     const [rows] = await connection.execute(
-      `SELECT username, custom_namecard FROM users WHERE custom_namecard IS NOT NULL`,
+      `SELECT username, custom_namecard FROM player_stats WHERE custom_namecard IS NOT NULL`,
     )
 
     await connection.end()
