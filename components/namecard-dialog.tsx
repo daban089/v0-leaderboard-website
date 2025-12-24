@@ -13,9 +13,10 @@ import { Loader2, Upload, X } from "lucide-react"
 interface NamecardDialogProps {
   username: string
   onClose: () => void
+  onSuccess?: () => void
 }
 
-export function NamecardDialog({ username, onClose }: NamecardDialogProps) {
+export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>("")
   const [isLoading, setIsLoading] = useState(false)
@@ -117,7 +118,7 @@ export function NamecardDialog({ username, onClose }: NamecardDialogProps) {
       const data = await response.json()
 
       if (response.ok) {
-        alert("Custom namecard saved! Refresh the page to see it on the leaderboard.")
+        onSuccess?.()
         onClose()
       } else {
         setError(data.error || "Failed to save namecard")
@@ -148,7 +149,7 @@ export function NamecardDialog({ username, onClose }: NamecardDialogProps) {
       const data = await response.json()
 
       if (response.ok) {
-        alert("Custom namecard removed! Refresh the page to see the changes.")
+        onSuccess?.()
         onClose()
       } else {
         setError(data.error || "Failed to remove namecard")

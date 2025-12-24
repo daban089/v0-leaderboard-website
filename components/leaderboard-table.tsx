@@ -21,9 +21,10 @@ interface Player {
 }
 
 interface LeaderboardTableProps {
-  kit?: string
+  kit: string
   searchQuery?: string // Added searchQuery prop
-  onKitChange?: (kit: string) => void // Added onKitChange prop
+  onKitChange?: (kit: KitType) => void // Added onKitChange prop
+  namecardRefreshKey?: number
 }
 
 interface Badge {
@@ -100,7 +101,12 @@ const getBadges = (player: Player): Badge[] => {
   return badges
 }
 
-const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all", searchQuery = "", onKitChange }) => {
+const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
+  kit,
+  searchQuery = "",
+  onKitChange,
+  namecardRefreshKey,
+}) => {
   const [selectedKit, setSelectedKit] = useState<KitType>(kit as KitType)
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(false)
@@ -167,6 +173,12 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all", search
     const kitOrder: KitType[] = ["all", "sword", "axe", "sumo", "mace", "crystalpvp"]
     setActiveTabIndex(kitOrder.indexOf(selectedKit))
   }, [selectedKit])
+
+  useEffect(() => {
+    if (namecardRefreshKey !== undefined && namecardRefreshKey > 0) {
+      fetchCustomNamecards()
+    }
+  }, [namecardRefreshKey])
 
   const filteredPlayers = players.filter((player) => player.username.toLowerCase().includes(searchQuery.toLowerCase()))
 

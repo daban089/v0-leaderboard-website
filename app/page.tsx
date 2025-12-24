@@ -15,6 +15,7 @@ export default function Page() {
   const [showNamecard, setShowNamecard] = useState(false)
   const [loggedInUser, setLoggedInUser] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
+  const [namecardRefreshKey, setNamecardRefreshKey] = useState(0)
 
   useEffect(() => {
     const savedUser = localStorage.getItem("verified_username")
@@ -31,6 +32,10 @@ export default function Page() {
   const handleLogout = () => {
     setLoggedInUser(null)
     localStorage.removeItem("verified_username")
+  }
+
+  const handleNamecardChange = () => {
+    setNamecardRefreshKey((prev) => prev + 1)
   }
 
   return (
@@ -95,12 +100,21 @@ export default function Page() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <LeaderboardTable kit={activeKit} searchQuery={searchQuery} onKitChange={setActiveKit} />
+        <LeaderboardTable
+          kit={activeKit}
+          searchQuery={searchQuery}
+          onKitChange={setActiveKit}
+          namecardRefreshKey={namecardRefreshKey}
+        />
       </div>
 
       {showLogin && <LoginDialog onLogin={handleLogin} onClose={() => setShowLogin(false)} />}
       {showNamecard && loggedInUser && (
-        <NamecardDialog username={loggedInUser} onClose={() => setShowNamecard(false)} />
+        <NamecardDialog
+          username={loggedInUser}
+          onClose={() => setShowNamecard(false)}
+          onSuccess={handleNamecardChange}
+        />
       )}
     </div>
   )
