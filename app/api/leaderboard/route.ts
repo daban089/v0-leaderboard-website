@@ -9,6 +9,7 @@ interface PlayerData {
   winStreak: number
   totalMatches: number
   kit?: string
+  custom_namecard?: string // Added custom_namecard field
 }
 
 export async function GET(request: Request) {
@@ -36,11 +37,13 @@ export async function GET(request: Request) {
           SUM(fp.is_winner) as wins,
           COUNT(*) - SUM(fp.is_winner) as losses,
           COUNT(*) as total_matches,
-          GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results
+          GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results,
+          u.custom_namecard
         FROM fight_players fp
         INNER JOIN fights f ON fp.fight = f.started
+        LEFT JOIN users u ON LOWER(fp.username) = LOWER(u.username)
         WHERE f.mode = 'DUEL_QUEUE_RANKED'
-        GROUP BY fp.username`
+        GROUP BY fp.username, u.custom_namecard`
       } else {
         query = `SELECT 
           fp.username,
@@ -55,11 +58,13 @@ export async function GET(request: Request) {
            AND (f2.kit = ? OR f2.kit = ?)
            ORDER BY fp2.id DESC 
            LIMIT 1) as latest_player_data,
-          GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results
+          GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results,
+          u.custom_namecard
         FROM fight_players fp
         INNER JOIN fights f ON fp.fight = f.started
+        LEFT JOIN users u ON LOWER(fp.username) = LOWER(u.username)
         WHERE f.mode = 'DUEL_QUEUE_RANKED' AND (f.kit = ? OR f.kit = ?)
-        GROUP BY fp.username`
+        GROUP BY fp.username, u.custom_namecard`
 
         const rankedKit = kit + "elo"
         params = [kit, rankedKit, kit, rankedKit]
@@ -88,7 +93,6 @@ export async function GET(request: Request) {
             for (const kit of kits) {
               let foundElo = false
 
-              // Try ranked first, then unranked
               const [rankedRows] = await connection.execute<any[]>(
                 `SELECT fp.player_data 
                FROM fight_players fp 
@@ -112,7 +116,6 @@ export async function GET(request: Request) {
                 }
               }
 
-              // Try unranked if ranked doesn't exist
               if (!foundElo) {
                 const [unrankedRows] = await connection.execute<any[]>(
                   `SELECT fp.player_data 
@@ -146,7 +149,6 @@ export async function GET(request: Request) {
             const sum = kitElos.reduce((a, b) => a + b, 0)
             elo = Math.floor(sum / 5)
           } else {
-            // Parse the latest player_data JSON to get current ELO for specific kit
             try {
               if (player.latest_player_data) {
                 const data = JSON.parse(player.latest_player_data)
@@ -182,6 +184,7 @@ export async function GET(request: Request) {
             winRate,
             elo,
             winStreak,
+            custom_namecard: player.custom_namecard || null, // Include custom_namecard in response
           }
         }),
       )

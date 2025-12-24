@@ -17,10 +17,13 @@ interface Player {
   winRate: number
   winStreak: number
   totalMatches: number
+  custom_namecard?: string // Added custom_namecard field
 }
 
 interface LeaderboardTableProps {
   kit?: string
+  searchQuery?: string // Added searchQuery prop
+  onKitChange?: (kit: string) => void // Added onKitChange prop
 }
 
 interface Badge {
@@ -97,7 +100,7 @@ const getBadges = (player: Player): Badge[] => {
   return badges
 }
 
-const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
+const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all", searchQuery = "", onKitChange }) => {
   const [selectedKit, setSelectedKit] = useState<KitType>(kit as KitType)
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(false)
@@ -151,7 +154,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
     setActiveTabIndex(kitOrder.indexOf(selectedKit))
   }, [selectedKit])
 
-  const filteredPlayers = players.filter((player) => player.username.toLowerCase().includes(""))
+  const filteredPlayers = players.filter((player) => player.username.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const getRankColor = (rank: number) => {
     if (rank === 1) return "from-yellow-400/20 to-yellow-600/20 border-yellow-500/50"
@@ -279,6 +282,10 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
     setTimeout(() => setSelectedPlayer(null), 200)
   }
 
+  const hasCustomNamecard = (player: Player) => {
+    return player.custom_namecard && player.custom_namecard.trim() !== ""
+  }
+
   if (loading) {
     return (
       <Card>
@@ -314,6 +321,9 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
             console.log("[v0] Switching to High Tiers mode")
             setMode("high-tiers")
             setSelectedKit("all")
+            if (onKitChange) {
+              onKitChange("all")
+            }
           }}
           className={`relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
             mode === "high-tiers"
@@ -340,6 +350,9 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
             console.log("[v0] Switching to Ranked mode")
             setMode("ranked")
             setSelectedKit("all")
+            if (onKitChange) {
+              onKitChange("all")
+            }
           }}
           className={`flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
             mode === "ranked"
@@ -362,7 +375,12 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
       {mode === "ranked" && (
         <div className="flex items-end">
           <button
-            onClick={() => setSelectedKit("all")}
+            onClick={() => {
+              setSelectedKit("all")
+              if (onKitChange) {
+                onKitChange("all")
+              }
+            }}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "all"
                 ? "text-white opacity-100 border-[#ff3b30]"
@@ -374,7 +392,12 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
           </button>
 
           <button
-            onClick={() => setSelectedKit("sword")}
+            onClick={() => {
+              setSelectedKit("sword")
+              if (onKitChange) {
+                onKitChange("sword")
+              }
+            }}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "sword"
                 ? "text-white opacity-100 border-[#ff3b30]"
@@ -392,7 +415,12 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
           </button>
 
           <button
-            onClick={() => setSelectedKit("axe")}
+            onClick={() => {
+              setSelectedKit("axe")
+              if (onKitChange) {
+                onKitChange("axe")
+              }
+            }}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "axe"
                 ? "text-white opacity-100 border-[#ff3b30]"
@@ -404,7 +432,12 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
           </button>
 
           <button
-            onClick={() => setSelectedKit("sumo")}
+            onClick={() => {
+              setSelectedKit("sumo")
+              if (onKitChange) {
+                onKitChange("sumo")
+              }
+            }}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "sumo"
                 ? "text-white opacity-100 border-[#ff3b30]"
@@ -416,7 +449,12 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
           </button>
 
           <button
-            onClick={() => setSelectedKit("mace")}
+            onClick={() => {
+              setSelectedKit("mace")
+              if (onKitChange) {
+                onKitChange("mace")
+              }
+            }}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "mace"
                 ? "text-white opacity-100 border-[#ff3b30]"
@@ -428,7 +466,12 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
           </button>
 
           <button
-            onClick={() => setSelectedKit("crystalpvp")}
+            onClick={() => {
+              setSelectedKit("crystalpvp")
+              if (onKitChange) {
+                onKitChange("crystalpvp")
+              }
+            }}
             className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "crystalpvp"
                 ? "text-white opacity-100 border-[#ff3b30]"
@@ -522,11 +565,11 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       }}
                     />
 
-                    {player.username.toLowerCase() === "bafr" && (
+                    {hasCustomNamecard(player) && (
                       <div
                         className="absolute inset-0 z-0 pointer-events-none"
                         style={{
-                          backgroundImage: "url('/bafr-custom-bg.gif')",
+                          backgroundImage: `url('${player.custom_namecard}')`,
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                           backgroundRepeat: "no-repeat",
@@ -619,9 +662,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                         <p className="truncate text-2xl font-extrabold text-foreground">
                           <span
                             className={`${
-                              player.username.toLowerCase() === "bafr"
-                                ? "bg-black/50 px-3 py-1 rounded-full inline-block"
-                                : ""
+                              hasCustomNamecard(player) ? "bg-black/50 px-3 py-1 rounded-full inline-block" : ""
                             }`}
                           >
                             {player.username}
@@ -634,7 +675,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                                 <div
                                   key={badge.id}
                                   className={`flex items-center gap-2 ${badge.color} ${
-                                    player.username.toLowerCase() === "bafr" ? "bg-black/50 px-2 py-1 rounded-full" : ""
+                                    hasCustomNamecard(player) ? "bg-black/50 px-2 py-1 rounded-full" : ""
                                   }`}
                                   title={badge.requirement}
                                 >
@@ -650,7 +691,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       <div className="flex flex-col gap-2 items-end">
                         <div
                           className={`flex items-center gap-2 ${
-                            player.username.toLowerCase() === "bafr" ? "bg-black/50 px-3 py-0.5 rounded-md" : ""
+                            hasCustomNamecard(player) ? "bg-black/50 px-3 py-0.5 rounded-md" : ""
                           }`}
                         >
                           <span className="text-3xl font-black text-white">{player.elo}</span>
@@ -659,18 +700,14 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                         <div className="flex gap-3 text-sm">
                           <span
                             className={`text-green-400 ${
-                              player.username.toLowerCase() === "bafr"
-                                ? "bg-black/50 px-2 py-0.5 rounded-md inline-block"
-                                : ""
+                              hasCustomNamecard(player) ? "bg-black/50 px-2 py-0.5 rounded-md inline-block" : ""
                             }`}
                           >
                             {player.wins}W
                           </span>
                           <span
                             className={`text-red-400 ${
-                              player.username.toLowerCase() === "bafr"
-                                ? "bg-black/50 px-2 py-0.5 rounded-md inline-block"
-                                : ""
+                              hasCustomNamecard(player) ? "bg-black/50 px-2 py-0.5 rounded-md inline-block" : ""
                             }`}
                           >
                             {player.losses}L

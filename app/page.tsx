@@ -1,34 +1,37 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { LeaderboardTable } from "@/components/leaderboard-table"
-// import { LoginDialog } from "@/components/login-dialog"
-// import { LogIn, LogOut, User } from "lucide-react"
+import { LoginDialog } from "@/components/login-dialog"
+import { NamecardDialog } from "@/components/namecard-dialog"
+import { LogIn, LogOut, User } from "lucide-react"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export default function Page() {
   const [activeKit, setActiveKit] = useState<string>("all")
-  // const [showLogin, setShowLogin] = useState(false)
-  // const [loggedInUser, setLoggedInUser] = useState<string | null>(null)
+  const [showLogin, setShowLogin] = useState(false)
+  const [showNamecard, setShowNamecard] = useState(false)
+  const [loggedInUser, setLoggedInUser] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
 
-  // useEffect(() => {
-  //   const savedUser = localStorage.getItem("verified_username")
-  //   if (savedUser) {
-  //     setLoggedInUser(savedUser)
-  //   }
-  // }, [])
+  useEffect(() => {
+    const savedUser = localStorage.getItem("verified_username")
+    if (savedUser) {
+      setLoggedInUser(savedUser)
+    }
+  }, [])
 
-  // const handleLogin = (username: string) => {
-  //   setLoggedInUser(username)
-  //   localStorage.setItem("verified_username", username)
-  // }
+  const handleLogin = (username: string) => {
+    setLoggedInUser(username)
+    localStorage.setItem("verified_username", username)
+  }
 
-  // const handleLogout = () => {
-  //   setLoggedInUser(null)
-  //   localStorage.removeItem("verified_username")
-  // }
+  const handleLogout = () => {
+    setLoggedInUser(null)
+    localStorage.removeItem("verified_username")
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -66,12 +69,15 @@ export default function Page() {
                 />
               </div>
 
-              {/* {loggedInUser ? (
+              {loggedInUser ? (
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 h-12">
+                  <button
+                    onClick={() => setShowNamecard(true)}
+                    className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 h-12 hover:bg-accent transition-colors cursor-pointer"
+                  >
                     <User className="h-4 w-4 text-primary" />
                     <span className="text-sm font-medium">{loggedInUser}</span>
-                  </div>
+                  </button>
                   <Button variant="outline" size="sm" onClick={handleLogout} className="h-12 bg-transparent">
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
@@ -82,7 +88,7 @@ export default function Page() {
                   <LogIn className="mr-2 h-4 w-4" />
                   Verify Account
                 </Button>
-              )} */}
+              )}
             </div>
           </div>
         </div>
@@ -92,7 +98,10 @@ export default function Page() {
         <LeaderboardTable kit={activeKit} searchQuery={searchQuery} onKitChange={setActiveKit} />
       </div>
 
-      {/* {showLogin && <LoginDialog onLogin={handleLogin} onClose={() => setShowLogin(false)} />} */}
+      {showLogin && <LoginDialog onLogin={handleLogin} onClose={() => setShowLogin(false)} />}
+      {showNamecard && loggedInUser && (
+        <NamecardDialog username={loggedInUser} onClose={() => setShowNamecard(false)} />
+      )}
     </div>
   )
 }
