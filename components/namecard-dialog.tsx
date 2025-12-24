@@ -16,6 +16,63 @@ interface NamecardDialogProps {
   onSuccess?: () => void
 }
 
+function extractDominantColors(imageUrl: string): Promise<string[]> {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.crossOrigin = "anonymous"
+    img.onload = () => {
+      const canvas = document.createElement("canvas")
+      const ctx = canvas.getContext("2d")
+      if (!ctx) {
+        resolve(["#ff6b35", "#f7931e", "#c1121f"]) // Default fallback colors
+        return
+      }
+
+      // Sample multiple points across the image
+      canvas.width = 100
+      canvas.height = 100
+      ctx.drawImage(img, 0, 0, 100, 100)
+
+      const imageData = ctx.getImageData(0, 0, 100, 100).data
+      const colorMap: Record<string, number> = {}
+
+      // Sample every 10th pixel to get color distribution
+      for (let i = 0; i < imageData.length; i += 40) {
+        const r = imageData[i]
+        const g = imageData[i + 1]
+        const b = imageData[i + 2]
+        const a = imageData[i + 3]
+
+        // Skip transparent or very dark pixels
+        if (a < 128 || (r < 30 && g < 30 && b < 30)) continue
+
+        const hex = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`
+        colorMap[hex] = (colorMap[hex] || 0) + 1
+      }
+
+      // Get top 3 most frequent colors
+      const sortedColors = Object.entries(colorMap)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .map((entry) => entry[0])
+
+      if (sortedColors.length === 0) {
+        resolve(["#ff6b35", "#f7931e", "#c1121f"]) // Default fallback
+      } else {
+        // Ensure we have at least 3 colors by duplicating if needed
+        while (sortedColors.length < 3) {
+          sortedColors.push(sortedColors[0])
+        }
+        resolve(sortedColors)
+      }
+    }
+    img.onerror = () => {
+      resolve(["#ff6b35", "#f7931e", "#c1121f"]) // Default fallback on error
+    }
+    img.src = imageUrl
+  })
+}
+
 export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>("")
@@ -23,6 +80,7 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
   const [error, setError] = useState("")
   const [hasExistingNamecard, setHasExistingNamecard] = useState(false)
   const [isCheckingExisting, setIsCheckingExisting] = useState(true)
+  const [extractedColors, setExtractedColors] = useState<string[]>([])
 
   useEffect(() => {
     const checkExistingNamecard = async () => {
@@ -48,7 +106,7 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
     checkExistingNamecard()
   }, [username])
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -70,6 +128,15 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
     // Create preview URL
     const url = URL.createObjectURL(file)
     setPreviewUrl(url)
+
+    try {
+      const colors = await extractDominantColors(url)
+      setExtractedColors(colors)
+      console.log("[v0] Extracted colors:", colors)
+    } catch (err) {
+      console.error("[v0] Error extracting colors:", err)
+      setExtractedColors(["#ff6b35", "#f7931e", "#c1121f"]) // Fallback
+    }
   }
 
   const handleRemoveFile = () => {
@@ -79,6 +146,7 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
     setSelectedFile(null)
     setPreviewUrl("")
     setError("")
+    setExtractedColors([])
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,11 +176,14 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
 
       const { url: blobUrl } = await uploadResponse.json()
 
-      // Then save the blob URL to the namecard
       const response = await fetch("/api/namecard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, gifUrl: blobUrl }),
+        body: JSON.stringify({
+          username,
+          gifUrl: blobUrl,
+          colors: extractedColors.length > 0 ? extractedColors : ["#ff6b35", "#f7931e", "#c1121f"],
+        }),
       })
 
       const data = await response.json()
@@ -210,6 +281,21 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
                   className="w-full h-full object-cover"
                 />
               </div>
+              {extractedColors.length > 0 && (
+                <div className="mt-2">
+                  <p className="text-xs text-muted-foreground mb-1">Extracted colors for lava effect:</p>
+                  <div className="flex gap-2">
+                    {extractedColors.map((color, i) => (
+                      <div
+                        key={i}
+                        className="w-8 h-8 rounded border border-border"
+                        style={{ backgroundColor: color }}
+                        title={color}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

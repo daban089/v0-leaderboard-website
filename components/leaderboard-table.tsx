@@ -101,6 +101,11 @@ const getBadges = (player: Player): Badge[] => {
   return badges
 }
 
+interface CustomNamecard {
+  url: string
+  colors: string[]
+}
+
 const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   kit,
   searchQuery = "",
@@ -116,7 +121,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   const [gamemodeElos, setGamemodeElos] = useState<Record<string, number> | null>(null)
   const [mode, setMode] = useState<"high-tiers" | "ranked">("ranked")
   const [activeTabIndex, setActiveTabIndex] = useState(0)
-  const [customNamecards, setCustomNamecards] = useState<Record<string, string>>({})
+  const [customNamecards, setCustomNamecards] = useState<Record<string, CustomNamecard>>({})
 
   const fetchCustomNamecards = async () => {
     try {
@@ -310,12 +315,17 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
 
   const hasCustomNamecard = (player: Player) => {
     const username = player.username.toLowerCase()
-    return customNamecards[username] && customNamecards[username].trim() !== ""
+    return customNamecards[username] && customNamecards[username].url && customNamecards[username].url.trim() !== ""
   }
 
   const getCustomNamecard = (player: Player) => {
     const username = player.username.toLowerCase()
-    return customNamecards[username] || ""
+    return customNamecards[username]?.url || ""
+  }
+
+  const getCustomColors = (player: Player): string[] => {
+    const username = player.username.toLowerCase()
+    return customNamecards[username]?.colors || ["#ff6b35", "#f7931e", "#c1121f"]
   }
 
   if (loading) {
@@ -598,16 +608,45 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                     />
 
                     {hasCustomNamecard(player) && (
-                      <div
-                        className="absolute inset-0 z-0 pointer-events-none"
-                        style={{
-                          backgroundImage: `url('${getCustomNamecard(player)}')`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                          backgroundRepeat: "no-repeat",
-                          opacity: 0.75,
-                        }}
-                      />
+                      <>
+                        <div
+                          className="absolute inset-0 z-0 pointer-events-none"
+                          style={{
+                            backgroundImage: `url('${getCustomNamecard(player)}')`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            backgroundRepeat: "no-repeat",
+                            opacity: 0.75,
+                          }}
+                        />
+                        {/* Custom color-based lava particles */}
+                        <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
+                          {[...Array(20)].map((_, i) => {
+                            const colors = getCustomColors(player)
+                            const colorIndex = i % colors.length
+                            return (
+                              <div
+                                key={`custom-lava-${i}`}
+                                className="absolute animate-fire-rise"
+                                style={{
+                                  left: `${5 + Math.random() * 90}%`,
+                                  bottom: `${-10}px`,
+                                  animationDelay: `${Math.random() * 3}s`,
+                                  animationDuration: `${3 + Math.random() * 2}s`,
+                                }}
+                              >
+                                <div
+                                  className="custom-lava-particle"
+                                  style={{
+                                    background: `radial-gradient(circle, ${colors[colorIndex]} 0%, ${colors[(colorIndex + 1) % colors.length]} 50%, ${colors[(colorIndex + 2) % colors.length]} 100%)`,
+                                    boxShadow: `0 0 8px ${colors[colorIndex]}, 0 0 12px ${colors[(colorIndex + 1) % colors.length]}, 0 0 16px ${colors[(colorIndex + 2) % colors.length]}40`,
+                                  }}
+                                />
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </>
                     )}
 
                     {!hasCustomNamecard(player) && player.rank === 1 && (

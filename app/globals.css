@@ -262,6 +262,14 @@
     filter: blur(0.5px);
   }
 
+  /* Add custom lava particle style for dynamic colors */
+  .custom-lava-particle {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    filter: blur(0.5px);
+  }
+
   /* Updated crimson glow animation to use darker blood red colors */
   @keyframes crimson-pulse {
     0%,

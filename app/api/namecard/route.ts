@@ -12,7 +12,7 @@ async function getConnection() {
 
 export async function POST(request: Request) {
   try {
-    const { username, gifUrl } = await request.json()
+    const { username, gifUrl, colors } = await request.json()
 
     if (!username || !gifUrl) {
       return NextResponse.json({ error: "Username and GIF URL are required" }, { status: 400 })
@@ -27,10 +27,11 @@ export async function POST(request: Request) {
 
     const connection = await getConnection()
 
-    await connection.execute(`UPDATE player_stats SET custom_namecard = ? WHERE LOWER(username) = LOWER(?)`, [
-      gifUrl,
-      username,
-    ])
+    const colorsJson = colors ? JSON.stringify(colors) : null
+    await connection.execute(
+      `UPDATE player_stats SET custom_namecard = ?, namecard_colors = ? WHERE LOWER(username) = LOWER(?)`,
+      [gifUrl, colorsJson, username],
+    )
 
     await connection.end()
 
@@ -46,15 +47,17 @@ export async function GET() {
     const connection = await getConnection()
 
     const [rows] = await connection.execute(
-      `SELECT username, custom_namecard FROM player_stats WHERE custom_namecard IS NOT NULL`,
+      `SELECT username, custom_namecard, namecard_colors FROM player_stats WHERE custom_namecard IS NOT NULL`,
     )
 
     await connection.end()
 
-    // Convert to object map for easy lookup
-    const namecards: Record<string, string> = {}
+    const namecards: Record<string, { url: string; colors: string[] }> = {}
     ;(rows as any[]).forEach((row: any) => {
-      namecards[row.username.toLowerCase()] = row.custom_namecard
+      namecards[row.username.toLowerCase()] = {
+        url: row.custom_namecard,
+        colors: row.namecard_colors ? JSON.parse(row.namecard_colors) : ["#ff6b35", "#f7931e", "#c1121f"],
+      }
     })
 
     return NextResponse.json(namecards)
@@ -74,9 +77,10 @@ export async function DELETE(request: Request) {
 
     const connection = await getConnection()
 
-    await connection.execute(`UPDATE player_stats SET custom_namecard = NULL WHERE LOWER(username) = LOWER(?)`, [
-      username,
-    ])
+    await connection.execute(
+      `UPDATE player_stats SET custom_namecard = NULL, namecard_colors = NULL WHERE LOWER(username) = LOWER(?)`,
+      [username],
+    )
 
     await connection.end()
 
