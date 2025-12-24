@@ -21,18 +21,27 @@ export function NamecardDialog({ username, onClose }: NamecardDialogProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [hasExistingNamecard, setHasExistingNamecard] = useState(false)
+  const [isCheckingExisting, setIsCheckingExisting] = useState(true)
 
   useEffect(() => {
     const checkExistingNamecard = async () => {
+      console.log("[v0] Checking existing namecard for:", username)
+      setIsCheckingExisting(true)
       try {
         const response = await fetch("/api/namecard")
+        console.log("[v0] API response status:", response.status)
+
         if (response.ok) {
           const data = await response.json()
+          console.log("[v0] API data:", data)
           const userNamecard = data.namecards?.[username.toLowerCase()]
+          console.log("[v0] User namecard:", userNamecard)
           setHasExistingNamecard(!!userNamecard && userNamecard.trim() !== "")
         }
       } catch (err) {
         console.error("[v0] Error checking existing namecard:", err)
+      } finally {
+        setIsCheckingExisting(false)
       }
     }
     checkExistingNamecard()
@@ -206,7 +215,12 @@ export function NamecardDialog({ username, onClose }: NamecardDialogProps) {
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <div className="flex justify-end gap-2">
-            {hasExistingNamecard && (
+            {isCheckingExisting ? (
+              <Button type="button" variant="outline" disabled className="mr-auto bg-transparent">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Checking...
+              </Button>
+            ) : hasExistingNamecard ? (
               <Button
                 type="button"
                 variant="destructive"
@@ -226,7 +240,10 @@ export function NamecardDialog({ username, onClose }: NamecardDialogProps) {
                   </>
                 )}
               </Button>
+            ) : (
+              <span className="text-xs text-muted-foreground mr-auto">No existing namecard</span>
             )}
+
             <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
               Cancel
             </Button>
