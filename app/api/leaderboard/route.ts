@@ -43,7 +43,7 @@ export async function GET(request: Request) {
         INNER JOIN fights f ON fp.fight = f.started
         LEFT JOIN users u ON LOWER(fp.username) = LOWER(u.username)
         WHERE f.mode = 'DUEL_QUEUE_RANKED'
-        GROUP BY fp.username, u.custom_namecard`
+        GROUP BY fp.username` // Removed u.custom_namecard from GROUP BY to fix player aggregation
       } else {
         query = `SELECT 
           fp.username,
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
         INNER JOIN fights f ON fp.fight = f.started
         LEFT JOIN users u ON LOWER(fp.username) = LOWER(u.username)
         WHERE f.mode = 'DUEL_QUEUE_RANKED' AND (f.kit = ? OR f.kit = ?)
-        GROUP BY fp.username, u.custom_namecard`
+        GROUP BY fp.username` // Removed u.custom_namecard from GROUP BY to fix player aggregation
 
         const rankedKit = kit + "elo"
         params = [kit, rankedKit, kit, rankedKit]
