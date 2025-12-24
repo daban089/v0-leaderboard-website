@@ -110,6 +110,19 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all", search
   const [gamemodeElos, setGamemodeElos] = useState<Record<string, number> | null>(null)
   const [mode, setMode] = useState<"high-tiers" | "ranked">("ranked")
   const [activeTabIndex, setActiveTabIndex] = useState(0)
+  const [customNamecards, setCustomNamecards] = useState<Record<string, string>>({})
+
+  const fetchCustomNamecards = async () => {
+    try {
+      const response = await fetch("/api/namecard")
+      if (response.ok) {
+        const namecards = await response.json()
+        setCustomNamecards(namecards)
+      }
+    } catch (err) {
+      console.error("[v0] Error fetching custom namecards:", err)
+    }
+  }
 
   const fetchLeaderboard = async (kit: KitType) => {
     try {
@@ -139,6 +152,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all", search
 
   useEffect(() => {
     fetchLeaderboard(selectedKit)
+    fetchCustomNamecards()
   }, [selectedKit])
 
   useEffect(() => {
@@ -283,7 +297,13 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all", search
   }
 
   const hasCustomNamecard = (player: Player) => {
-    return player.custom_namecard && player.custom_namecard.trim() !== ""
+    const username = player.username.toLowerCase()
+    return customNamecards[username] && customNamecards[username].trim() !== ""
+  }
+
+  const getCustomNamecard = (player: Player) => {
+    const username = player.username.toLowerCase()
+    return customNamecards[username] || ""
   }
 
   if (loading) {
@@ -569,7 +589,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all", search
                       <div
                         className="absolute inset-0 z-0 pointer-events-none"
                         style={{
-                          backgroundImage: `url('${player.custom_namecard}')`,
+                          backgroundImage: `url('${getCustomNamecard(player)}')`,
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                           backgroundRepeat: "no-repeat",
