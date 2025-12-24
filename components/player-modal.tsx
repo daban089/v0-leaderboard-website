@@ -151,7 +151,7 @@ export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerMod
               <img
                 src={getAvatarUrl(player.username) || "/placeholder.svg"}
                 alt={player.username}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain scale-105"
                 style={{
                   imageRendering: "pixelated",
                 }}

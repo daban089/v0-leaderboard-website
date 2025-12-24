@@ -604,7 +604,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       <img
                         src={getAvatarUrl(player.username) || "/placeholder.svg"}
                         alt={player.username}
-                        className="absolute right-14 h-[88px] w-[88px] object-contain z-10"
+                        className="absolute right-14 h-[88px] w-[88px] object-contain z-10 scale-105"
                         style={{
                           filter: "drop-shadow(-4px 0px 0.8px rgba(0,0,0,0.3))",
                         }}
