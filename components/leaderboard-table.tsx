@@ -604,12 +604,12 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       <img
                         src={getAvatarUrl(player.username) || "/placeholder.svg"}
                         alt={player.username}
-                        className="absolute right-14 h-[88px] w-[88px] object-contain z-10 scale-105"
+                        className="absolute right-14 h-[100px] w-[100px] object-contain z-10"
                         style={{
                           filter: "drop-shadow(-4px 0px 0.8px rgba(0,0,0,0.3))",
                         }}
                         onError={(e) => {
-                          e.currentTarget.src = "/placeholder.svg?height=88&width=88"
+                          e.currentTarget.src = "/placeholder.svg?height=100&width=100"
                         }}
                       />
                     </div>
