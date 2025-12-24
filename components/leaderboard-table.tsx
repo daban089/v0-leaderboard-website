@@ -512,7 +512,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       player.rank <= 3 || player.rank > 3
                         ? {
                             backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
-                            backgroundSize: "240px 100px",
+                            backgroundSize: "240px 80px",
                             backgroundPosition: "left center",
                             backgroundRepeat: "no-repeat",
                           }
@@ -576,7 +576,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       </div>
                     )}
 
-                    <div className="relative h-[100px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
+                    <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
                       <span
                         className="absolute left-0 text-5xl font-black italic font-sans z-10 text-white"
                         style={{
