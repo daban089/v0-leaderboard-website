@@ -17,7 +17,6 @@ interface Player {
   winRate: number
   winStreak: number
   totalMatches: number
-  verified?: boolean
 }
 
 interface LeaderboardTableProps {
@@ -498,31 +497,29 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                   <div
                     key={player.username}
                     className={`relative flex items-center gap-6 rounded-xl border overflow-hidden p-4 select-none transition-all duration-300 ${
-                      player.verified
-                        ? "verified-gradient verified-border hover:scale-[1.02] cursor-pointer"
-                        : player.rank === 1
-                          ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
-                          : player.rank === 2
-                            ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
-                            : player.rank === 3
-                              ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
-                              : selectedKit === "all"
-                                ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
-                                : "border-border hover:translate-x-1 hover:shadow-md"
+                      player.rank === 1
+                        ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
+                        : player.rank === 2
+                          ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
+                          : player.rank === 3
+                            ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
+                            : selectedKit === "all"
+                              ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
+                              : "border-border hover:translate-x-1 hover:shadow-md"
                     }`}
                     onClick={() => handlePlayerClick(player)}
                     style={
-                      !player.verified && (player.rank <= 3 || player.rank > 3)
+                      player.rank <= 3 || player.rank > 3
                         ? {
                             backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
-                            backgroundSize: "240px 80px",
+                            backgroundSize: "240px 100px",
                             backgroundPosition: "left center",
                             backgroundRepeat: "no-repeat",
                           }
                         : undefined
                     }
                   >
-                    {!player.verified && player.rank === 1 && (
+                    {player.rank === 1 && (
                       <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         {[...Array(12)].map((_, i) => (
                           <div
@@ -541,7 +538,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       </div>
                     )}
 
-                    {!player.verified && player.rank === 2 && (
+                    {player.rank === 2 && (
                       <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         {[...Array(12)].map((_, i) => (
                           <div
@@ -560,7 +557,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       </div>
                     )}
 
-                    {!player.verified && player.rank === 3 && (
+                    {player.rank === 3 && (
                       <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         {[...Array(12)].map((_, i) => (
                           <div
@@ -579,7 +576,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       </div>
                     )}
 
-                    <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
+                    <div className="relative h-[100px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
                       <span
                         className="absolute left-0 text-5xl font-black italic font-sans z-10 text-white"
                         style={{
@@ -599,11 +596,6 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                           e.currentTarget.src = "/placeholder.svg?height=88&width=88"
                         }}
                       />
-                      {player.verified && (
-                        <div className="absolute top-2 right-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full px-3 py-1 text-xs font-bold shadow-lg z-20 animate-pulse">
-                          ✓ VERIFIED
-                        </div>
-                      )}
                     </div>
 
                     <div className="flex flex-1 items-center justify-between gap-4 min-w-0">

@@ -1,47 +1,46 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { LeaderboardTable } from "@/components/leaderboard-table"
-import { LoginDialog } from "@/components/login-dialog"
-import { LogIn, LogOut, User } from "lucide-react"
+// import { LoginDialog } from "@/components/login-dialog"
+// import { LogIn, LogOut, User } from "lucide-react"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 
 export default function Page() {
   const [activeKit, setActiveKit] = useState<string>("all")
-  const [showLogin, setShowLogin] = useState(false)
-  const [loggedInUser, setLoggedInUser] = useState<string | null>(null)
+  // const [showLogin, setShowLogin] = useState(false)
+  // const [loggedInUser, setLoggedInUser] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem("verified_username")
-    if (savedUser) {
-      setLoggedInUser(savedUser)
-    }
-  }, [])
+  // useEffect(() => {
+  //   const savedUser = localStorage.getItem("verified_username")
+  //   if (savedUser) {
+  //     setLoggedInUser(savedUser)
+  //   }
+  // }, [])
 
-  const handleLogin = (username: string) => {
-    setLoggedInUser(username)
-    localStorage.setItem("verified_username", username)
-  }
+  // const handleLogin = (username: string) => {
+  //   setLoggedInUser(username)
+  //   localStorage.setItem("verified_username", username)
+  // }
 
-  const handleLogout = () => {
-    setLoggedInUser(null)
-    localStorage.removeItem("verified_username")
-  }
+  // const handleLogout = () => {
+  //   setLoggedInUser(null)
+  //   localStorage.removeItem("verified_username")
+  // }
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <img src="/images/jangamar-logo.png" alt="Jangamar's Tiers" className="h-20 w-auto object-contain" />
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+            <div className="flex items-center gap-3">
               {/* Discord Button */}
               <a
                 href="https://discord.gg/gzPjF9JNjn"
@@ -56,18 +55,18 @@ export default function Page() {
               </a>
 
               {/* Search Bar */}
-              <div className="relative h-12 w-full sm:w-auto">
+              <div className="relative h-12">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="Search players..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-full w-full sm:w-64 pl-10 pr-4 rounded-full border-border bg-card"
+                  className="h-full w-64 pl-10 pr-4 rounded-full border-border bg-card"
                 />
               </div>
 
-              {loggedInUser ? (
+              {/* {loggedInUser ? (
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 h-12">
                     <User className="h-4 w-4 text-primary" />
@@ -83,7 +82,7 @@ export default function Page() {
                   <LogIn className="mr-2 h-4 w-4" />
                   Verify Account
                 </Button>
-              )}
+              )} */}
             </div>
           </div>
         </div>
@@ -93,7 +92,7 @@ export default function Page() {
         <LeaderboardTable kit={activeKit} searchQuery={searchQuery} onKitChange={setActiveKit} />
       </div>
 
-      {showLogin && <LoginDialog onLogin={handleLogin} onClose={() => setShowLogin(false)} />}
+      {/* {showLogin && <LoginDialog onLogin={handleLogin} onClose={() => setShowLogin(false)} />} */}
     </div>
   )
 }
