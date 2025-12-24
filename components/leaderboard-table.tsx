@@ -103,7 +103,6 @@ const getBadges = (player: Player): Badge[] => {
 
 interface CustomNamecard {
   url: string
-  colors: string[]
 }
 
 const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
@@ -321,11 +320,6 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   const getCustomNamecard = (player: Player) => {
     const username = player.username.toLowerCase()
     return customNamecards[username]?.url || ""
-  }
-
-  const getCustomColors = (player: Player): string[] => {
-    const username = player.username.toLowerCase()
-    return customNamecards[username]?.colors || ["#ff6b35", "#f7931e", "#c1121f"]
   }
 
   if (loading) {
@@ -608,42 +602,16 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                     />
 
                     {hasCustomNamecard(player) && (
-                      <>
-                        <div
-                          className="absolute inset-0 z-0 pointer-events-none"
-                          style={{
-                            backgroundImage: `url('${getCustomNamecard(player)}')`,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                            backgroundRepeat: "no-repeat",
-                            opacity: 0.75,
-                          }}
-                        />
-                        {/* Custom color-based lava particles */}
-                        <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-                          {Array.from({ length: 25 }).map((_, i) => {
-                            const colors = getCustomColors(player)
-                            const color = colors[i % colors.length]
-                            const randomX = Math.random() * 200 - 100
-                            const randomDelay = Math.random() * 3
-
-                            return (
-                              <div
-                                key={`custom-lava-${i}`}
-                                className="custom-lava-particle absolute bottom-0 left-1/2 -translate-x-1/2"
-                                style={
-                                  {
-                                    background: `radial-gradient(circle, ${color}ff 0%, ${color}aa 50%, ${color}44 100%)`,
-                                    boxShadow: `0 0 10px ${color}bb, 0 0 20px ${color}77`,
-                                    "--tx": `${randomX}px`,
-                                    animationDelay: `${randomDelay}s`,
-                                  } as React.CSSProperties
-                                }
-                              />
-                            )
-                          })}
-                        </div>
-                      </>
+                      <div
+                        className="absolute inset-0 z-0 pointer-events-none"
+                        style={{
+                          backgroundImage: `url('${getCustomNamecard(player)}')`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
+                          opacity: 0.75,
+                        }}
+                      />
                     )}
 
                     {!hasCustomNamecard(player) && player.rank === 1 && (

@@ -16,63 +16,6 @@ interface NamecardDialogProps {
   onSuccess?: () => void
 }
 
-function extractDominantColors(imageUrl: string): Promise<string[]> {
-  return new Promise((resolve) => {
-    const img = new Image()
-    img.crossOrigin = "anonymous"
-    img.onload = () => {
-      const canvas = document.createElement("canvas")
-      const ctx = canvas.getContext("2d")
-      if (!ctx) {
-        resolve(["#ff6b35", "#f7931e", "#c1121f"]) // Default fallback colors
-        return
-      }
-
-      // Sample multiple points across the image
-      canvas.width = 100
-      canvas.height = 100
-      ctx.drawImage(img, 0, 0, 100, 100)
-
-      const imageData = ctx.getImageData(0, 0, 100, 100).data
-      const colorMap: Record<string, number> = {}
-
-      // Sample every 10th pixel to get color distribution
-      for (let i = 0; i < imageData.length; i += 40) {
-        const r = imageData[i]
-        const g = imageData[i + 1]
-        const b = imageData[i + 2]
-        const a = imageData[i + 3]
-
-        // Skip transparent or very dark pixels
-        if (a < 128 || (r < 30 && g < 30 && b < 30)) continue
-
-        const hex = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`
-        colorMap[hex] = (colorMap[hex] || 0) + 1
-      }
-
-      // Get top 3 most frequent colors
-      const sortedColors = Object.entries(colorMap)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 3)
-        .map((entry) => entry[0])
-
-      if (sortedColors.length === 0) {
-        resolve(["#ff6b35", "#f7931e", "#c1121f"]) // Default fallback
-      } else {
-        // Ensure we have at least 3 colors by duplicating if needed
-        while (sortedColors.length < 3) {
-          sortedColors.push(sortedColors[0])
-        }
-        resolve(sortedColors)
-      }
-    }
-    img.onerror = () => {
-      resolve(["#ff6b35", "#f7931e", "#c1121f"]) // Default fallback on error
-    }
-    img.src = imageUrl
-  })
-}
-
 export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>("")
@@ -83,17 +26,12 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
 
   useEffect(() => {
     const checkExistingNamecard = async () => {
-      console.log("[v0] Checking existing namecard for:", username)
       setIsCheckingExisting(true)
       try {
         const response = await fetch("/api/namecard")
-        console.log("[v0] API response status:", response.status)
-
         if (response.ok) {
           const data = await response.json()
-          console.log("[v0] API data:", data)
           const userNamecard = data[username.toLowerCase()]
-          console.log("[v0] User namecard:", userNamecard)
           setHasExistingNamecard(!!userNamecard && userNamecard.trim() !== "")
         }
       } catch (err) {
@@ -105,7 +43,7 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
     checkExistingNamecard()
   }, [username])
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -127,13 +65,6 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
     // Create preview URL
     const url = URL.createObjectURL(file)
     setPreviewUrl(url)
-
-    try {
-      const colors = await extractDominantColors(url)
-      console.log("[v0] Extracted colors:", colors)
-    } catch (err) {
-      console.error("[v0] Error extracting colors:", err)
-    }
   }
 
   const handleRemoveFile = () => {
@@ -157,7 +88,6 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
     setIsLoading(true)
 
     try {
-      // First, upload to Vercel Blob with username for color extraction
       const formData = new FormData()
       formData.append("file", selectedFile)
       formData.append("username", username)
@@ -171,8 +101,7 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
         throw new Error("Failed to upload file")
       }
 
-      const { url: blobUrl, colors } = await uploadResponse.json()
-      console.log("[v0] Upload response - URL:", blobUrl, "Colors:", colors)
+      const { url: blobUrl } = await uploadResponse.json()
 
       const response = await fetch("/api/namecard", {
         method: "POST",
@@ -180,14 +109,12 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
         body: JSON.stringify({
           username,
           gifUrl: blobUrl,
-          colors,
         }),
       })
 
       const data = await response.json()
 
       if (response.ok) {
-        console.log("[v0] Namecard saved successfully with colors:", colors)
         onSuccess?.()
         onClose()
       } else {
