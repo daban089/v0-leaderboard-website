@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 
 import java.io.*;
@@ -15,7 +16,7 @@ import java.util.*;
 
 public class InventoryManagerPlugin extends JavaPlugin implements Listener {
     
-    // The 6 worlds that share inventory (Group 1)
+    // The 6 worlds that share inventory (Survival Group)
     private static final Set<String> CONNECTED_WORLDS = new HashSet<>(Arrays.asList(
         "Lobbyj",
         "Lobbyj_nether", 
@@ -25,10 +26,13 @@ public class InventoryManagerPlugin extends JavaPlugin implements Listener {
         "world_the_end"
     ));
     
-    // LobbyPractice world (Group 2) - separate inventory
-    private static final String LOBBY_PRACTICE = "LobbyPractice";
+    private static final Set<String> PRACTICE_WORLDS = new HashSet<>(Arrays.asList(
+        "LobbyPractice",
+        "Arenas"
+    ));
     
     private File dataFolder;
+    private Map<UUID, String> playerLastGroup = new HashMap<>();
     
     @Override
     public void onEnable() {
@@ -38,15 +42,20 @@ public class InventoryManagerPlugin extends JavaPlugin implements Listener {
         }
         
         Bukkit.getPluginManager().registerEvents(this, this);
-        getLogger().info("Inventory Manager enabled - Managing 6 connected worlds + LobbyPractice");
+        
+        disableStrikePracticeInSurvival();
+        
+        getLogger().info("Inventory Manager enabled - Managing 6 survival worlds + 2 practice worlds");
+        getLogger().info("StrikePractice disabled in survival worlds");
     }
     
     @Override
     public void onDisable() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             String worldName = player.getWorld().getName();
-            if (isConnectedWorld(worldName) || isLobbyPractice(worldName)) {
-                savePlayerData(player, getInventoryGroup(worldName));
+            String group = getInventoryGroup(worldName);
+            if (group != null) {
+                savePlayerData(player, group);
             }
         }
         getLogger().info("Inventory Manager disabled");
@@ -56,15 +65,15 @@ public class InventoryManagerPlugin extends JavaPlugin implements Listener {
         return CONNECTED_WORLDS.contains(worldName);
     }
     
-    private boolean isLobbyPractice(String worldName) {
-        return LOBBY_PRACTICE.equals(worldName);
+    private boolean isPracticeWorld(String worldName) {
+        return PRACTICE_WORLDS.contains(worldName);
     }
     
     private String getInventoryGroup(String worldName) {
         if (isConnectedWorld(worldName)) {
             return "connected";
-        } else if (isLobbyPractice(worldName)) {
-            return "lobbypractice";
+        } else if (isPracticeWorld(worldName)) {
+            return "practice";
         }
         return null; // Not managed
     }
@@ -76,7 +85,11 @@ public class InventoryManagerPlugin extends JavaPlugin implements Listener {
         
         String group = getInventoryGroup(worldName);
         if (group != null) {
-            loadPlayerData(player, group);
+            playerLastGroup.put(player.getUniqueId(), group);
+        }
+        
+        if (isConnectedWorld(worldName)) {
+            preventStrikePracticeUsage(player);
         }
     }
     
@@ -89,14 +102,17 @@ public class InventoryManagerPlugin extends JavaPlugin implements Listener {
         String fromGroup = getInventoryGroup(fromWorld);
         String toGroup = getInventoryGroup(toWorld);
         
-        // Save inventory when leaving a managed world group
-        if (fromGroup != null && !fromGroup.equals(toGroup)) {
+        if (fromGroup != null && toGroup != null && !fromGroup.equals(toGroup)) {
             savePlayerData(player, fromGroup);
+            loadPlayerData(player, toGroup);
+            playerLastGroup.put(player.getUniqueId(), toGroup);
+        } else if (toGroup != null) {
+            // Just update tracking if staying in managed worlds
+            playerLastGroup.put(player.getUniqueId(), toGroup);
         }
         
-        // Load inventory when entering a managed world group
-        if (toGroup != null && !toGroup.equals(fromGroup)) {
-            loadPlayerData(player, toGroup);
+        if (isConnectedWorld(toWorld)) {
+            preventStrikePracticeUsage(player);
         }
     }
     
@@ -129,7 +145,13 @@ public class InventoryManagerPlugin extends JavaPlugin implements Listener {
         File playerFile = new File(dataFolder, player.getUniqueId() + "_" + group + ".yml");
         
         if (!playerFile.exists()) {
-            return; // No saved data, keep current inventory
+            player.getInventory().clear();
+            player.getInventory().setArmorContents(new ItemStack[4]);
+            player.getInventory().setItemInOffHand(null);
+            player.setHealth(20.0);
+            player.setFoodLevel(20);
+            player.setSaturation(5.0f);
+            return;
         }
         
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(playerFile))) {
@@ -202,5 +224,20 @@ public class InventoryManagerPlugin extends JavaPlugin implements Listener {
             effects.add(new PotionEffect(effectData));
         }
         return effects;
+    }
+    
+    private void disableStrikePracticeInSurvival() {
+        Plugin strikePractice = Bukkit.getPluginManager().getPlugin("StrikePractice");
+        if (strikePractice != null) {
+            getLogger().info("Found StrikePractice plugin - blocking in survival worlds");
+        }
+    }
+    
+    private void preventStrikePracticeUsage(Player player) {
+        // Remove any StrikePractice scoreboard/sidebar
+        player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+        
+        // Send message to player
+        player.sendMessage("§c§lStrikePractice is disabled in survival worlds.");
     }
 }

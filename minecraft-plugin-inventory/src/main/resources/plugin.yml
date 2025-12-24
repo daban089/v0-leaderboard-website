@@ -3,7 +3,10 @@ version: 1.0
 main: com.smp.inventory.InventoryManagerPlugin
 api-version: 1.19
 author: Jangamar
-description: Manages separate inventories for different world groups
+description: Manages separate inventories for different world groups and disables StrikePractice in survival worlds
+
+softdepend: [StrikePractice]
 
 # This plugin keeps inventories connected for Lobbyj/world group
 # while keeping other worlds (LobbyPractice, Arenas) completely separate
+# StrikePractice is completely disabled in the 6 survival worlds

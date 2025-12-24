@@ -1,10 +1,10 @@
 # Inventory Manager Plugin
 
-A Minecraft plugin that connects inventories for a specific group of 6 worlds while leaving all other worlds untouched.
+A Minecraft plugin that manages separate inventory groups for different world sets while keeping them completely isolated.
 
 ## Features
 
-- **Connected Inventory Group**: The following 6 worlds share the same inventory:
+- **Survival Worlds Group (Connected)**: The following 6 worlds share the same inventory:
   - Lobbyj
   - Lobbyj_nether
   - Lobbyj_the_end
@@ -12,11 +12,19 @@ A Minecraft plugin that connects inventories for a specific group of 6 worlds wh
   - world_nether
   - world_the_end
 
-- **All Other Worlds Unaffected**: LobbyPractice, Arenas, and any other worlds on your server use default Minecraft behavior - each keeps its own separate inventory naturally.
+- **Practice Worlds Group (Connected)**: The following 2 worlds share the same inventory:
+  - LobbyPractice
+  - Arenas
+
+- **Complete Separation**: The survival group and practice group have completely separate inventories. Players moving between these groups will have their inventory saved and swapped automatically.
+
+- **StrikePractice Disabled in Survival**: The StrikePractice plugin is blocked from operating in the 6 survival worlds to prevent conflicts.
 
 ## How It Works
 
-When a player is in any of the 6 connected worlds, their inventory is shared across all of them. When they move to any other world (like LobbyPractice or Arenas), the plugin saves their connected-world inventory and lets Minecraft handle the inventory for that world normally. Moving back to the connected worlds restores the shared inventory.
+When a player moves between worlds in the same group (e.g., from Lobbyj to world_nether), their inventory stays the same. When they move to a different group (e.g., from world to LobbyPractice), the plugin saves their current inventory and loads the inventory for that group.
+
+When a player is in any of the 6 survival worlds, their inventory is shared across all of them. When they move to any of the 2 practice worlds (like LobbyPractice or Arenas), the plugin saves their survival-world inventory and lets Minecraft handle the inventory for that world normally. Moving back to the survival worlds restores the shared inventory. Similarly, when a player is in any of the 2 practice worlds, their inventory is shared across both. Moving to any of the 6 survival worlds saves their practice-world inventory and restores the survival-world inventory.
 
 The plugin saves:
 - Inventory contents
@@ -34,4 +42,5 @@ The plugin saves:
 
 ## Data Storage
 
-Player inventory data for the connected worlds is saved in `plugins/InventoryManager/inventories/` as `.yml` files.
+Player inventory data for the survival group is saved in `plugins/InventoryManager/inventories/survival/` as `.yml` files.
+Player inventory data for the practice group is saved in `plugins/InventoryManager/inventories/practice/` as `.yml` files.
