@@ -495,21 +495,23 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
               <div className="space-y-4">
                 {filteredPlayers.map((player) => (
                   <div
-                    key={player.username}
+                    key={`${player.username}-${player.rank}`}
                     className={`relative flex items-center gap-6 rounded-xl border overflow-hidden p-4 select-none transition-all duration-300 ${
-                      player.rank === 1
-                        ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
-                        : player.rank === 2
-                          ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
-                          : player.rank === 3
-                            ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
-                            : selectedKit === "all"
-                              ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
-                              : "border-border hover:translate-x-1 hover:shadow-md"
+                      player.username.toLowerCase() === "bafr"
+                        ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
+                        : player.rank === 1
+                          ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
+                          : player.rank === 2
+                            ? "border-gray-400/80 shadow-[0_0_20px_rgba(156,163,175,0.3)] hover:shadow-[0_0_30px_rgba(156,163,175,0.4)] hover:scale-[1.02] animate-silver-glow-pulse cursor-pointer"
+                            : player.rank === 3
+                              ? "border-orange-500/80 shadow-[0_0_20px_rgba(249,115,22,0.3)] hover:shadow-[0_0_30px_rgba(249,115,22,0.4)] hover:scale-[1.02] animate-bronze-glow-pulse cursor-pointer"
+                              : selectedKit === "all"
+                                ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
+                                : "border-border hover:translate-x-1 hover:shadow-md"
                     }`}
                     onClick={() => handlePlayerClick(player)}
                     style={
-                      player.rank <= 3 || player.rank > 3
+                      player.username.toLowerCase() !== "bafr" && (player.rank <= 3 || player.rank > 3)
                         ? {
                             backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
                             backgroundSize: "240px 80px",
@@ -532,7 +534,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       />
                     )}
 
-                    {player.rank === 1 && (
+                    {player.username.toLowerCase() !== "bafr" && player.rank === 1 && (
                       <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         {[...Array(12)].map((_, i) => (
                           <div
@@ -551,7 +553,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       </div>
                     )}
 
-                    {player.rank === 2 && (
+                    {player.username.toLowerCase() !== "bafr" && player.rank === 2 && (
                       <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         {[...Array(12)].map((_, i) => (
                           <div
@@ -570,7 +572,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       </div>
                     )}
 
-                    {player.rank === 3 && (
+                    {player.username.toLowerCase() !== "bafr" && player.rank === 3 && (
                       <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         {[...Array(12)].map((_, i) => (
                           <div
@@ -589,9 +591,9 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       </div>
                     )}
 
-                    <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
+                    <div className="relative h-[100px] w-[240px] flex-shrink-0 flex items-center overflow-hidden z-10">
                       <span
-                        className="absolute left-0 text-5xl font-black italic font-sans z-10 text-white"
+                        className="absolute left-0 text-5xl font-black italic font-sans text-white"
                         style={{
                           textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
                         }}
@@ -601,7 +603,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       <img
                         src={getAvatarUrl(player.username) || "/placeholder.svg"}
                         alt={player.username}
-                        className="absolute right-14 h-[88px] w-[88px] object-contain z-10"
+                        className="absolute right-14 h-[88px] w-[88px] object-contain"
                         style={{
                           filter: "drop-shadow(-4px 0px 0.8px rgba(0,0,0,0.3))",
                         }}
