@@ -157,9 +157,10 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
     setIsLoading(true)
 
     try {
-      // First, upload to Vercel Blob
+      // First, upload to Vercel Blob with username for color extraction
       const formData = new FormData()
       formData.append("file", selectedFile)
+      formData.append("username", username)
 
       const uploadResponse = await fetch("/api/upload", {
         method: "POST",
@@ -170,7 +171,8 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
         throw new Error("Failed to upload file")
       }
 
-      const { url: blobUrl } = await uploadResponse.json()
+      const { url: blobUrl, colors } = await uploadResponse.json()
+      console.log("[v0] Upload response - URL:", blobUrl, "Colors:", colors)
 
       const response = await fetch("/api/namecard", {
         method: "POST",
@@ -178,12 +180,14 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
         body: JSON.stringify({
           username,
           gifUrl: blobUrl,
+          colors,
         }),
       })
 
       const data = await response.json()
 
       if (response.ok) {
+        console.log("[v0] Namecard saved successfully with colors:", colors)
         onSuccess?.()
         onClose()
       } else {
