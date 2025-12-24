@@ -523,7 +523,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                   >
                     {player.username.toLowerCase() === "bafr" && (
                       <div
-                        className="absolute inset-0 z-0"
+                        className="absolute inset-0 z-0 pointer-events-none"
                         style={{
                           backgroundImage: "url('/bafr-custom-bg.gif')",
                           backgroundSize: "cover",
@@ -593,7 +593,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
 
                     <div className="relative h-[100px] w-[240px] flex-shrink-0 flex items-center overflow-hidden z-10">
                       <span
-                        className="absolute left-0 text-5xl font-black italic font-sans text-white"
+                        className="absolute left-0 text-5xl font-black italic font-sans text-white z-10"
                         style={{
                           textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
                         }}
@@ -603,7 +603,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       <img
                         src={getAvatarUrl(player.username) || "/placeholder.svg"}
                         alt={player.username}
-                        className="absolute right-14 h-[88px] w-[88px] object-contain"
+                        className="absolute right-14 h-[88px] w-[88px] object-contain z-10"
                         style={{
                           filter: "drop-shadow(-4px 0px 0.8px rgba(0,0,0,0.3))",
                         }}
@@ -613,7 +613,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       />
                     </div>
 
-                    <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
+                    <div className="flex flex-1 items-center justify-between gap-4 min-w-0 relative z-10">
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
                         <div className="space-y-2">
