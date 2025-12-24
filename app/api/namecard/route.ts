@@ -63,3 +63,26 @@ export async function GET() {
     return NextResponse.json({ error: "Failed to fetch namecards" }, { status: 500 })
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { username } = await request.json()
+
+    if (!username) {
+      return NextResponse.json({ error: "Username is required" }, { status: 400 })
+    }
+
+    const connection = await getConnection()
+
+    await connection.execute(`UPDATE player_stats SET custom_namecard = NULL WHERE LOWER(username) = LOWER(?)`, [
+      username,
+    ])
+
+    await connection.end()
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error("[v0] Error removing namecard:", error)
+    return NextResponse.json({ error: "Failed to remove custom namecard" }, { status: 500 })
+  }
+}

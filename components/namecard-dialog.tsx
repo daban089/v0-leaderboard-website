@@ -1,8 +1,9 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
+
+import type React from "react"
+import { useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,6 +20,23 @@ export function NamecardDialog({ username, onClose }: NamecardDialogProps) {
   const [previewUrl, setPreviewUrl] = useState<string>("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [hasExistingNamecard, setHasExistingNamecard] = useState(false)
+
+  useEffect(() => {
+    const checkExistingNamecard = async () => {
+      try {
+        const response = await fetch("/api/namecard")
+        if (response.ok) {
+          const data = await response.json()
+          const userNamecard = data.namecards?.[username.toLowerCase()]
+          setHasExistingNamecard(!!userNamecard && userNamecard.trim() !== "")
+        }
+      } catch (err) {
+        console.error("[v0] Error checking existing namecard:", err)
+      }
+    }
+    checkExistingNamecard()
+  }, [username])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -103,6 +121,37 @@ export function NamecardDialog({ username, onClose }: NamecardDialogProps) {
     }
   }
 
+  const handleRemoveNamecard = async () => {
+    if (!confirm("Are you sure you want to remove your custom namecard?")) {
+      return
+    }
+
+    setIsLoading(true)
+    setError("")
+
+    try {
+      const response = await fetch("/api/namecard", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        alert("Custom namecard removed! Refresh the page to see the changes.")
+        onClose()
+      } else {
+        setError(data.error || "Failed to remove namecard")
+      }
+    } catch (err) {
+      console.error("[v0] Namecard removal error:", err)
+      setError("An error occurred. Please try again.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <Dialog open onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
@@ -157,6 +206,27 @@ export function NamecardDialog({ username, onClose }: NamecardDialogProps) {
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <div className="flex justify-end gap-2">
+            {hasExistingNamecard && (
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={handleRemoveNamecard}
+                disabled={isLoading}
+                className="mr-auto"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Removing...
+                  </>
+                ) : (
+                  <>
+                    <X className="mr-2 h-4 w-4" />
+                    Remove Namecard
+                  </>
+                )}
+              </Button>
+            )}
             <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
               Cancel
             </Button>

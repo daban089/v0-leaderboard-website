@@ -560,7 +560,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all", search
                   <div
                     key={`${player.username}-${player.rank}`}
                     className={`relative flex items-center gap-6 rounded-xl border overflow-hidden p-4 select-none transition-all duration-300 ${
-                      player.username.toLowerCase() === "bafr"
+                      hasCustomNamecard(player)
                         ? "border-border cursor-pointer hover:scale-[1.02] hover:shadow-xl"
                         : player.rank === 1
                           ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
@@ -598,9 +598,9 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all", search
                       />
                     )}
 
-                    {player.username.toLowerCase() !== "bafr" && player.rank === 1 && (
+                    {!hasCustomNamecard(player) && player.rank === 1 && (
                       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                        {[...Array(12)].map((_, i) => (
+                        {[...Array(15)].map((_, i) => (
                           <div
                             key={`fire-${i}`}
                             className="absolute animate-fire-rise"
@@ -617,7 +617,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all", search
                       </div>
                     )}
 
-                    {player.username.toLowerCase() !== "bafr" && player.rank === 2 && (
+                    {!hasCustomNamecard(player) && player.rank === 2 && (
                       <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         {[...Array(12)].map((_, i) => (
                           <div
@@ -636,7 +636,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all", search
                       </div>
                     )}
 
-                    {player.username.toLowerCase() !== "bafr" && player.rank === 3 && (
+                    {!hasCustomNamecard(player) && player.rank === 3 && (
                       <div className="absolute inset-0 overflow-hidden pointer-events-none">
                         {[...Array(12)].map((_, i) => (
                           <div
@@ -681,9 +681,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all", search
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-2xl font-extrabold text-foreground">
                           <span
-                            className={`${
-                              hasCustomNamecard(player) ? "bg-black/50 px-3 py-1 rounded-full inline-block" : ""
-                            }`}
+                            className={`${hasCustomNamecard(player) ? "bg-black/50 px-3 py-1 rounded-full inline-block" : ""}`}
                           >
                             {player.username}
                           </span>
