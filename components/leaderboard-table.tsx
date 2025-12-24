@@ -621,28 +621,25 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                         />
                         {/* Custom color-based lava particles */}
                         <div className="absolute inset-0 overflow-hidden pointer-events-none z-[1]">
-                          {[...Array(20)].map((_, i) => {
+                          {Array.from({ length: 25 }).map((_, i) => {
                             const colors = getCustomColors(player)
-                            const colorIndex = i % colors.length
+                            const color = colors[i % colors.length]
+                            const randomX = Math.random() * 200 - 100
+                            const randomDelay = Math.random() * 3
+
                             return (
                               <div
                                 key={`custom-lava-${i}`}
-                                className="absolute animate-fire-rise"
-                                style={{
-                                  left: `${5 + Math.random() * 90}%`,
-                                  bottom: `${-10}px`,
-                                  animationDelay: `${Math.random() * 3}s`,
-                                  animationDuration: `${3 + Math.random() * 2}s`,
-                                }}
-                              >
-                                <div
-                                  className="custom-lava-particle"
-                                  style={{
-                                    background: `radial-gradient(circle, ${colors[colorIndex]} 0%, ${colors[(colorIndex + 1) % colors.length]} 50%, ${colors[(colorIndex + 2) % colors.length]} 100%)`,
-                                    boxShadow: `0 0 8px ${colors[colorIndex]}, 0 0 12px ${colors[(colorIndex + 1) % colors.length]}, 0 0 16px ${colors[(colorIndex + 2) % colors.length]}40`,
-                                  }}
-                                />
-                              </div>
+                                className="custom-lava-particle absolute bottom-0 left-1/2 -translate-x-1/2"
+                                style={
+                                  {
+                                    background: `radial-gradient(circle, ${color}ff 0%, ${color}aa 50%, ${color}44 100%)`,
+                                    boxShadow: `0 0 10px ${color}bb, 0 0 20px ${color}77`,
+                                    "--tx": `${randomX}px`,
+                                    animationDelay: `${randomDelay}s`,
+                                  } as React.CSSProperties
+                                }
+                              />
                             )
                           })}
                         </div>

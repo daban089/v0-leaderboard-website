@@ -263,11 +263,31 @@
   }
 
   /* Add custom lava particle style for dynamic colors */
+  /* Faster and fierier volcano lava particle animation */
+  @keyframes lava-burst {
+    0% {
+      transform: translateY(0) translateX(0) scale(1);
+      opacity: 0;
+    }
+    5% {
+      opacity: 1;
+    }
+    85% {
+      opacity: 0.9;
+    }
+    100% {
+      transform: translateY(-150px) translateX(var(--tx, 0)) scale(0.2);
+      opacity: 0;
+    }
+  }
+
   .custom-lava-particle {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    filter: blur(0.5px);
+    filter: blur(1px);
+    /* Increased animation speed from 8s to 2.5s for faster, fierier effect */
+    animation: lava-burst 2.5s ease-out infinite;
   }
 
   /* Updated crimson glow animation to use darker blood red colors */
