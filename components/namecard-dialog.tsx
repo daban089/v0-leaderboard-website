@@ -34,7 +34,7 @@ export function NamecardDialog({ username, onClose }: NamecardDialogProps) {
         if (response.ok) {
           const data = await response.json()
           console.log("[v0] API data:", data)
-          const userNamecard = data.namecards?.[username.toLowerCase()]
+          const userNamecard = data[username.toLowerCase()]
           console.log("[v0] User namecard:", userNamecard)
           setHasExistingNamecard(!!userNamecard && userNamecard.trim() !== "")
         }
