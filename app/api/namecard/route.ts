@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server"
-import { neon } from "@neondatabase/serverless"
+import mysql from "mysql2/promise"
 
-const sql = neon(process.env.DATABASE_URL!)
+async function getConnection() {
+  return await mysql.createConnection({
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
+  })
+}
 
 export async function POST(request: Request) {
   try {
@@ -18,13 +25,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid URL format" }, { status: 400 })
     }
 
-    // Insert or update the custom namecard in Neon
-    await sql`
-      INSERT INTO custom_namecards (username, namecard_url, updated_at)
-      VALUES (${username.toLowerCase()}, ${gifUrl}, NOW())
-      ON CONFLICT (username) 
-      DO UPDATE SET namecard_url = ${gifUrl}, updated_at = NOW()
-    `
+    const connection = await getConnection()
+
+    await connection.execute(`UPDATE users SET custom_namecard = ? WHERE LOWER(username) = LOWER(?)`, [
+      gifUrl,
+      username,
+    ])
+
+    await connection.end()
 
     return NextResponse.json({ success: true })
   } catch (error) {
@@ -35,15 +43,18 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const result = await sql`
-      SELECT username, namecard_url 
-      FROM custom_namecards
-    `
+    const connection = await getConnection()
+
+    const [rows] = await connection.execute(
+      `SELECT username, custom_namecard FROM users WHERE custom_namecard IS NOT NULL`,
+    )
+
+    await connection.end()
 
     // Convert to object map for easy lookup
     const namecards: Record<string, string> = {}
-    result.forEach((row: any) => {
-      namecards[row.username.toLowerCase()] = row.namecard_url
+    ;(rows as any[]).forEach((row: any) => {
+      namecards[row.username.toLowerCase()] = row.custom_namecard
     })
 
     return NextResponse.json(namecards)
