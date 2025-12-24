@@ -73,6 +73,12 @@ export async function GET(request: Request) {
 
       const players = await Promise.all(
         (rows as any[]).map(async (player) => {
+          const [verifiedRows] = await connection.execute<any[]>(
+            `SELECT verification_key FROM player_stats WHERE username = ?`,
+            [player.username],
+          )
+          const verified = verifiedRows.length > 0 && (verifiedRows[0] as any).verification_key === null
+
           let elo = 1000
 
           if (kit === "all") {
@@ -182,6 +188,7 @@ export async function GET(request: Request) {
             winRate,
             elo,
             winStreak,
+            verified,
           }
         }),
       )
