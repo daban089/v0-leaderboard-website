@@ -119,15 +119,8 @@ export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerMod
     { name: "Mace", icon: "/images/mace.png", elo: gamemodeElos?.mace || player.elo },
   ]
 
-  const getCraftyAvatarUrl = (username: string) => {
-    return `https://crafty.gg/renders/body?name=${encodeURIComponent(username)}`
-  }
-
-  const getShimmerUrl = (rank: number) => {
-    if (rank === 1) return "/shimmer.svg"
-    if (rank === 2) return "/shimmer-silver.svg"
-    if (rank === 3) return "/shimmer-bronze.svg"
-    return null
+  const getAvatarUrl = (username: string) => {
+    return `/api/avatar-proxy?username=${encodeURIComponent(username)}`
   }
 
   return (
@@ -155,18 +148,10 @@ export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerMod
         <div className="p-8">
           <div className="flex flex-col items-center mb-6">
             <div className="relative w-48 h-48 flex items-center justify-center mb-4 rounded-full overflow-hidden bg-muted/20 border-4 border-border">
-              {getShimmerUrl(player.rank) && (
-                <img
-                  src={getShimmerUrl(player.rank) || "/placeholder.svg"}
-                  alt="Shimmer effect"
-                  className="absolute inset-0 w-full h-full object-cover z-10 pointer-events-none animate-shimmer"
-                  style={{ mixBlendMode: "screen" }}
-                />
-              )}
               <img
-                src={getCraftyAvatarUrl(player.username) || "/placeholder.svg"}
+                src={getAvatarUrl(player.username) || "/placeholder.svg"}
                 alt={player.username}
-                className="w-full h-full object-contain scale-150"
+                className="w-full h-full object-contain"
                 style={{
                   imageRendering: "pixelated",
                 }}

@@ -308,14 +308,14 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row gap-3 mb-4 sm:mb-6">
+      <div className="flex gap-3 mb-6">
         <button
           onClick={() => {
             console.log("[v0] Switching to High Tiers mode")
             setMode("high-tiers")
             setSelectedKit("all")
           }}
-          className={`relative flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
+          className={`relative flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 overflow-hidden ${
             mode === "high-tiers"
               ? "bg-gradient-to-r from-red-950/90 via-red-900/90 to-red-950/90 text-red-100 shadow-lg shadow-red-900/70 border border-red-800/60 backdrop-blur-xl crimson-glow"
               : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
@@ -329,10 +329,10 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
             alt="High Tiers"
             width={64}
             height={64}
-            className="h-8 w-8 sm:h-10 sm:w-10 relative z-10 pixelated"
+            className="h-10 w-10 relative z-10 pixelated"
             onError={() => console.log("[v0] Failed to load fire-focus-icon")}
           />
-          <span className="relative z-10 text-sm sm:text-base">High Tiers</span>
+          <span className="relative z-10">High Tiers</span>
         </button>
 
         <button
@@ -341,7 +341,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
             setMode("ranked")
             setSelectedKit("all")
           }}
-          className={`flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+          className={`flex items-center gap-3 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
             mode === "ranked"
               ? "bg-card text-foreground border-2 border-primary"
               : "bg-card/50 text-muted-foreground hover:bg-card hover:text-foreground border border-border"
@@ -352,30 +352,30 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
             alt="Ranked"
             width={64}
             height={64}
-            className="h-8 w-8 sm:h-10 sm:w-10 pixelated"
+            className="h-10 w-10 pixelated"
             onError={() => console.log("[v0] Failed to load soul-focus-icon")}
           />
-          <span className="text-sm sm:text-base">Ranked</span>
+          <span>Ranked</span>
         </button>
       </div>
 
       {mode === "ranked" && (
-        <div className="flex items-end justify-between sm:justify-start">
+        <div className="flex items-end">
           <button
             onClick={() => setSelectedKit("all")}
-            className={`flex flex-col items-center gap-0.5 sm:gap-1 flex-1 sm:w-28 sm:flex-none py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "all"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
           >
-            <Trophy className="h-5 w-5 sm:h-8 sm:w-8" />
-            <span className="text-[9px] sm:text-xs font-medium">Overall</span>
+            <Trophy className="h-8 w-8" />
+            <span className="text-xs font-medium">Overall</span>
           </button>
 
           <button
             onClick={() => setSelectedKit("sword")}
-            className={`flex flex-col items-center gap-0.5 sm:gap-1 flex-1 sm:w-28 sm:flex-none py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "sword"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
@@ -386,68 +386,50 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
               alt="Sword"
               width={64}
               height={64}
-              className="h-5 w-5 sm:h-8 sm:w-8 object-contain"
+              className="h-8 w-8 object-contain"
             />
-            <span className="text-[9px] sm:text-xs font-medium">Sword</span>
+            <span className="text-xs font-medium">Sword</span>
           </button>
 
           <button
             onClick={() => setSelectedKit("axe")}
-            className={`flex flex-col items-center gap-0.5 sm:gap-1 flex-1 sm:w-28 sm:flex-none py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "axe"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
           >
-            <Image
-              src="/images/diamond-axe.png"
-              alt="Axe"
-              width={64}
-              height={64}
-              className="h-5 w-5 sm:h-8 sm:w-8 object-contain"
-            />
-            <span className="text-[9px] sm:text-xs font-medium">Axe</span>
+            <Image src="/images/diamond-axe.png" alt="Axe" width={64} height={64} className="h-8 w-8 object-contain" />
+            <span className="text-xs font-medium">Axe</span>
           </button>
 
           <button
             onClick={() => setSelectedKit("sumo")}
-            className={`flex flex-col items-center gap-0.5 sm:gap-1 flex-1 sm:w-28 sm:flex-none py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "sumo"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
           >
-            <Image
-              src="/images/lead.png"
-              alt="Lead"
-              width={64}
-              height={64}
-              className="h-5 w-5 sm:h-8 sm:w-8 object-contain"
-            />
-            <span className="text-[9px] sm:text-xs font-medium">Sumo</span>
+            <Image src="/images/lead.png" alt="Lead" width={64} height={64} className="h-8 w-8 object-contain" />
+            <span className="text-xs font-medium">Sumo</span>
           </button>
 
           <button
             onClick={() => setSelectedKit("mace")}
-            className={`flex flex-col items-center gap-0.5 sm:gap-1 flex-1 sm:w-28 sm:flex-none py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "mace"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
             }`}
           >
-            <Image
-              src="/images/mace.png"
-              alt="Mace"
-              width={64}
-              height={64}
-              className="h-5 w-5 sm:h-8 sm:w-8 object-contain"
-            />
-            <span className="text-[9px] sm:text-xs font-medium">Mace</span>
+            <Image src="/images/mace.png" alt="Mace" width={64} height={64} className="h-8 w-8 object-contain" />
+            <span className="text-xs font-medium">Mace</span>
           </button>
 
           <button
             onClick={() => setSelectedKit("crystalpvp")}
-            className={`flex flex-col items-center gap-0.5 sm:gap-1 flex-1 sm:w-28 sm:flex-none py-1.5 sm:py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
+            className={`flex flex-col items-center gap-1 w-28 py-3 rounded-t-3xl transition-all duration-500 ease-in-out bg-card border-t border-l border-r ${
               selectedKit === "crystalpvp"
                 ? "text-white opacity-100 border-[#ff3b30]"
                 : "text-muted-foreground hover:text-foreground opacity-60 hover:opacity-100 border-border"
@@ -458,10 +440,10 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
               alt="Crystal"
               width={64}
               height={64}
-              className="h-5 w-5 sm:h-8 sm:w-8 object-contain"
+              className="h-8 w-8 object-contain"
               style={{ imageRendering: "pixelated" }}
             />
-            <span className="text-[9px] sm:text-xs font-medium">Crystal</span>
+            <span className="text-xs font-medium">Crystal</span>
           </button>
         </div>
       )}
@@ -483,38 +465,38 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
       ) : (
         <div className="relative">
           <div
-            className="hidden sm:block absolute top-0 left-0 h-[1px] bg-[#ff3b30] transition-all duration-500"
+            className="absolute top-0 left-0 h-[1px] bg-[#ff3b30] transition-all duration-500"
             style={{ width: `${activeTabIndex * 112}px` }}
           />
           <div
-            className="hidden sm:block absolute top-0 right-0 h-[1px] bg-[#ff3b30] transition-all duration-500"
+            className="absolute top-0 right-0 h-[1px] bg-[#ff3b30] transition-all duration-500"
             style={{ width: `calc(100% - ${(activeTabIndex + 1) * 112}px)` }}
           />
           <Card className="overflow-hidden rounded-t-none border-t-0 border-[#ff3b30]">
-            <CardHeader className="p-0 h-6 sm:h-8">
-              <div className="flex items-center gap-3 sm:gap-6 px-2 sm:px-4 h-full">
-                <div className="h-full w-[180px] sm:w-[240px] flex-shrink-0 flex items-center">
-                  <span className="text-base sm:text-xl font-bold text-muted-foreground uppercase tracking-wider ml-2 sm:ml-4 leading-none">
+            <CardHeader className="p-0 h-8">
+              <div className="flex items-center gap-6 px-4 h-full">
+                <div className="h-full w-[240px] flex-shrink-0 flex items-center">
+                  <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider ml-4 leading-none">
                     #
                   </span>
                 </div>
-                <div className="flex flex-1 items-center justify-between gap-2 sm:gap-4">
-                  <span className="text-base sm:text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
+                <div className="flex flex-1 items-center justify-between gap-4">
+                  <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
                     PLAYER
                   </span>
-                  <span className="text-base sm:text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
+                  <span className="text-xl font-bold text-muted-foreground uppercase tracking-wider leading-none">
                     STATS
                   </span>
                 </div>
               </div>
             </CardHeader>
 
-            <CardContent className="p-2 sm:p-4 pt-0">
-              <div className="space-y-2 sm:space-y-4">
+            <CardContent className="p-4 pt-0">
+              <div className="space-y-4">
                 {filteredPlayers.map((player) => (
                   <div
                     key={player.username}
-                    className={`relative flex items-center gap-3 sm:gap-6 rounded-xl border overflow-hidden p-2 sm:p-4 select-none transition-all duration-300 ${
+                    className={`relative flex items-center gap-6 rounded-xl border overflow-hidden p-4 select-none transition-all duration-300 ${
                       player.rank === 1
                         ? "border-yellow-500/80 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.4)] hover:scale-[1.02] animate-glow-pulse cursor-pointer"
                         : player.rank === 2
@@ -526,6 +508,16 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                               : "border-border hover:translate-x-1 hover:shadow-md"
                     }`}
                     onClick={() => handlePlayerClick(player)}
+                    style={
+                      player.rank <= 3 || player.rank > 3
+                        ? {
+                            backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
+                            backgroundSize: "240px 80px",
+                            backgroundPosition: "left center",
+                            backgroundRepeat: "no-repeat",
+                          }
+                        : undefined
+                    }
                   >
                     {player.rank === 1 && (
                       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -584,32 +576,42 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       </div>
                     )}
 
-                    <div className="h-full w-[180px] sm:w-[240px] flex-shrink-0 flex items-center justify-center">
-                      <div
-                        className={`flex items-center justify-center rounded-full font-black text-4xl sm:text-6xl w-20 h-20 sm:w-28 sm:h-28 ${getRankColor(player.rank)}`}
+                    <div className="relative h-[80px] w-[240px] flex-shrink-0 flex items-center overflow-hidden">
+                      <span
+                        className="absolute left-0 text-5xl font-black italic font-sans z-10 text-white"
+                        style={{
+                          textShadow: "2px 2px 4px rgba(0, 0, 0, 0.5)",
+                        }}
                       >
-                        {player.rank}
-                      </div>
+                        {player.rank}.
+                      </span>
+                      <img
+                        src={getAvatarUrl(player.username) || "/placeholder.svg"}
+                        alt={player.username}
+                        className="absolute right-14 h-[88px] w-[88px] object-contain z-10"
+                        style={{
+                          filter: "drop-shadow(-4px 0px 0.8px rgba(0,0,0,0.3))",
+                        }}
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.svg?height=88&width=88"
+                        }}
+                      />
                     </div>
 
-                    <div className="flex flex-1 items-center justify-between gap-2 sm:gap-4 min-w-0">
+                    <div className="flex flex-1 items-center justify-between gap-4 min-w-0">
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-lg sm:text-2xl font-extrabold text-foreground">{player.username}</p>
+                        <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
                         <div className="space-y-2">
                           {selectedKit === "all" && (
-                            <div className="flex flex-wrap gap-1 sm:gap-2">
+                            <div className="flex flex-wrap gap-2">
                               {getBadges(player).map((badge) => (
                                 <div
                                   key={badge.id}
-                                  className={`flex items-center gap-1 sm:gap-2 ${badge.color}`}
+                                  className={`flex items-center gap-2 ${badge.color}`}
                                   title={badge.requirement}
                                 >
-                                  <img
-                                    src={badge.icon || "/placeholder.svg"}
-                                    alt={badge.name}
-                                    className="h-4 w-4 sm:h-6 sm:w-6"
-                                  />
-                                  <span className="text-xs sm:text-sm font-medium">{badge.name}</span>
+                                  <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-6 w-6" />
+                                  <span className="text-sm font-medium">{badge.name}</span>
                                 </div>
                               ))}
                             </div>
@@ -617,12 +619,12 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                         </div>
                       </div>
 
-                      <div className="flex flex-col gap-1 sm:gap-2 items-end">
-                        <div className="flex items-center gap-1 sm:gap-2">
-                          <span className="text-xl sm:text-3xl font-black text-white">{player.elo}</span>
-                          <span className="text-xs sm:text-sm text-muted-foreground">ELO</span>
+                      <div className="flex flex-col gap-2 items-end">
+                        <div className="flex items-center gap-2">
+                          <span className="text-3xl font-black text-white">{player.elo}</span>
+                          <span className="text-sm text-muted-foreground">ELO</span>
                         </div>
-                        <div className="flex gap-2 sm:gap-3 text-xs sm:text-sm">
+                        <div className="flex gap-3 text-sm">
                           <span className="text-green-500 font-semibold">{player.wins}W</span>
                           <span className="text-red-500 font-semibold">{player.losses}L</span>
                         </div>
@@ -630,6 +632,12 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                     </div>
                   </div>
                 ))}
+
+                {filteredPlayers.length === 0 && !loading && (
+                  <div className="py-12 text-center">
+                    <p className="text-muted-foreground">No players found</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
