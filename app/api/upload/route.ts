@@ -5,10 +5,9 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
     const file = formData.get("file") as File
-    const username = formData.get("username") as string
 
-    if (!file || !username) {
-      return NextResponse.json({ error: "No file or username provided" }, { status: 400 })
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 })
     }
 
     // Validate file type

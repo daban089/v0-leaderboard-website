@@ -51,6 +51,7 @@ export async function GET() {
 
     await connection.end()
 
+    // Convert to object map for easy lookup
     const namecards: Record<string, string> = {}
     ;(rows as any[]).forEach((row: any) => {
       namecards[row.username.toLowerCase()] = row.custom_namecard

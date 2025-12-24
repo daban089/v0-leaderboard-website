@@ -101,10 +101,6 @@ const getBadges = (player: Player): Badge[] => {
   return badges
 }
 
-interface CustomNamecard {
-  url: string
-}
-
 const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   kit,
   searchQuery = "",
@@ -120,7 +116,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   const [gamemodeElos, setGamemodeElos] = useState<Record<string, number> | null>(null)
   const [mode, setMode] = useState<"high-tiers" | "ranked">("ranked")
   const [activeTabIndex, setActiveTabIndex] = useState(0)
-  const [customNamecards, setCustomNamecards] = useState<Record<string, CustomNamecard>>({})
+  const [customNamecards, setCustomNamecards] = useState<Record<string, string>>({})
 
   const fetchCustomNamecards = async () => {
     try {
@@ -314,12 +310,12 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
 
   const hasCustomNamecard = (player: Player) => {
     const username = player.username.toLowerCase()
-    return customNamecards[username] && customNamecards[username].url && customNamecards[username].url.trim() !== ""
+    return customNamecards[username] && customNamecards[username].trim() !== ""
   }
 
   const getCustomNamecard = (player: Player) => {
     const username = player.username.toLowerCase()
-    return customNamecards[username]?.url || ""
+    return customNamecards[username] || ""
   }
 
   if (loading) {

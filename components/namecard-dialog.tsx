@@ -26,12 +26,17 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
 
   useEffect(() => {
     const checkExistingNamecard = async () => {
+      console.log("[v0] Checking existing namecard for:", username)
       setIsCheckingExisting(true)
       try {
         const response = await fetch("/api/namecard")
+        console.log("[v0] API response status:", response.status)
+
         if (response.ok) {
           const data = await response.json()
+          console.log("[v0] API data:", data)
           const userNamecard = data[username.toLowerCase()]
+          console.log("[v0] User namecard:", userNamecard)
           setHasExistingNamecard(!!userNamecard && userNamecard.trim() !== "")
         }
       } catch (err) {
@@ -88,9 +93,9 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
     setIsLoading(true)
 
     try {
+      // First, upload to Vercel Blob
       const formData = new FormData()
       formData.append("file", selectedFile)
-      formData.append("username", username)
 
       const uploadResponse = await fetch("/api/upload", {
         method: "POST",
@@ -103,13 +108,11 @@ export function NamecardDialog({ username, onClose, onSuccess }: NamecardDialogP
 
       const { url: blobUrl } = await uploadResponse.json()
 
+      // Then save the blob URL to the namecard
       const response = await fetch("/api/namecard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username,
-          gifUrl: blobUrl,
-        }),
+        body: JSON.stringify({ username, gifUrl: blobUrl }),
       })
 
       const data = await response.json()
