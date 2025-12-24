@@ -510,16 +510,12 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                                 : "border-border hover:translate-x-1 hover:shadow-md"
                     }`}
                     onClick={() => handlePlayerClick(player)}
-                    style={
-                      player.username.toLowerCase() !== "bafr" && (player.rank <= 3 || player.rank > 3)
-                        ? {
-                            backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
-                            backgroundSize: "240px 80px",
-                            backgroundPosition: "left center",
-                            backgroundRepeat: "no-repeat",
-                          }
-                        : undefined
-                    }
+                    style={{
+                      backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
+                      backgroundSize: "240px 100px",
+                      backgroundPosition: "left center",
+                      backgroundRepeat: "no-repeat",
+                    }}
                   >
                     {player.username.toLowerCase() === "bafr" && (
                       <div
@@ -615,7 +611,15 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
 
                     <div className="flex flex-1 items-center justify-between gap-4 min-w-0 relative z-10">
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-2xl font-extrabold text-foreground">{player.username}</p>
+                        <p
+                          className={`truncate text-2xl font-extrabold text-foreground ${
+                            player.username.toLowerCase() === "bafr"
+                              ? "bg-black/50 px-3 py-1 rounded-full inline-block"
+                              : ""
+                          }`}
+                        >
+                          {player.username}
+                        </p>
                         <div className="space-y-2">
                           {selectedKit === "all" && (
                             <div className="flex flex-wrap gap-2">
@@ -634,7 +638,11 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                         </div>
                       </div>
 
-                      <div className="flex flex-col gap-2 items-end">
+                      <div
+                        className={`flex flex-col gap-2 items-end ${
+                          player.username.toLowerCase() === "bafr" ? "bg-black/50 px-3 py-2 rounded-full" : ""
+                        }`}
+                      >
                         <div className="flex items-center gap-2">
                           <span className="text-3xl font-black text-white">{player.elo}</span>
                           <span className="text-sm text-muted-foreground">ELO</span>
