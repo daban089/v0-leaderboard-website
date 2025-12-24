@@ -527,7 +527,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                           backgroundRepeat: "no-repeat",
-                          opacity: 0.9,
+                          opacity: 0.75,
                         }}
                       />
                     )}
