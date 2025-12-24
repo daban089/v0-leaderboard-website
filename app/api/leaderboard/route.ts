@@ -9,7 +9,6 @@ interface PlayerData {
   winStreak: number
   totalMatches: number
   kit?: string
-  custom_namecard?: string // Added custom_namecard field
 }
 
 export async function GET(request: Request) {
@@ -37,13 +36,11 @@ export async function GET(request: Request) {
           SUM(fp.is_winner) as wins,
           COUNT(*) - SUM(fp.is_winner) as losses,
           COUNT(*) as total_matches,
-          GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results,
-          u.custom_namecard
+          GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results
         FROM fight_players fp
         INNER JOIN fights f ON fp.fight = f.started
-        LEFT JOIN users u ON LOWER(fp.username) = LOWER(u.username)
         WHERE f.mode = 'DUEL_QUEUE_RANKED'
-        GROUP BY fp.username` // Removed u.custom_namecard from GROUP BY to fix player aggregation
+        GROUP BY fp.username`
       } else {
         query = `SELECT 
           fp.username,
@@ -58,13 +55,11 @@ export async function GET(request: Request) {
            AND (f2.kit = ? OR f2.kit = ?)
            ORDER BY fp2.id DESC 
            LIMIT 1) as latest_player_data,
-          GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results,
-          u.custom_namecard
+          GROUP_CONCAT(fp.is_winner ORDER BY fp.id DESC SEPARATOR ',') as recent_results
         FROM fight_players fp
         INNER JOIN fights f ON fp.fight = f.started
-        LEFT JOIN users u ON LOWER(fp.username) = LOWER(u.username)
         WHERE f.mode = 'DUEL_QUEUE_RANKED' AND (f.kit = ? OR f.kit = ?)
-        GROUP BY fp.username` // Removed u.custom_namecard from GROUP BY to fix player aggregation
+        GROUP BY fp.username`
 
         const rankedKit = kit + "elo"
         params = [kit, rankedKit, kit, rankedKit]
@@ -184,7 +179,6 @@ export async function GET(request: Request) {
             winRate,
             elo,
             winStreak,
-            custom_namecard: player.custom_namecard || null, // Include custom_namecard in response
           }
         }),
       )
