@@ -119,8 +119,8 @@ export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerMod
     { name: "Mace", icon: "/images/mace.png", elo: gamemodeElos?.mace || player.elo },
   ]
 
-  const getAvatarUrl = (username: string) => {
-    return `/api/avatar-proxy?username=${encodeURIComponent(username)}`
+  const getCraftyAvatarUrl = (username: string) => {
+    return `https://crafty.gg/mc-head/body/8/${encodeURIComponent(username)}`
   }
 
   return (
@@ -147,18 +147,40 @@ export function PlayerModal({ isOpen, onClose, player, gamemodeElos }: PlayerMod
 
         <div className="p-8">
           <div className="flex flex-col items-center mb-6">
-            <div className="relative w-48 h-48 flex items-center justify-center mb-4 rounded-full overflow-hidden bg-muted/20 border-4 border-border">
+            <div className="relative w-64 h-80 flex items-center justify-center mb-4 rounded-lg overflow-hidden bg-muted/20 border-4 border-border">
               <img
-                src={getAvatarUrl(player.username) || "/placeholder.svg"}
+                src={getCraftyAvatarUrl(player.username) || "/placeholder.svg"}
                 alt={player.username}
-                className="w-full h-full object-contain"
+                className="w-full h-full object-contain scale-110"
                 style={{
                   imageRendering: "pixelated",
                 }}
                 onError={(e) => {
-                  e.currentTarget.src = "/placeholder.svg?height=192&width=192"
+                  e.currentTarget.src = "/placeholder.svg?height=320&width=256"
                 }}
               />
+              {/* Shimmer overlay for top 3 ranks */}
+              {player.rank === 1 && (
+                <img
+                  src="/shimmer.svg"
+                  alt="Gold Shimmer"
+                  className="absolute inset-0 w-full h-full pointer-events-none opacity-60"
+                />
+              )}
+              {player.rank === 2 && (
+                <img
+                  src="/shimmer-silver.svg"
+                  alt="Silver Shimmer"
+                  className="absolute inset-0 w-full h-full pointer-events-none opacity-60"
+                />
+              )}
+              {player.rank === 3 && (
+                <img
+                  src="/shimmer-bronze.svg"
+                  alt="Bronze Shimmer"
+                  className="absolute inset-0 w-full h-full pointer-events-none opacity-60"
+                />
+              )}
             </div>
             <h2 className="text-3xl font-bold text-foreground">{player.username}</h2>
             <p className="text-muted-foreground">Rank #{player.rank}</p>
