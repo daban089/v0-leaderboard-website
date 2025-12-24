@@ -648,31 +648,19 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                       </div>
 
                       <div className="flex flex-col gap-2 items-end">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`text-3xl font-black text-white ${
-                              player.username.toLowerCase() === "bafr"
-                                ? "bg-black/50 px-3 py-1 rounded-full inline-block"
-                                : ""
-                            }`}
-                          >
-                            {player.elo}
-                          </span>
-                          <span
-                            className={`text-sm text-muted-foreground ${
-                              player.username.toLowerCase() === "bafr"
-                                ? "bg-black/50 px-2 py-1 rounded-full inline-block"
-                                : ""
-                            }`}
-                          >
-                            ELO
-                          </span>
+                        <div
+                          className={`flex items-center gap-2 ${
+                            player.username.toLowerCase() === "bafr" ? "bg-black/50 px-3 py-0.5 rounded-md" : ""
+                          }`}
+                        >
+                          <span className="text-3xl font-black text-white">{player.elo}</span>
+                          <span className="text-sm text-muted-foreground">ELO</span>
                         </div>
                         <div className="flex gap-3 text-sm">
                           <span
                             className={`text-green-400 ${
                               player.username.toLowerCase() === "bafr"
-                                ? "bg-black/50 px-2 py-1 rounded-full inline-block"
+                                ? "bg-black/50 px-2 py-0.5 rounded-md inline-block"
                                 : ""
                             }`}
                           >
@@ -681,7 +669,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                           <span
                             className={`text-red-400 ${
                               player.username.toLowerCase() === "bafr"
-                                ? "bg-black/50 px-2 py-1 rounded-full inline-block"
+                                ? "bg-black/50 px-2 py-0.5 rounded-md inline-block"
                                 : ""
                             }`}
                           >
