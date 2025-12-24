@@ -510,13 +510,18 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                                 : "border-border hover:translate-x-1 hover:shadow-md"
                     }`}
                     onClick={() => handlePlayerClick(player)}
-                    style={{
-                      backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
-                      backgroundSize: "240px 100px",
-                      backgroundPosition: "left center",
-                      backgroundRepeat: "no-repeat",
-                    }}
                   >
+                    <div
+                      className="absolute inset-0 z-[1] pointer-events-none"
+                      style={{
+                        backgroundImage: `url('${getShimmerUrl(player.rank)}')`,
+                        backgroundSize: "240px 100px",
+                        backgroundPosition: "left center",
+                        backgroundRepeat: "no-repeat",
+                        opacity: 1,
+                      }}
+                    />
+
                     {player.username.toLowerCase() === "bafr" && (
                       <div
                         className="absolute inset-0 z-0 pointer-events-none"
@@ -611,14 +616,16 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
 
                     <div className="flex flex-1 items-center justify-between gap-4 min-w-0 relative z-10">
                       <div className="min-w-0 flex-1">
-                        <p
-                          className={`truncate text-2xl font-extrabold text-foreground ${
-                            player.username.toLowerCase() === "bafr"
-                              ? "bg-black/50 px-3 py-1 rounded-full inline-block"
-                              : ""
-                          }`}
-                        >
-                          {player.username}
+                        <p className="truncate text-2xl font-extrabold text-foreground">
+                          <span
+                            className={`${
+                              player.username.toLowerCase() === "bafr"
+                                ? "bg-black/50 px-3 py-1 rounded-full inline-block"
+                                : ""
+                            }`}
+                          >
+                            {player.username}
+                          </span>
                         </p>
                         <div className="space-y-2">
                           {selectedKit === "all" && (
@@ -626,7 +633,9 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                               {getBadges(player).map((badge) => (
                                 <div
                                   key={badge.id}
-                                  className={`flex items-center gap-2 ${badge.color}`}
+                                  className={`flex items-center gap-2 ${badge.color} ${
+                                    player.username.toLowerCase() === "bafr" ? "bg-black/50 px-2 py-1 rounded-full" : ""
+                                  }`}
                                   title={badge.requirement}
                                 >
                                   <img src={badge.icon || "/placeholder.svg"} alt={badge.name} className="h-6 w-6" />
@@ -638,18 +647,46 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ kit = "all" }) => {
                         </div>
                       </div>
 
-                      <div
-                        className={`flex flex-col gap-2 items-end ${
-                          player.username.toLowerCase() === "bafr" ? "bg-black/50 px-3 py-2 rounded-full" : ""
-                        }`}
-                      >
+                      <div className="flex flex-col gap-2 items-end">
                         <div className="flex items-center gap-2">
-                          <span className="text-3xl font-black text-white">{player.elo}</span>
-                          <span className="text-sm text-muted-foreground">ELO</span>
+                          <span
+                            className={`text-3xl font-black text-white ${
+                              player.username.toLowerCase() === "bafr"
+                                ? "bg-black/50 px-3 py-1 rounded-full inline-block"
+                                : ""
+                            }`}
+                          >
+                            {player.elo}
+                          </span>
+                          <span
+                            className={`text-sm text-muted-foreground ${
+                              player.username.toLowerCase() === "bafr"
+                                ? "bg-black/50 px-2 py-1 rounded-full inline-block"
+                                : ""
+                            }`}
+                          >
+                            ELO
+                          </span>
                         </div>
                         <div className="flex gap-3 text-sm">
-                          <span className="text-green-500 font-semibold">{player.wins}W</span>
-                          <span className="text-red-500 font-semibold">{player.losses}L</span>
+                          <span
+                            className={`text-green-400 ${
+                              player.username.toLowerCase() === "bafr"
+                                ? "bg-black/50 px-2 py-1 rounded-full inline-block"
+                                : ""
+                            }`}
+                          >
+                            {player.wins}W
+                          </span>
+                          <span
+                            className={`text-red-400 ${
+                              player.username.toLowerCase() === "bafr"
+                                ? "bg-black/50 px-2 py-1 rounded-full inline-block"
+                                : ""
+                            }`}
+                          >
+                            {player.losses}L
+                          </span>
                         </div>
                       </div>
                     </div>
