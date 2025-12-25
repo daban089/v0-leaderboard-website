@@ -1,0 +1,7 @@
+# MySQL Database Configuration
+mysql:
+  host: "your-mysql-host"
+  port: 3306
+  database: "your-database-name"
+  user: "your-mysql-user"
+  password: "your-mysql-password"

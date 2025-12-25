@@ -35,39 +35,50 @@ client.on("messageCreate", async (message) => {
 
   const code = message.content.trim()
 
-  // Validate code format (alphanumeric, 6-10 chars)
-  if (!/^[a-zA-Z0-9]{6,10}$/.test(code)) {
-    await message.reply("❌ Invalid code format. Codes should be 6-10 alphanumeric characters.")
+  // Validate code format (4 digits for DiscordSRV)
+  if (!/^[0-9]{4}$/.test(code)) {
+    await message.reply("❌ Invalid code format. Please enter a 4-digit code from `/discord link`.")
     return
   }
 
   try {
     const connection = await pool.getConnection()
 
-    // Check if code exists and is valid
-    const [codeResult] = await connection.query(
-      "SELECT username FROM player_stats WHERE verification_code = ? AND verification_code_expires_at > NOW()",
-      [code],
-    )
+    // Check if code exists in discordsrv_codes and get the UUID
+    const [codeResult] = await connection.query("SELECT uuid, expiration FROM discordsrv_codes WHERE code = ?", [code])
 
     if (codeResult.length === 0) {
       connection.release()
-      await message.reply("❌ Code not found or expired. Please generate a new code with `/verify` in-game.")
+      await message.reply("❌ Code not found. Please generate a new code with `/discord link` in-game.")
       return
     }
 
-    const username = codeResult[0].username
+    const codeData = codeResult[0]
+    const uuid = codeData.uuid
 
-    // Link Discord ID
-    await connection.query(
-      "UPDATE player_stats SET discord_id = ?, verification_code = NULL, verification_code_expires_at = NULL WHERE verification_code = ?",
-      [message.author.id, code],
-    )
+    // Check if code is expired
+    if (new Date(codeData.expiration) < new Date()) {
+      connection.release()
+      await message.reply("❌ Code has expired. Please generate a new code with `/discord link` in-game.")
+      return
+    }
+
+    // Get player name from UUID (query player_stats by UUID or however you store it)
+    // Also link the Discord ID in discordsrv_accounts
+    const [accountResult] = await connection.query("SELECT uuid FROM discordsrv_accounts WHERE uuid = ?", [uuid])
+
+    if (accountResult.length === 0) {
+      // First time linking - insert into discordsrv_accounts
+      await connection.query("INSERT INTO discordsrv_accounts (uuid, discord) VALUES (?, ?)", [uuid, message.author.id])
+    } else {
+      // Already has account - update Discord ID
+      await connection.query("UPDATE discordsrv_accounts SET discord = ? WHERE uuid = ?", [message.author.id, uuid])
+    }
 
     connection.release()
 
-    await message.reply(`✅ Successfully linked Discord account to **${username}**!`)
-    console.log(`[Discord Bot] Linked ${username} to Discord user ${message.author.tag}`)
+    await message.reply(`✅ Successfully linked your Discord account! You can now use this code on the website.`)
+    console.log(`[Discord Bot] Linked UUID ${uuid} to Discord user ${message.author.tag}`)
   } catch (error) {
     console.error("[Discord Bot] Error processing code:", error)
     await message.reply("❌ An error occurred while linking your account. Please try again.")
