@@ -5,7 +5,7 @@ import { LeaderboardTable } from "@/components/leaderboard-table"
 import { LoginDialog } from "@/components/login-dialog"
 import { NamecardDialog } from "@/components/namecard-dialog"
 import { AdminPanel } from "@/components/admin-panel"
-import { LogIn, LogOut, User } from "lucide-react"
+import { LogIn, LogOut, User, Palette } from "lucide-react"
 import { Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -85,14 +85,13 @@ export default function Page() {
 
               {/* Customize Button */}
               {loggedInUser && (
-                <Button
-                  variant="outline"
-                  size="sm"
+                <button
                   onClick={() => setShowNamecard(true)}
-                  className="h-12 bg-transparent"
+                  className="flex items-center justify-center h-10 w-10 rounded-lg border border-border bg-card hover:bg-accent transition-colors cursor-pointer"
+                  title="Customize Namecard"
                 >
-                  Customize
-                </Button>
+                  <Palette className="h-5 w-5 text-primary" />
+                </button>
               )}
 
               {/* Search Bar */}
