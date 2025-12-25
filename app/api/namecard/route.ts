@@ -18,14 +18,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Username and GIF URL are required" }, { status: 400 })
     }
 
+    const connection = await getConnection()
+
+    const [permissionRows] = await connection.execute(
+      `SELECT can_customize_namecard FROM player_stats WHERE LOWER(username) = LOWER(?)`,
+      [username],
+    )
+
+    if ((permissionRows as any[]).length === 0 || !(permissionRows as any[])[0].can_customize_namecard) {
+      await connection.end()
+      return NextResponse.json({ error: "You don't have permission to customize namecards" }, { status: 403 })
+    }
+
     // Validate URL format
     try {
       new URL(gifUrl)
     } catch {
+      await connection.end()
       return NextResponse.json({ error: "Invalid URL format" }, { status: 400 })
     }
-
-    const connection = await getConnection()
 
     await connection.execute(`UPDATE player_stats SET custom_namecard = ? WHERE LOWER(username) = LOWER(?)`, [
       gifUrl,
@@ -73,6 +84,16 @@ export async function DELETE(request: Request) {
     }
 
     const connection = await getConnection()
+
+    const [permissionRows] = await connection.execute(
+      `SELECT can_customize_namecard FROM player_stats WHERE LOWER(username) = LOWER(?)`,
+      [username],
+    )
+
+    if ((permissionRows as any[]).length === 0 || !(permissionRows as any[])[0].can_customize_namecard) {
+      await connection.end()
+      return NextResponse.json({ error: "You don't have permission to customize namecards" }, { status: 403 })
+    }
 
     await connection.execute(`UPDATE player_stats SET custom_namecard = NULL WHERE LOWER(username) = LOWER(?)`, [
       username,
