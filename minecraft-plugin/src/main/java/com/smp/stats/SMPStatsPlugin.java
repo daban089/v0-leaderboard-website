@@ -174,15 +174,9 @@ public class SMPStatsPlugin extends JavaPlugin implements Listener {
     }
     
     private String generateVerificationKey() {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random random = new Random();
-        StringBuilder key = new StringBuilder();
-        
-        for (int i = 0; i < 6; i++) {
-            key.append(chars.charAt(random.nextInt(chars.length())));
-        }
-        
-        return key.toString();
+        int pin = 1000 + random.nextInt(9000); // Generates 1000-9999
+        return String.valueOf(pin);
     }
     
     private boolean saveVerificationKey(String username, String key) {

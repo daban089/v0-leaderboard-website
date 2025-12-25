@@ -2,13 +2,15 @@ package com.smpstats.discordbridge;
 
 import github.scarsz.discordsrv.DiscordSRV;
 import github.scarsz.discordsrv.api.Subscribe;
-import github.scarsz.discordsrv.api.events.AccountLinkCodeGenerateEvent;
+import github.scarsz.discordsrv.api.events.AccountLinkedEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.util.Random;
 
 public class DiscordBridge extends JavaPlugin {
 
@@ -17,6 +19,7 @@ public class DiscordBridge extends JavaPlugin {
     private String mysqlUser;
     private String mysqlPassword;
     private int mysqlPort;
+    private Random random = new Random();
 
     @Override
     public void onEnable() {
@@ -33,7 +36,7 @@ public class DiscordBridge extends JavaPlugin {
         // Subscribe to DiscordSRV events
         DiscordSRV.api.subscribe(this);
         
-        getLogger().info("DiscordBridge enabled! Listening for DiscordSRV code generation.");
+        getLogger().info("DiscordBridge enabled! Listening for Discord account links.");
     }
 
     @Override
@@ -65,19 +68,29 @@ public class DiscordBridge extends JavaPlugin {
         }
     }
 
-    @Subscribe
-    public void onCodeGenerate(AccountLinkCodeGenerateEvent event) {
-        String code = event.getCode(); // Get the code DiscordSRV generated
-        String uuid = event.getPlayer().getUniqueId().toString();
-        String username = event.getPlayer().getName();
-        long expiration = System.currentTimeMillis() + (10 * 60 * 1000); // 10 minutes
-        
-        saveToDatabase(code, uuid, username, expiration);
-        
-        getLogger().info("Captured code for " + username + ": " + code);
+    private String generateCode() {
+        return String.format("%04d", random.nextInt(10000));
     }
 
-    private void saveToDatabase(String code, String uuid, String username, long expiration) {
+    @Subscribe
+    public void onAccountLinked(AccountLinkedEvent event) {
+        Player player = event.getPlayer();
+        String uuid = player.getUniqueId().toString();
+        String username = player.getName();
+        String discordId = event.getUser().getId();
+        String code = generateCode();
+        long expiration = System.currentTimeMillis() + (10 * 60 * 1000); // 10 minutes
+        
+        saveToDatabase(code, uuid, username, discordId, expiration);
+        
+        // Tell the player their website verification code
+        player.sendMessage("§a[Website] Your verification code is: §e" + code);
+        player.sendMessage("§7Use this code on the website to complete verification.");
+        
+        getLogger().info("Generated website code for " + username + ": " + code);
+    }
+
+    private void saveToDatabase(String code, String uuid, String username, String discordId, long expiration) {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             try (Connection conn = getConnection()) {
                 // Delete old codes for this UUID
@@ -86,15 +99,16 @@ public class DiscordBridge extends JavaPlugin {
                 deleteStmt.setString(1, uuid);
                 deleteStmt.executeUpdate();
                 
-                String sql = "INSERT INTO website_verifications (code, uuid, username, verified, expiration) VALUES (?, ?, ?, FALSE, ?)";
+                String sql = "INSERT INTO website_verifications (code, uuid, username, discord_id, verified, expiration) VALUES (?, ?, ?, ?, FALSE, ?)";
                 PreparedStatement stmt = conn.prepareStatement(sql);
                 stmt.setString(1, code);
                 stmt.setString(2, uuid);
                 stmt.setString(3, username);
-                stmt.setLong(4, expiration);
+                stmt.setString(4, discordId);
+                stmt.setLong(5, expiration);
                 stmt.executeUpdate();
                 
-                getLogger().info("Saved to database: " + username + " with code " + code);
+                getLogger().info("Saved to database: " + username + " with code " + code + " and Discord ID " + discordId);
             } catch (Exception e) {
                 getLogger().severe("Failed to save: " + e.getMessage());
             }

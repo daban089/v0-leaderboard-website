@@ -11,49 +11,51 @@ export async function POST(request: Request) {
     const mysql = await import("mysql2/promise")
 
     const connection = await mysql.createConnection({
-      host: process.env.MYSQL_HOST || "node9.partner-hosting.com",
+      host: process.env.MYSQL_HOST,
       port: 3306,
-      user: process.env.MYSQL_USER || "u602_YDV9ppr7m2",
-      password: process.env.MYSQL_PASSWORD || "L4oDmnR=FPLuOtbrXuc4L!E.",
-      database: process.env.MYSQL_DATABASE || "s602_MySQL",
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
     })
 
-    const [codeRows] = await connection.execute<any[]>(
-      `SELECT dc.code, dc.uuid, da.discord 
-       FROM discordsrv_codes dc
-       JOIN discordsrv_accounts da ON dc.uuid = da.uuid
-       WHERE dc.code = ? AND dc.expiration > UNIX_TIMESTAMP() * 1000`,
+    const [playerRows] = await connection.execute<any[]>(
+      `SELECT username, uuid FROM player_stats WHERE verification_key = ?`,
       [pin],
     )
 
-    if (codeRows.length === 0) {
-      await connection.end()
-      return NextResponse.json({ error: "Invalid or expired PIN" }, { status: 401 })
-    }
-
-    const { uuid, discord: discord_id } = codeRows[0]
-
-    // Get player by UUID from player_stats
-    const [playerRows] = await connection.execute<any[]>(`SELECT username FROM player_stats WHERE uuid = ?`, [uuid])
-
     if (playerRows.length === 0) {
       await connection.end()
-      return NextResponse.json({ error: "Player not found in database" }, { status: 404 })
+      return NextResponse.json({ error: "Invalid verification code" }, { status: 401 })
     }
 
-    const { username } = playerRows[0]
+    const { username, uuid } = playerRows[0]
 
-    // Link Discord ID to player account
-    await connection.execute(`UPDATE player_stats SET discord_id = ? WHERE uuid = ?`, [discord_id, uuid])
+    const [discordRows] = await connection.execute<any[]>(`SELECT discord FROM discordsrv_accounts WHERE uuid = ?`, [
+      uuid,
+    ])
 
-    // Delete used code
-    await connection.execute(`DELETE FROM discordsrv_codes WHERE code = ?`, [pin])
+    if (discordRows.length === 0) {
+      await connection.end()
+      return NextResponse.json(
+        {
+          error: "Discord not linked. Please use /discord link in-game first, then try again.",
+        },
+        { status: 403 },
+      )
+    }
+
+    const discord_id = discordRows[0].discord
+
+    await connection.execute(`UPDATE player_stats SET discord_id = ?, verification_key = NULL WHERE username = ?`, [
+      discord_id,
+      username,
+    ])
 
     await connection.end()
 
     return NextResponse.json({ success: true, username, discord_id })
   } catch (error) {
-    console.error("[v0] Discord PIN verification error:", error)
+    console.error("Discord PIN verification error:", error)
     return NextResponse.json({ error: "Verification failed" }, { status: 500 })
   }
 }
