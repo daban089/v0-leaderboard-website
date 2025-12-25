@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     })
 
     const [playerRows] = await connection.execute<any[]>(
-      `SELECT username, discord_id FROM player_stats WHERE username = ? AND verification_key = ?`,
+      `SELECT username, player_uuid FROM player_stats WHERE username = ? AND verification_key = ?`,
       [username, pin],
     )
 
@@ -28,9 +28,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid username or PIN" }, { status: 401 })
     }
 
-    const { discord_id } = playerRows[0]
+    const { player_uuid } = playerRows[0]
 
-    if (!discord_id) {
+    const [discordRows] = await connection.execute<any[]>(`SELECT discord FROM discordsrv_accounts WHERE uuid = ?`, [
+      player_uuid,
+    ])
+
+    if (discordRows.length === 0 || !discordRows[0].discord) {
       await connection.end()
       return NextResponse.json(
         {
@@ -40,7 +44,12 @@ export async function POST(request: Request) {
       )
     }
 
-    await connection.execute(`UPDATE player_stats SET verification_key = NULL WHERE username = ?`, [username])
+    const discord_id = discordRows[0].discord
+
+    await connection.execute(`UPDATE player_stats SET discord_id = ?, verification_key = NULL WHERE username = ?`, [
+      discord_id,
+      username,
+    ])
 
     await connection.end()
 

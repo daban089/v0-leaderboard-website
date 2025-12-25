@@ -89,6 +89,7 @@ public class SMPStatsPlugin extends JavaPlugin implements Listener {
                     "kills INT DEFAULT 0," +
                     "deaths INT DEFAULT 0," +
                     "verification_key VARCHAR(6)," +
+                    "player_uuid VARCHAR(36)," +
                     "last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)";
         
         try (Statement stmt = connection.createStatement()) {
@@ -140,7 +141,7 @@ public class SMPStatsPlugin extends JavaPlugin implements Listener {
             Player player = (Player) sender;
             String verificationKey = generateVerificationKey();
             
-            if (saveVerificationKey(player.getName(), verificationKey)) {
+            if (saveVerificationKey(player.getName(), verificationKey, player.getUniqueId())) {
                 TextComponent codeComponent = new TextComponent(ChatColor.GREEN + "" + ChatColor.BOLD + verificationKey);
                 codeComponent.setClickEvent(new ClickEvent(
                     ClickEvent.Action.COPY_TO_CLIPBOARD, 
@@ -179,12 +180,13 @@ public class SMPStatsPlugin extends JavaPlugin implements Listener {
         return String.valueOf(pin);
     }
     
-    private boolean saveVerificationKey(String username, String key) {
-        String sql = "UPDATE player_stats SET verification_key = ? WHERE username = ?";
+    private boolean saveVerificationKey(String username, String key, UUID playerUUID) {
+        String sql = "UPDATE player_stats SET verification_key = ?, player_uuid = ? WHERE username = ?";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, key);
-            stmt.setString(2, username);
+            stmt.setString(2, playerUUID.toString());
+            stmt.setString(3, username);
             int rows = stmt.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
@@ -199,7 +201,7 @@ public class SMPStatsPlugin extends JavaPlugin implements Listener {
         playerJoinTimes.put(player.getUniqueId(), System.currentTimeMillis());
         
         // Initialize player in database if not exists
-        initializePlayer(player.getName());
+        initializePlayer(player.getName(), player.getUniqueId());
     }
     
     @EventHandler
@@ -223,11 +225,12 @@ public class SMPStatsPlugin extends JavaPlugin implements Listener {
         }
     }
     
-    private void initializePlayer(String username) {
-        String sql = "INSERT INTO player_stats (username) VALUES (?) ON DUPLICATE KEY UPDATE username=username";
+    private void initializePlayer(String username, UUID playerUUID) {
+        String sql = "INSERT INTO player_stats (username, player_uuid) VALUES (?, ?) ON DUPLICATE KEY UPDATE username=username";
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, username);
+            stmt.setString(2, playerUUID.toString());
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
