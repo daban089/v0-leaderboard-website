@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Trophy } from "lucide-react"
 import Image from "next/image"
 import { PlayerModal } from "./player-modal"
+import { PlayerContextMenu } from "./player-context-menu"
 
 interface Player {
   rank: number
@@ -117,6 +118,8 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   const [mode, setMode] = useState<"high-tiers" | "ranked">("ranked")
   const [activeTabIndex, setActiveTabIndex] = useState(0)
   const [customNamecards, setCustomNamecards] = useState<Record<string, string>>({})
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null)
+  const [contextMenuPlayer, setContextMenuPlayer] = useState<Player | null>(null)
 
   const fetchCustomNamecards = async () => {
     try {
@@ -316,6 +319,13 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
   const getCustomNamecard = (player: Player) => {
     const username = player.username.toLowerCase()
     return customNamecards[username] || ""
+  }
+
+  const handlePlayerContextMenu = (e: React.MouseEvent, player: Player) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setContextMenuPlayer(player)
+    setContextMenu({ x: e.clientX, y: e.clientY })
   }
 
   if (loading) {
@@ -585,6 +595,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
                                 : "border-border hover:translate-x-1 hover:shadow-md"
                     }`}
                     onClick={() => handlePlayerClick(player)}
+                    onContextMenu={(e) => handlePlayerContextMenu(e, player)}
                   >
                     <div
                       className="absolute inset-0 z-[1] pointer-events-none"
@@ -772,6 +783,20 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = ({
             winStreak: selectedPlayer.winStreak,
           }}
           gamemodeElos={gamemodeElos || undefined}
+        />
+      )}
+
+      {contextMenu && contextMenuPlayer && (
+        <PlayerContextMenu
+          username={contextMenuPlayer.username}
+          uuid={contextMenuPlayer.username}
+          discord=""
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => {
+            setContextMenu(null)
+            setContextMenuPlayer(null)
+          }}
         />
       )}
     </div>
