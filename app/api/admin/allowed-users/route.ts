@@ -60,7 +60,7 @@ export async function DELETE(request: Request) {
     const connection = await getConnection()
 
     await connection.execute(
-      `UPDATE player_stats SET can_customize_namecard = FALSE WHERE LOWER(username) = LOWER(?)`,
+      `UPDATE player_stats SET can_customize_namecard = FALSE, custom_namecard = NULL WHERE LOWER(username) = LOWER(?)`,
       [username],
     )
 
