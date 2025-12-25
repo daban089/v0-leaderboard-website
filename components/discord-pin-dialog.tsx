@@ -15,10 +15,12 @@ export function DiscordPinDialog({ onLogin, onClose }: DiscordPinDialogProps) {
   const [pin, setPin] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [needsDiscordLink, setNeedsDiscordLink] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
+    setNeedsDiscordLink(false)
     setIsLoading(true)
 
     try {
@@ -34,6 +36,9 @@ export function DiscordPinDialog({ onLogin, onClose }: DiscordPinDialogProps) {
         onLogin(data.username)
         onClose()
       } else {
+        if (data.error?.includes("discord link") || data.error?.includes("/discord link")) {
+          setNeedsDiscordLink(true)
+        }
         setError(data.error || "PIN verification failed")
       }
     } catch (err) {
@@ -54,14 +59,14 @@ export function DiscordPinDialog({ onLogin, onClose }: DiscordPinDialogProps) {
         </button>
 
         <div className="mb-6">
-          <h2 className="text-2xl font-bold">Link with Discord</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Use the 4-digit PIN from DiscordSRV linking</p>
+          <h2 className="text-2xl font-bold">Verify Account</h2>
+          <p className="mt-1 text-sm text-muted-foreground">Use the 4-digit PIN from /verify in-game</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="pin" className="mb-2 block text-sm font-medium">
-              Discord PIN
+              Verification PIN
             </label>
             <Input
               id="pin"
@@ -76,11 +81,23 @@ export function DiscordPinDialog({ onLogin, onClose }: DiscordPinDialogProps) {
             />
           </div>
 
-          {error && (
+          {needsDiscordLink ? (
+            <div className="rounded-lg border border-amber-500/50 bg-amber-500/10 p-4 text-sm">
+              <p className="font-medium text-amber-500">Discord Not Linked</p>
+              <p className="mt-2 text-muted-foreground">You need to link your Discord account first:</p>
+              <ol className="mt-2 space-y-1 text-muted-foreground">
+                <li>
+                  1. Type <code className="rounded bg-secondary px-1">/discord link</code> in-game
+                </li>
+                <li>2. Message the bot on Discord with your code</li>
+                <li>3. Come back here and try again</li>
+              </ol>
+            </div>
+          ) : error ? (
             <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
               {error}
             </div>
-          )}
+          ) : null}
 
           <Button type="submit" className="w-full" disabled={isLoading || pin.length !== 4}>
             {isLoading ? (
@@ -89,7 +106,7 @@ export function DiscordPinDialog({ onLogin, onClose }: DiscordPinDialogProps) {
                 Verifying...
               </>
             ) : (
-              "Link Account"
+              "Verify Account"
             )}
           </Button>
         </form>
@@ -97,10 +114,16 @@ export function DiscordPinDialog({ onLogin, onClose }: DiscordPinDialogProps) {
         <div className="mt-6 rounded-lg border border-border bg-secondary/50 p-4">
           <p className="text-sm font-medium">How to get your PIN:</p>
           <ol className="mt-2 space-y-1 text-sm text-muted-foreground">
-            <li>1. Link your Discord in the Minecraft server</li>
-            <li>2. DiscordSRV will give you a 4-digit PIN</li>
-            <li>3. Paste it here to link your account</li>
+            <li>
+              1. Type <code className="rounded bg-secondary/80 px-1">/verify</code> in the Minecraft server
+            </li>
+            <li>2. You'll receive a 4-digit PIN</li>
+            <li>3. Enter it here to verify your account</li>
           </ol>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Note: You must have your Discord linked via{" "}
+            <code className="rounded bg-secondary/80 px-1">/discord link</code> first.
+          </p>
         </div>
       </div>
     </div>
