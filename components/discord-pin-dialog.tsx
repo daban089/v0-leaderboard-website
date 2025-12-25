@@ -12,6 +12,7 @@ interface DiscordPinDialogProps {
 }
 
 export function DiscordPinDialog({ onLogin, onClose }: DiscordPinDialogProps) {
+  const [username, setUsername] = useState("")
   const [pin, setPin] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
@@ -27,7 +28,7 @@ export function DiscordPinDialog({ onLogin, onClose }: DiscordPinDialogProps) {
       const response = await fetch("/api/verify-discord-pin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ pin: pin.trim() }),
+        body: JSON.stringify({ username: username.trim(), pin: pin.trim() }),
       })
 
       const data = await response.json()
@@ -65,6 +66,21 @@ export function DiscordPinDialog({ onLogin, onClose }: DiscordPinDialogProps) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
+            <label htmlFor="username" className="mb-2 block text-sm font-medium">
+              Minecraft Username
+            </label>
+            <Input
+              id="username"
+              type="text"
+              placeholder="YourUsername"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              disabled={isLoading}
+            />
+          </div>
+
+          <div>
             <label htmlFor="pin" className="mb-2 block text-sm font-medium">
               Verification PIN
             </label>
@@ -99,7 +115,7 @@ export function DiscordPinDialog({ onLogin, onClose }: DiscordPinDialogProps) {
             </div>
           ) : null}
 
-          <Button type="submit" className="w-full" disabled={isLoading || pin.length !== 4}>
+          <Button type="submit" className="w-full" disabled={isLoading || pin.length !== 4 || !username.trim()}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -118,7 +134,7 @@ export function DiscordPinDialog({ onLogin, onClose }: DiscordPinDialogProps) {
               1. Type <code className="rounded bg-secondary/80 px-1">/verify</code> in the Minecraft server
             </li>
             <li>2. You'll receive a 4-digit PIN</li>
-            <li>3. Enter it here to verify your account</li>
+            <li>3. Enter your username and PIN here to verify your account</li>
           </ol>
           <p className="mt-3 text-xs text-muted-foreground">
             Note: You must have your Discord linked via{" "}
