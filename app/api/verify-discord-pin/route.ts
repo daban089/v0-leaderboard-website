@@ -18,12 +18,11 @@ export async function POST(request: Request) {
       database: process.env.MYSQL_DATABASE || "s602_MySQL",
     })
 
-    // Query DiscordSRV codes table to find the Discord ID linked to this PIN
     const [codeRows] = await connection.execute<any[]>(
-      `SELECT discordsrv_codes.discord_id, discordsrv_accounts.uuid
-       FROM discordsrv_codes
-       JOIN discordsrv_accounts ON discordsrv_codes.discord_id = discordsrv_accounts.discord
-       WHERE discordsrv_codes.code = ? AND discordsrv_codes.expiry > NOW()`,
+      `SELECT dc.code, dc.uuid, da.discord 
+       FROM discordsrv_codes dc
+       JOIN discordsrv_accounts da ON dc.uuid = da.uuid
+       WHERE dc.code = ? AND dc.expiration > UNIX_TIMESTAMP() * 1000`,
       [pin],
     )
 
@@ -32,10 +31,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid or expired PIN" }, { status: 401 })
     }
 
-    const { discord_id, uuid } = codeRows[0]
+    const { uuid, discord: discord_id } = codeRows[0]
 
     // Get player by UUID from player_stats
-    const [playerRows] = await connection.execute<any[]>(`SELECT username, id FROM player_stats WHERE uuid = ?`, [uuid])
+    const [playerRows] = await connection.execute<any[]>(`SELECT username FROM player_stats WHERE uuid = ?`, [uuid])
 
     if (playerRows.length === 0) {
       await connection.end()
@@ -47,7 +46,7 @@ export async function POST(request: Request) {
     // Link Discord ID to player account
     await connection.execute(`UPDATE player_stats SET discord_id = ? WHERE uuid = ?`, [discord_id, uuid])
 
-    // Mark code as used
+    // Delete used code
     await connection.execute(`DELETE FROM discordsrv_codes WHERE code = ?`, [pin])
 
     await connection.end()
