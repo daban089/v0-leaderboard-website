@@ -83,6 +83,18 @@ export default function Page() {
                 <span className="text-sm font-medium">Discord</span>
               </a>
 
+              {/* Customize Button */}
+              {loggedInUser && !isAdmin && canCustomize && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowNamecard(true)}
+                  className="h-12 bg-transparent"
+                >
+                  Customize
+                </Button>
+              )}
+
               {/* Search Bar */}
               <div className="relative h-12">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -104,17 +116,7 @@ export default function Page() {
                     <User className="h-4 w-4 text-primary" />
                     <span className="text-sm font-medium">{loggedInUser}</span>
                   </button>
-                  {/* Show customization button only for allowed users (not admins) */}
-                  {!isAdmin && canCustomize && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setShowNamecard(true)}
-                      className="h-12 bg-transparent"
-                    >
-                      Customize
-                    </Button>
-                  )}
+                  {/* Logout Button */}
                   <Button variant="outline" size="sm" onClick={handleLogout} className="h-12 bg-transparent">
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout
