@@ -51,6 +51,8 @@ export async function POST(request: Request) {
       username,
     ])
 
+    console.error("[v0] Verification successful:", { username, discord_id })
+
     await connection.end()
 
     return NextResponse.json({ success: true, username, discord_id })
